@@ -12,12 +12,14 @@ We are using [Terraform][T] for deploying the our application to AWS. [Install T
 
 ## Configuration
 
-Create the credentials($HOME/.aws/credentials) file in the user path. See [here][https://www.terraform.io/docs/providers/aws/#shared-credentials-file] for more details.
+Create the credentials($HOME/.aws/credentials) file in the user path. See [here][TS] for more details.
 ```
 aws_access_key_id = <<AWS ACCESS KEY>>
 aws_secret_access_key = <<AWS SECRET ACCESS KEY>>
 password = <<Password for RDS DB>>
 ```
+[TS]: https://www.terraform.io/docs/providers/aws/#shared-credentials-file/
+
 
 ## Build Infrastructure
 1. Load Terraform Modules
