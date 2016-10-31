@@ -1,4 +1,4 @@
-#DPR Deploy
+# DPR Deploy
 
 Deployement Automation for the DPR.
 
@@ -19,7 +19,7 @@ aws_secret_access_key = <<AWS SECRET ACCESS KEY>>
 password = <<Password for RDS DB>>
 ```
 
-##Build Infrastructure
+## Build Infrastructure
 1. Load Terraform Modules
 ```
 python deploy.py get
@@ -30,12 +30,13 @@ python deploy.py apply
 ```
 
 
-##Optional
+## Optional
 1. Pass Variables to the Terraform by adding values in terraform.tfvars. List of variables that we can override are:
- * region = <<AWS Region>>
- * bucket_name = <<Bucket name for S3>>
-
-Also, variables can be overide in corresponding module files.(To replace the defaults) 
+```
+ region = << AWS Region >>
+ bucket_name = << Bucket name for S3 >>
+```
+Also, variables can be overide in corresponding module files.(To replace the defaults specified in variables.tf in each Teraform module.)
 
 
 2. Destroy the Inra Structure.
@@ -43,7 +44,7 @@ Also, variables can be overide in corresponding module files.(To replace the def
 python deploy.py destroy
 ```
 
-##Integration with Zappa (Continious Deployment)
+## Integration with Zappa (Continious Deployment)
 
 Yet to be Done
 
