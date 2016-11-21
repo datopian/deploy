@@ -1,0 +1,29 @@
+{
+  "stage": {
+        "project_name": "dpr-api-ansible",
+        "s3_bucket": "{{ s3_bucketname }}",
+        "app_function": "dpr.application",
+        "aws_region": "{{ aws_region }}",
+        "use_apigateway": true,
+        "memory_size": 512,
+        "log_level": "DEBUG",
+        "debug": true,
+        "profile_name": "default",
+        "environment_variables": {
+            "FLASK_CONFIGURATION": "stage",
+
+            "AUTH0_CLIENT_ID": "{{auth0_client_id}}",
+            "AUTH0_CLIENT_SECRET": "{{auth0_client_secret}}",
+            "AUTH0_API_AUDIENCE": "{{auth0_audiance}}",
+            "AUTH0_DOMAIN": "{{auth0_domain}}",
+            "AUTH0_DB_NAME": "{{auth0_connection_name}}"
+
+            "SQLALCHEMY_DATABASE_URI": "postgresql://{{rds_instance_user}}:{{rds_instance_password}}@{{ rds.instance.endpoint }}:{{ rds.instance.port }}/{{rds_instance_db_name}}",
+            "FLASKS3_BUCKET_NAME": "{{ s3_bucketname }}",
+            "AWS_REGION": "{{ aws_region }}",
+            "AWS_ACCESS_KEY_ID": "{{aws_key}}",
+            "AWS_SECRET_ACCESS_KEY": "{{aws_secret}}",
+            "S3_BUCKET_NAME": "{{ s3_bucketname }}",
+        }
+    }
+}

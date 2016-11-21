@@ -1,0 +1,15 @@
+---
+- name: Get RDS facts
+  rds:
+    command: facts
+    region: "{{ aws_region }}"
+    instance_name: "{{ rds_instance_name }}"
+  register: rds
+
+- name: Delete rds instance
+  rds:
+    command: delete
+    region: "{{ aws_region }}"
+    wait: yes
+    wait_timeout: 600
+    instance_name: "{{ rds_instance_name }}"

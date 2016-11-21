@@ -1,0 +1,11 @@
+---
+- name: Dump all vars
+  action: template src=dumpall.j2 dest=/tmp/ansible.all
+
+- name: Print Api Gateway URL
+  debug: msg="Zappa deployed at API GATEWAY -  {{ zappa_status_json['API Gateway URL'] }}"
+  when: zappa_status_json['API Gateway URL'] is defined
+
+- name: Print RDS Instance URL
+  debug: msg="RDS deployed at this end point -  {{ rds.instance.endpoint }}"
+  when: rds.instance.endpoint is defined

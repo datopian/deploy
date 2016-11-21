@@ -1,0 +1,9 @@
+{
+  "client_id": "H2c3QDzeYTqpq6ksMvXUTwdkLJAalvTd",
+  "audience": "https://subhankar123.auth0.com/api/v2/",
+  "scope": [
+    "read:users",
+    "update:users",
+    "read:users_app_metadata"
+  ]
+}

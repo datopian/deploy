@@ -1,0 +1,6 @@
+---
+- name: Delete S3 bucket
+  s3:
+    bucket: "{{ s3_bucketname }}"
+    mode: delete
+    region: "{{ aws_region }}"

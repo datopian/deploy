@@ -1,0 +1,58 @@
+---
+- hosts: localhost
+  vars_prompt:
+    - name: auth0_global_api_key
+      prompt: Plz provide auth0 API KEY
+      default: SQ2MHKt9kCJ4kk3FTm0YWHP4SbmmeSIj
+      private: no
+    - name: auth0_global_secret
+      prompt: Plz provide auth0 Global secret KEY
+      default: 9ITTI85xYo5PdhW_lbtIcAjJiB4YRisVp6Fo7lnbAfJUBYazzBRwMekvSY7HOsP7
+      private: no
+    - name: auth0_domain
+      prompt: Plz provide auth0 Domain name i.e. subhankarb.auth0.com
+      default: subhankar123.auth0.com
+      private: no
+    - name: auth0_application_name
+      prompt: Plz provide auth0 Desired Application name.
+      default: Test Application
+      private: no
+    - name: auth0_connection_name
+      prompt: Plz provide auth0 Desired Database name.
+      default: test-database
+      private: no
+    - name: aws_key
+      prompt: Plz provide AWS key
+      default: AKIAJ3WYMOYMQTWX6RIQ
+      private: no
+    - name: aws_secret
+      prompt: Plz provide AWS secret key
+      default: ZFjPdoOju1OKhK2Mz/4cDftyAj/Z0ffoMVIxynIO
+      private: no
+    - name: aws_region
+      prompt: Plz provide AWS zone name
+      default: us-west-2
+      private: no
+    - name: s3_bucketname
+      prompt: Plz provide Desired S3 bucket name
+      default: myawesomebucket123454321
+      private: no
+    - name: rds_instance_name
+      prompt: Plz provide Desired RDS instance name
+      default: awesome-rds
+      private: no
+    - name: rds_instance_db_name
+      prompt: Plz provide Desired RDS instance database name
+      default: dpr_db
+      private: no
+    - name: rds_instance_user
+      prompt: Plz provide Desired RDS instance user name
+      default: dbuser
+      private: no
+    - name: rds_instance_password
+      prompt: Plz provide Desired RDS instance password
+      default: dbpass123
+      private: no
+  roles:
+    - common
+    - deploy

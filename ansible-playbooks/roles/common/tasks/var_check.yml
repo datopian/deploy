@@ -1,0 +1,31 @@
+---
+
+- name: Checking for aws key
+  fail:
+    msg: aws_key can not be empty
+  when: aws_key == ''
+
+- name: Checking for aws secret
+  fail:
+    msg: aws_secret can not be empty
+  when: aws_secret == ''
+
+- name: Checking for aws region
+  fail:
+    msg: aws_region can not be empty
+  when: aws_region == ''
+
+- name: Checking for auth0 global api key
+  fail:
+    msg: auth0_global_api_key can not be empty
+  when: auth0_global_api_key == ''
+
+- name: Checking for auth0 global secret key
+  fail:
+    msg: auth0_global_secret can not be empty
+  when: auth0_global_secret == ''
+
+- name: Checking for auth0 domain name
+  fail:
+    msg: auth0_domain can not be empty
+  when: auth0_domain == ''

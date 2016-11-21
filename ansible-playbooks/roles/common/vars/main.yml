@@ -1,0 +1,4 @@
+---
+auth0_token_dir: /tmp/auth0_token
+auth0_uri: "https://{{auth0_domain}}/api/v2"
+auth0_audiance: "{{auth0_uri}}/"
