@@ -1,10 +1,14 @@
 ---
 - name: Create S3 bucket
-  s3:
+  s3_bucket:
     aws_access_key: "{{aws_key}}"
     aws_secret_key: "{{aws_secret}}"
-    bucket: "{{ s3_bucketname }}"
-    mode: create
     region: "{{ aws_region }}"
+    name: "{{ s3_bucketname }}"
+  register: s3_bucket_result
+  failed_when:
+    - "'failed' in s3_bucket_result and 'already own it' not in s3_bucket_result['msg']"
 
-- debug: msg="Created s3 bucket with name- {{ s3_bucketname }}"
+- debug:
+    msg: "Created s3 bucket with name - {{ s3_bucketname }}"
+  when: "{{app_debug}} == True"

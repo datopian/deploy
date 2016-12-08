@@ -1,8 +1,1 @@
 ---
-s3_bucketname: myawesomebucket123454321
-aws_region: us-west-2
-rds_instance_name: awesome-rds
-virtualenv_path: /tmp/zappa_venv
-dpr_api_path: /tmp/frictionlessdata/dpr-api
-zappa_conf_path: "{{dpr_api_path}}/zappa_configuration.json"
-dpr_api_git: https://github.com/frictionlessdata/dpr-api.git

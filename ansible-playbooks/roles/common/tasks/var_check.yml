@@ -5,6 +5,11 @@
     msg: aws_key can not be empty
   when: aws_key == ''
 
+- name: Checking for route 53 domain_name
+  fail:
+    msg: domain_name can not be empty
+  when: domain_name == ''
+
 - name: Checking for aws secret
   fail:
     msg: aws_secret can not be empty

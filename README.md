@@ -2,56 +2,59 @@
 
 Deployement Automation for the DPR.
 
-## Dependencies
+### Requirements:
 
-We are using [Terraform][T] for deploying the our application to AWS. [Install Terraform][TI].
+- We only need docker to be installed. Please follow [this instruction](https://docs.docker.com/engine/installation/) for installation.
 
-[T]: https://www.terraform.io/
-[TI]: https://www.terraform.io/intro/getting-started/install.html
+### Run instruction:
+We need to build docker image locally and run that image.
+```bash
+$ cd ~
+$ git clone https://gitlab.com/atomatic/dpr-deploy
+$ cd dpr-deploy
+$ docker build -t dpr-deploy .
+# After this step docker image will be built
+$ docker run -it dpr-deploy -h
+  # this will print help
+  usage: deploy.py [-h] [-d] {build, destroy}
 
+  argument parser for ansible
 
-## Configuration
-
-Create the credentials($HOME/.aws/credentials) file in the user path. See [here][TS] for more details.
-```
-aws_access_key_id = <<AWS ACCESS KEY>>
-aws_secret_access_key = <<AWS SECRET ACCESS KEY>>
-password = <<Password for RDS DB>>
-```
-[TS]: https://www.terraform.io/docs/providers/aws/#shared-credentials-file/
-
-
-## Build Infrastructure
-1. Load Terraform Modules
-```
-python deploy.py get
-```
-2. Create the Inra Structure.
-```
-python deploy.py apply
+  mandetory arguments:
+    -a, --action     {build, destroy}  please mention action
+    optional arguments:
+    -h, --help       show this help message and exit
+    -d, --debug      Run in debug mode
 ```
 
-
-## Optional
-1. Pass Variables to the Terraform by adding values in terraform.tfvars. List of variables that we can override are:
+### Deploy Infrastructure and Application:
+After build the docker image plz run this to deploy
+```bash
+$ docker run -it dpr-deploy -a build -d
 ```
- region = << AWS Region >>
- bucket_name = << Bucket name for S3 >>
+This will prompt for some System Properties for Infrastructure:
+- Please provide auth0 API KEY
+- Please provide auth0 Global secret KEY
+- Please provide auth0 Domain name
+- Plz provide AWS key
+- Plz provide AWS secret key
+- Plz provide AWS zone name [us-west-2]
+- Plz provide route 53 domain name
+
+If these System Properties is not supplied it will throw error.
+
+### Destroy Infrastructure and Application:
+If we want to destroy the Infrastructure plz run this command.
+```bash
+$ docker run -it dpr-deploy -a destroy -d
 ```
-Also, variables can be overide in corresponding module files.(To replace the defaults specified in variables.tf in each Teraform module.)
+This will prompt for some System Properties for Infrastructure:
+- Please provide auth0 API KEY
+- Please provide auth0 Global secret KEY
+- Please provide auth0 Domain name
+- Plz provide AWS key
+- Plz provide AWS secret key
+- Plz provide AWS zone name [us-west-2]
+- Plz provide route 53 domain name
 
-
-2. Destroy the Inra Structure.
-```
-python deploy.py destroy
-```
-
-## Integration with Zappa (Continious Deployment)
-
-Yet to be Done
-
-
-
-
-
-
+If these System Properties is not supplied it will throw error.

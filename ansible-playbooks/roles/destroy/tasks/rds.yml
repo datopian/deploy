@@ -4,12 +4,16 @@
     command: facts
     region: "{{ aws_region }}"
     instance_name: "{{ rds_instance_name }}"
+    aws_access_key: "{{aws_key}}"
+    aws_secret_key: "{{aws_secret}}"
   register: rds
 
 - name: Delete rds instance
   rds:
     command: delete
+    aws_access_key: "{{aws_key}}"
+    aws_secret_key: "{{aws_secret}}"
     region: "{{ aws_region }}"
     wait: yes
-    wait_timeout: 600
+    wait_timeout: 900
     instance_name: "{{ rds_instance_name }}"

@@ -1,10 +1,10 @@
 {
   "name": "Test Application",
   "callbacks": [
-    "https://yrmibce6q8.execute-api.us-west-2.amazonaws.com/stage/api/auth/callback"
+    "https://{{domain_prefix}}.{{ domain_name }}/api/auth/callback"
   ],
   "allowed_origins": [
-    "https://yrmibce6q8.execute-api.us-west-2.amazonaws.com/*"
+    "https://{{domain_prefix}}.{{ domain_name }}/*"
   ],
   "client_aliases": [],
   "allowed_clients": [],

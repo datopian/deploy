@@ -1,6 +1,6 @@
 {
   "stage": {
-        "project_name": "dpr-api-ansible",
+        "project_name": "{{zappa_app_name}}",
         "s3_bucket": "{{ s3_bucketname }}",
         "app_function": "dpr.application",
         "aws_region": "{{ aws_region }}",
@@ -9,6 +9,8 @@
         "log_level": "DEBUG",
         "debug": true,
         "profile_name": "default",
+        "domain": "{{domain_prefix}}.{{ domain_name }}",
+        "lets_encrypt_key": "account.key"
         "environment_variables": {
             "FLASK_CONFIGURATION": "stage",
 
@@ -18,7 +20,7 @@
             "AUTH0_DOMAIN": "{{auth0_domain}}",
             "AUTH0_DB_NAME": "{{auth0_connection_name}}"
 
-            "SQLALCHEMY_DATABASE_URI": "postgresql://{{rds_instance_user}}:{{rds_instance_password}}@{{ rds.instance.endpoint }}:{{ rds.instance.port }}/{{rds_instance_db_name}}",
+            "SQLALCHEMY_DATABASE_URI": "{{ sql_alchemy_uri }}",
             "FLASKS3_BUCKET_NAME": "{{ s3_bucketname }}",
             "AWS_REGION": "{{ aws_region }}",
             "AWS_ACCESS_KEY_ID": "{{aws_key}}",

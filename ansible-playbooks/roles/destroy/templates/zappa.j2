@@ -1,13 +1,8 @@
 {
   "stage": {
-        "project_name": "dpr-api-ansible",
+        "project_name": "{{zappa_app_name}}",
         "s3_bucket": "{{ s3_bucketname }}",
-        "app_function": "dpr.application",
         "aws_region": "{{ aws_region }}",
-        "use_apigateway": true,
-        "memory_size": 512,
-        "log_level": "DEBUG",
-        "debug": true,
         "profile_name": "default"
     }
 }
