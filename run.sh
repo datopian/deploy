@@ -21,11 +21,11 @@ case $i in
     shift # past argument=value
     ;;
     -h|--help)
-    HELP=TRUE
+    HELP="TRUE"
     shift # past argument with no value
     ;;
     -d|--debug)
-    DUBUG=True
+    DEBUG=True
     shift # past argument with no value
     ;;
     *)

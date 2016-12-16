@@ -1,11 +1,12 @@
 {
   "infra": {
-    "aws_region": "{{aws_region}}"
+    "aws_region": "{{aws_region}}",
     "rds_enpoint": "{{rds.instance.endpoint}}",
     "s3_bucket": "{{s3_bucketname}}",
     "auth0_client_id": "{{auth0_client_id}}",
     "auth0_client_secret": "{{auth0_client_secret}}",
-    "auth0_connection_name": "{{auth0_connection_name}}"
+    "auth0_connection_name": "{{auth0_connection_name}}",
+    "auth0_client_name": "{{auth0_application_name}}"
   },
   "application": {
     "zappa_api_getway": "{{zappa_status_json['API Gateway URL']}}",

@@ -9,7 +9,7 @@
         "log_level": "DEBUG",
         "debug": true,
         "profile_name": "default",
-        "domain": "{{domain_prefix}}.{{ domain_name }}",
+        "domain": "{{ domain_name }}",
         "lets_encrypt_key": "account.key"
         "environment_variables": {
             "FLASK_CONFIGURATION": "stage",
@@ -25,7 +25,7 @@
             "AWS_REGION": "{{ aws_region }}",
             "AWS_ACCESS_KEY_ID": "{{aws_key}}",
             "AWS_SECRET_ACCESS_KEY": "{{aws_secret}}",
-            "S3_BUCKET_NAME": "{{ s3_bucketname }}",
+            "S3_BUCKET_NAME": "{{ s3_bucketname }}"
         }
     }
 }

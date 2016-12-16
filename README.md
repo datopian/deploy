@@ -86,3 +86,50 @@ If these System Properties is not supplied it will throw error.
 - Delete RDS instance
 - Delete auth0 client and user pool
 - Undeploy zappa application
+
+
+# DPR - Deployment esp API Gateway
+
+## 10 Dec 2016
+
+So i think the way to go is zerossl as per:
+
+https://www.pandastrike.com/posts/20160613-ssl-cert-aws-api-gateway-zerossl-letsencrypt
+
+**NOTE**: Rufus can do DNS based domain ownership very easily ..
+
+## 8 Dec 2016
+
+We want to link a custom domain to API-Gateway generated endpoint.
+
+We therefore need to create custom domain in API-gateway.
+
+**Option 1:**
+
+https://github.com/Miserlou/Zappa/blob/master/docs/domain_with_free_ssl_dns.md
+
+- Create DNS in route53 [Need to buy this from route53 console] - TODO: cost summary. $12 for domain + $0.50 a month plus more ...  [Route 53 pricing][53-pricing]
+- Zappa can automatically link to this TODO: link to docs
+
+[53-pricing]: https://aws.amazon.com/route53/pricing/
+
+**Option 2:**
+
+https://github.com/Miserlou/Zappa/blob/master/docs/domain_with_free_ssl_http.md
+
+Amazon doc: http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html
+
+- Have a domain registered [DONE]
+- Get a PEM-encoded SSL certificate for your custom domain name from a certificate authority. This can be done by ```letsencrypt```
+  1. Certificate private key
+  2. Certificate body
+  3. Certificate chain
+- Manually or [programatically][boto-apig] create custom domain in API Gateway
+- Map custom domain to cloudfront distribution point
+  - Requires cloudfront distribution point
+
+[boto-apig]: http://boto3.readthedocs.io/en/latest/reference/services/apigateway.html#APIGateway.Client.create_domain_name
+
+**NOTE: all this info should be included in documentation for this function in our dpr-deploy code ;-)**
+
+Once these are created we can link custom domain in API Gateway.

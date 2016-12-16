@@ -1,8 +1,7 @@
 FROM python:2.7.12
 RUN pip install pip==9.0.1
-RUN pip install ansible==2.2.0.0
-RUN pip install PyJWT==1.4.2
-RUN pip install boto==2.43.0
+COPY requirements.txt /ansible/requirements.txt
+RUN pip install -r requirements.txt
 COPY ansible-playbooks /ansible/ansible-playbooks
 COPY run.sh /ansible/run.sh
 WORKDIR /ansible
