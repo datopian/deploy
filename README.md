@@ -133,3 +133,29 @@ Amazon doc: http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-c
 **NOTE: all this info should be included in documentation for this function in our dpr-deploy code ;-)**
 
 Once these are created we can link custom domain in API Gateway.
+
+
+
+
+## **Modified play-books and the deployment process:**
+### Requirements:
+
+- We only need docker to be installed. Please follow [this instruction](https://docs.docker.com/engine/installation/) for installation.
+
+### Run instruction:
+We need to build docker image locally and run that image.
+```bash
+$ cd ~
+$ git clone https://gitlab.com/atomatic/dpr-deploy
+$ cd dpr-deploy
+$ docker build -t dpr-deploy .
+# After this step docker image will be built
+$ docker run -it dpr-deploy -h
+  # this will print ansible commands
+$ cp external_config.json.template external_config.json
+# please update the configurations in external_config.json
+```
+### For running the deployment:
+```bash
+$ docker run -it dpr-deploy --extra-vars "@external_config.json"
+```

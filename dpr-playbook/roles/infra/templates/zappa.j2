@@ -1,0 +1,29 @@
+{
+  "{{environment_tier}}": {
+        "project_name": "{{zappa_project}}",
+        "s3_bucket": "{{ bit_store_bucket_name }}",
+        "app_function": "dpr.application",
+        "aws_region": "{{ region }}",
+        "use_apigateway": true,
+        "memory_size": 512,
+        "log_level": "DEBUG",
+        "debug": true,
+        "profile_name": "default",
+        "environment_variables": {
+            "FLASK_CONFIGURATION": "stage",
+
+            "AUTH0_CLIENT_ID": "{{auth0_client_id}}",
+            "AUTH0_CLIENT_SECRET": "{{auth0_client_secret}}",
+            "AUTH0_API_AUDIENCE": "{{auth0_audiance}}",
+            "AUTH0_DOMAIN": "{{auth0_domain}}",
+            "AUTH0_DB_NAME": "{{auth0_connection_name}}"
+
+            "SQLALCHEMY_DATABASE_URI": "{{ sql_alchemy_uri }}",
+            "FLASKS3_BUCKET_NAME": "{{ bit_store_bucket_name }}",
+            "AWS_REGION": "{{ region }}",
+            "AWS_ACCESS_KEY_ID": "{{aws_key}}",
+            "AWS_SECRET_ACCESS_KEY": "{{aws_secret}}",
+            "S3_BUCKET_NAME": "{{ bit_store_bucket_name }}"
+        }
+    }
+}

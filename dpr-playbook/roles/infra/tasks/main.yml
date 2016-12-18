@@ -1,0 +1,11 @@
+---
+- { include_vars: "environment_tier/{{ environment_tier }}.yml", tags: ['always'] }
+- { include_vars: infrastructure/instances.yml, tags: ['always'] }
+
+- { include: common/aws_cred.yml, tags: ['always']}
+- { include: bitstore.yml, tags: ['bitstore'] }
+- { include: instances.yml, tags: ['instances'] }
+- { include: auth0.yml, tags: ['auth0'] }
+- { include: facts.yml, tags: ['zappa']}
+- { include: zappa.yml, tags: ['zappa']}
+- { include: utils/all_facts.yml, tags: ['always']}

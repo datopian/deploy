@@ -1,0 +1,36 @@
+---
+project: dpr-api
+s3_suffix: suogpq7cyl44ff02
+bit_store_bucket_name: "{{ project }}-{{ environment_tier }}-{{ s3_suffix }}"
+rds_suffix: suogpq7cae04ff03
+app_debug: True
+
+# [postgres, MySQL]
+rds_engine: postgres
+rds_database_name: "dpr_db"
+rds_database_username: "{{ project | replace('-', '') }}"
+rds_database_password: "test_pass"
+rds_database_size: 10 # GB
+rds_database_backup_retention: 30
+
+auth0_application_name: "{{project}}-{{environment_tier}}-application"
+auth0_connection_name: "{{project}}-{{environment_tier}}-database"
+auth0_token_dir: /tmp/auth0_token
+auth0_uri: "https://{{auth0_domain}}/api/v2"
+auth0_audiance: "{{auth0_uri}}/"
+
+virtualenv_path: /tmp/zappa_venv
+dpr_api_path: /tmp/frictionlessdata/dpr-api
+zappa_config_dir: /tmp/frictionlessdata/config
+zappa_conf_file: zappa_configuration-deploy.json
+zapp_instance_count: 2
+dpr_api_git: https://github.com/frictionlessdata/dpr-api.git
+
+override_region: ''
+override_instance_type: {}
+
+default_instance_type:
+  database: t2.micro
+
+fallback_instance_type:
+  database: t2.micro

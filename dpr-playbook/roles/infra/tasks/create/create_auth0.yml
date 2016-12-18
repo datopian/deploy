@@ -1,0 +1,83 @@
+---
+
+- name: get all clients
+  uri:
+   url: "{{auth0_uri}}/clients"
+   method: GET
+   HEADER_Authorization: "Bearer {{auth0_jwt_token}}"
+   HEADER_Content-Type: application/json
+   body_format: json
+   status_code: 200
+  register: get_clients
+
+- name: Filter existing clients based on name
+  set_fact:
+    exists_clients: "{{ get_clients['json'] | selectattr('name', 'equalto', auth0_application_name) | map(attribute='client_id') | list }}"
+
+- name: Print Existing clients
+  debug:
+    msg: "{{ exists_clients }}"
+  when: "{{app_debug}} == True"
+
+- name: Delete existes clients with same name
+  uri:
+    url: "{{auth0_uri}}/clients/{{item}}"
+    method: DELETE
+    HEADER_Authorization: "Bearer {{auth0_jwt_token}}"
+    HEADER_Content-Type: application/json
+    body_format: json
+    status_code: 204
+  with_items: "{{exists_clients}}"
+  register: delete_clients
+
+- name: Creating auth0 Create client payload
+  action: template src=auth0_create_client.j2 dest="{{ role_path }}/files/auth0_create_client.json"
+
+- name: Create Auth0 client
+  uri:
+   url: "{{auth0_uri}}/clients"
+   method: POST
+   body: "{{ lookup('file','auth0_create_client.json') }}"
+   HEADER_Authorization: "Bearer {{auth0_jwt_token}}"
+   HEADER_Content-Type: application/json
+   body_format: json
+   status_code: 201
+  register: create_clients
+
+- name: Register Auth0 Application id
+  set_fact:
+    auth0_client_id: "{{ create_clients.json.client_id }}"
+
+- name: Register Auth0 Application Secret
+  set_fact:
+    auth0_client_secret: "{{ create_clients.json.client_secret }}"
+
+- debug:
+    msg: "Create client with id {{auth0_client_id}} and secret {{auth0_client_secret}}"
+  when: "{{app_debug}} == True"
+
+- name: Creating auth0 Create Connection payload template
+  action: template src=auth0_create_connection.j2 dest="{{ role_path }}/files/auth0_create_connection.json"
+
+- name: Creating auth0 Grant Client Read access template
+  action: template src=auth0_client_grant.j2 dest="{{ role_path }}/files/auth0_client_grant.json"
+
+- name: Create Auth0 Connection of Strategy Auth0
+  uri:
+    url: "{{auth0_uri}}/connections"
+    method: POST
+    body: "{{ lookup('file','auth0_create_connection.json') }}"
+    HEADER_Authorization: "Bearer {{auth0_jwt_token}}"
+    HEADER_Content-Type: application/json
+    body_format: json
+    status_code: 201,409
+
+- name: Give client grant to read user
+  uri:
+    url: "{{auth0_uri}}/client-grants"
+    method: POST
+    body: "{{ lookup('file','auth0_client_grant.json') }}"
+    HEADER_Authorization: "Bearer {{auth0_jwt_token}}"
+    HEADER_Content-Type: application/json
+    body_format: json
+    status_code: 201

@@ -1,15 +1,12 @@
 ---
-- name: Dump all vars
-  action: template src=dumpall.j2 dest=/tmp/ansible.all
-
 - name: Generate infra and application values
-  action: template src=info.j2 dest={{ role_path }}/files/info.json
-
-- debug: msg="{{}}"
+  action: template src=all_facts.j2 dest={{ role_path }}/files/all_facts.json
 
 - name: Read infra and application values
-  shell: cat {{ role_path }}/files/info.json
+  shell: cat {{ role_path }}/files/all_facts.json
   register: result_read
+
+- debug: msg="{{result_read.stdout}}"
 
 - name: Read infra and application values from json
   set_fact:

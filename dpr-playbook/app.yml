@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  roles:
+    - role: infra
+      task_group: create
+      environment_tier: development
+      required_systems:
+        - bitstore-s3
+        - database
+        - auth0
+        - zappa

@@ -82,3 +82,6 @@ celerybeat-schedule
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
+
+# config
+external_config.json

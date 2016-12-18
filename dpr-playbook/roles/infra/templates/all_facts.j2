@@ -1,0 +1,32 @@
+{
+  {# Gathering RDS Facts#}
+  {% if  rds_fact is defined %}
+  "rds": {
+      "database_name": "{{rds_database_name}}",
+      "endpoint": "{{rds_fact.instance.endpoint}}",
+      "availability_zone": "{{rds_fact.instance.availability_zone}}",
+      "port": "{{rds_fact.instance.port}}",
+      "instance_type": "{{rds_fact.instance.instance_type}}",
+      "username": "{{rds_fact.instance.username}}",
+      "status": "{{rds_fact.instance.status}}",
+      "vpc_security_groups": "{{rds_fact.instance.vpc_security_groups}}",
+      "url": "{{sql_alchemy_uri}}"
+  },
+  {% endif %}
+
+  {# Gathering Auth0 Facts#}
+  {% if auth0_client_id is defined %}
+  "auth0": {
+    "auth0_client_id": "{{auth0_client_id}}",
+    "auth0_client_secret": "{{auth0_client_secret}}",
+    "auth0_connection_name": "{{auth0_connection_name}}",
+    "auth0_application_name": "{{auth0_application_name}}",
+    "auth0_audiance": "{{auth0_audiance}}"
+  },
+  {% endif %}
+
+  {# Gathering Zappa Facts#}
+  "zappa": {{zappa_status_json}}
+
+  "description": "All available facts"
+}

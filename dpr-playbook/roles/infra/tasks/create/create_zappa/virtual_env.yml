@@ -1,0 +1,25 @@
+---
+- name: Remove DPR-API directory
+  file:
+    state: absent
+    path: "{{ dpr_api_path }}"
+
+- name: Clone DPR-API
+  git:
+    repo: "{{ dpr_api_git }}"
+    dest: "{{ dpr_api_path }}"
+
+- name: Create virtual environmane directory
+  file:
+    path: "{{ virtualenv_path }}"
+    state: directory
+    mode: 0755
+
+- name: Install zappa requirements
+  pip:
+    requirements: "{{ dpr_api_path }}/requirements.txt"
+    virtualenv: "{{ virtualenv_path }}"
+    virtualenv_python: python2.7
+
+- name: Creating virtual environment source script
+  action: template src=venv_exec.j2 dest={{ virtualenv_path }}/exec mode=755

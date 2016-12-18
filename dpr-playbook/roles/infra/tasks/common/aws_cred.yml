@@ -1,0 +1,18 @@
+---
+
+- name: Create aws environmane directory
+  file:
+    path: "{{ '~/.aws' | expanduser }}"
+    state: directory
+    mode: 0755
+- name: Dump AWS credentials
+  template:
+    src: aws_cred.j2
+    dest: "{{ '~/.aws/credentials' | expanduser }}"
+    mode: 0640
+
+- name: Dump AWS config
+  template:
+    src: aws_config.j2
+    dest: "{{ '~/.aws/config' | expanduser }}"
+    mode: 0640

@@ -1,0 +1,12 @@
+---
+- include: create/create_zappa/conf_generator.yml zappa_instance_number={{item}}
+  with_sequence: count={{zapp_instance_count}}
+  when: "'zappa' in required_systems and task_group == 'create'"
+
+- { include: create/create_zappa/virtual_env.yml, system_role: zappa, when: "'zappa' in required_systems and task_group == 'create'", tags: ['zappa_manager']}
+
+- include: create/create_zappa/deploy_zappa.yml zappa_instance_number={{item}}
+  with_sequence: count={{zapp_instance_count}}
+  when: "'zappa' in required_systems and task_group == 'create'"
+
+- { include: create/create_zappa/populate_data.yml, system_role: zappa, when: "'zappa' in required_systems and task_group == 'create'", tags: ['zappa_manager']}

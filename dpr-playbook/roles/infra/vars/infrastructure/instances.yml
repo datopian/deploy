@@ -1,0 +1,2 @@
+---
+instance_type: "{{ default_instance_type.update(override_instance_type) }}{{ default_instance_type }}"

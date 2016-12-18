@@ -1,0 +1,3 @@
+---
+- { include: common/auth0_token.yml, system_role: auth0, when: "'auth0' in required_systems" }
+- { include: create/create_auth0.yml, system_role: auth0, when: "'auth0' in required_systems and task_group == 'create'" }
