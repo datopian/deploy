@@ -26,7 +26,7 @@
   {% endif %}
 
   {# Gathering Zappa Facts#}
-  {% if auth0_client_id is defined %}
+  {% if zappa_status_json is defined %}
   "zappa": {{zappa_status_json}},
   {% endif %}
 
