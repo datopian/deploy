@@ -148,14 +148,20 @@ We need to build docker image locally and run that image.
 $ cd ~
 $ git clone https://gitlab.com/atomatic/dpr-deploy
 $ cd dpr-deploy
+
+$ cp external_config.json.template external_config.json
+# please update the configurations in external_config.json
 $ docker build -t dpr-deploy .
 # After this step docker image will be built
 $ docker run -it dpr-deploy -h
   # this will print ansible commands
-$ cp external_config.json.template external_config.json
-# please update the configurations in external_config.json
+  # please run the docker build -t dpr-deploy . command when ever we update some configurations
 ```
 ### For running the deployment:
 ```bash
 $ docker run -it dpr-deploy --extra-vars "@external_config.json"
 ```
+
+## Configurations Options are:
+
+```project``` [Projetc name ]
