@@ -1,3 +1,3 @@
 ---
 
-- { include: create/create_s3.yml, system_role: bitstore-s3, when: "'bitstore-s3' in required_systems and task_group == 'create'" }
+- { include: create/create_s3.yml, system_role: bitstore-s3, when: "'bitstore-s3' in required_systems and task_group == 'create'", tags: ['s3'] }

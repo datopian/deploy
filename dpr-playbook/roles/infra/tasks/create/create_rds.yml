@@ -3,7 +3,7 @@
   rds:
     region: "{{ region }}"
     command: create
-    instance_name: "{{ project }}-{{ environment_tier }}-{{ rds_suffix }}"
+    instance_name: "{{ project }}-{{ environment_tier }}-{{rds_suffix}}"
     instance_type: "db.{{ instance_type[system_role] }}"
 
     db_engine: "{{ rds_engine }}"

@@ -7,10 +7,3 @@
   register: result_read
 
 - debug: msg="{{result_read.stdout}}"
-
-- name: Read infra and application values from json
-  set_fact:
-    app_info: "{{result_read.stdout | from_json}}"
-
-- name: Print Application Info
-  debug: msg="{{ app_info | to_nice_json(indent=2) }}"

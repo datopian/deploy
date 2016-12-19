@@ -3,7 +3,7 @@
   rds:
     command: facts
     region: "{{ region }}"
-    instance_name: "{{ project }}-{{ environment_tier }}-{{ rds_suffix }}"
+    instance_name: "{{ project }}-{{ environment_tier }}-{{rds_suffix}}"
   register: rds_fact
 
 - debug:
