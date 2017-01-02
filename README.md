@@ -165,3 +165,19 @@ $ docker run -it dpr-deploy --extra-vars "@external_config.json"
 ## Configurations Options are:
 
 ```project``` [Projetc name ]
+
+## Tags
+There are separate tags to run components individually:
+To run the tags we want to run run command:
+```bash
+$ docker run -it dpr-deploy --extra-vars "@external_config.json" --tags "s3,rds"
+# this will only run s3 and rds part of deployment
+```
+
+
+```s3``` This tag will only create/delete s3 buckets
+```rds``` This tag will only create/delete rds instance.
+```auth0``` This tag will only create/delete auth0 environment.
+```zappa_facts``` This tag will gather facts about s3, rds and auth0
+```zappa_manager``` This tag will run ```zappa_facts``` and run manager.py
+```zappa``` This tag will only create/create flask app and run zappa_facts,zappa_manager

@@ -5,7 +5,7 @@
 - { include: common/aws_cred.yml, tags: ['always']}
 - { include: bitstore.yml, tags: ['bitstore'] }
 - { include: instances.yml, tags: ['instances'] }
+- { include: cloud_front.yml, tags: ['cloud_front'] }
 - { include: auth0.yml, tags: ['auth0'] }
-- { include: facts.yml, tags: ['zappa']}
 - { include: zappa.yml, tags: ['zappa']}
 - { include: utils/all_facts.yml, tags: ['always']}

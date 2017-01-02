@@ -7,5 +7,6 @@
       required_systems:
         - bitstore-s3
         - database
+        - cloud_front
         - auth0
         - zappa

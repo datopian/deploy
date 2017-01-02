@@ -1,0 +1,8 @@
+---
+
+- name: List all cloud front distributions
+  command: "python {{ role_path }}/files/cloud_front.py list"
+  register: distributions_list
+
+- debug:
+    msg: "{{ distributions_list.stdout }}"

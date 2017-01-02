@@ -9,13 +9,11 @@
    status_code: 200
   register: get_clients
 
-- debug:
-    msg: "{{get_clients}}"
-
 - name: Filter existing clients based on name
   set_fact:
     auth0_client_id: "{{ (get_clients['json'] | selectattr('name', 'equalto', auth0_application_name) | map(attribute='client_id') | list)[0] }}"
     auth0_client_secret: "{{ (get_clients['json'] | selectattr('name', 'equalto', auth0_application_name) | map(attribute='client_secret') | list)[0] }}"
+
 - debug:
     msg:"{{ auth0_client_id}}, {{auth0_client_secret}}"
   when: "{{app_debug}} == True"

@@ -1,0 +1,18 @@
+{
+    "CORSRules": [
+        {
+            "AllowedHeaders": ["*"],
+            "AllowedMethods": ["GET", "PUT", "POST", "DELETE" ],
+            "AllowedOrigins": [ "https://{{domain_name}}/"],
+            "MaxAgeSeconds": 123
+        }
+        {% if environment_tier == "development" %}
+        ,{
+          "AllowedHeaders": ["*"],
+          "AllowedMethods": ["GET", "PUT", "POST", "DELETE" ],
+          "AllowedOrigins": [ "http://localhost:5000/", "http://127.0.0.1:5000/"],
+          "MaxAgeSeconds": 123
+        }
+        {% endif %}
+    ]
+}

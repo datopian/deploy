@@ -1,7 +1,9 @@
 ---
 project: dpr
+domain_base: "datapackaged.com"
+domain_name: "{{environment_tier}}.{{domain_base}}"
 bit_store_bucket_name: "bits.{{domain_name}}"
-app_debug: True
+app_debug: False
 rds_suffix: ac143bs
 
 # [postgres, MySQL]
@@ -24,6 +26,11 @@ zappa_config_dir: /tmp/frictionlessdata/config
 zappa_conf_file: zappa_configuration-deploy.json
 zapp_instance_count: 1
 dpr_api_git: https://github.com/frictionlessdata/dpr-api.git
+
+submodules:
+  dpr_js:
+    path: app/static/dpr-js
+    branch: gh-pages
 
 override_region: ''
 override_instance_type: {}

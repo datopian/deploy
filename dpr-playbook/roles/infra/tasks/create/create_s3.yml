@@ -1,5 +1,4 @@
 ---
-
 - name: "Create S3 bucket| {{ system_role }}"
   s3_bucket:
     region: "{{ region }}"
@@ -12,3 +11,24 @@
 - debug:
     msg: "Created s3 bucket with name - {{ bit_store_bucket_name }}"
   when: "{{app_debug}} == True"
+
+
+- name: Creating S3 CORS Payload
+  action: template src=s3_cors.j2 dest="{{ role_path }}/files/s3_cors.json"
+
+- debug:
+    msg: "{{lookup('file','s3_cors.json')}}"
+
+- name: "Put S3 CORS"
+  command: "python {{ role_path }}/files/s3_cors.py put -b {{bit_store_bucket_name}} -p '{{lookup('file','s3_cors.json')}}'"
+  register: s3_cors_put
+
+- name: "Get s3 CORS "
+  command: "python {{ role_path }}/files/s3_cors.py get -b {{bit_store_bucket_name}} "
+  register: s3_cors
+
+- debug:
+    msg: "{{s3_cors_put}}"
+
+- debug:
+    msg: "{{s3_cors}}"

@@ -9,6 +9,13 @@
     repo: "{{ dpr_api_git }}"
     dest: "{{ dpr_api_path }}"
 
+- name: Initiate submodule
+  command: "git submodule update --init --recursive chdir={{ dpr_api_path }}"
+
+- name: Checkout Branch
+  command: "git checkout {{ item.value.branch }} chdir={{ dpr_api_path }}/{{ item.value.path}}"
+  with_dict: "{{ submodules }}"
+
 - name: Create virtual environmane directory
   file:
     path: "{{ virtualenv_path }}"
