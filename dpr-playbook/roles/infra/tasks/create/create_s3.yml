@@ -3,6 +3,7 @@
   s3_bucket:
     region: "{{ region }}"
     name: "{{ bit_store_bucket_name }}"
+    policy: "{{ lookup('file','s3_policy.json') }}"
   register: s3_bucket_result
   failed_when:
     - "'failed' in s3_bucket_result and 'already own it' not in s3_bucket_result['msg']"
