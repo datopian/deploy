@@ -3,6 +3,7 @@ project: dpr
 domain_base: "datapackaged.com"
 domain_name: "{{environment_tier}}.{{domain_base}}"
 bit_store_bucket_name: "bits.{{domain_name}}"
+bit_store_url: "https://bits.{{domain_name}}"
 app_debug: False
 rds_suffix: ac143bs
 
