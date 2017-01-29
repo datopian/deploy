@@ -5,11 +5,5 @@
   "aws_key": "",
   "aws_secret": "",
   "domain_name": "",
-  "bit_store_bucket_name": "",
-  "submodules": {
-    "dpr_js":{
-      "path": "",
-      "branch": ""
-    }
-  }
+  "bit_store_bucket_name": ""
 }

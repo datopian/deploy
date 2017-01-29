@@ -13,8 +13,19 @@
   command: "git submodule update --init --recursive chdir={{ dpr_api_path }}"
 
 - name: Checkout Branch
-  command: "git checkout {{ item.value.branch }} chdir={{ dpr_api_path }}/{{ item.value.path}}"
-  with_dict: "{{ submodules }}"
+  command: "git checkout {{ submodule_branch }} chdir={{ dpr_api_path }}/{{submodule_path}}"
+
+- name: Update Branch
+  command: "git pull origin {{ submodule_branch }} chdir={{ dpr_api_path }}/{{ submodule_path }}"
+
+- name: Install npm dependencies
+  command: "npm install chdir={{ dpr_api_path }}/{{ submodule_path }}"
+
+- name: Create Bundle
+  command: "npm run build chdir={{ dpr_api_path }}/{{ submodule_path }}"
+
+- name: Removing dpr-js
+  command: "rm -rf {{ dpr_api_path }}/{{ submodule_path }}"
 
 - name: Create virtual environmane directory
   file:

@@ -27,10 +27,8 @@ zappa_conf_file: zappa_configuration-deploy.json
 zapp_instance_count: 1
 dpr_api_git: https://github.com/frictionlessdata/dpr-api.git
 
-submodules:
-  dpr_js:
-    path: app/static/dpr-js
-    branch: gh-pages
+submodule_branch: gh-pages
+submodule_path: dpr-js
 
 override_region: ''
 override_instance_type: {}
