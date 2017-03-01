@@ -157,9 +157,28 @@ $ docker run -it dpr-deploy -h
   # this will print ansible commands
   # please run the docker build -t dpr-deploy . command when ever we update some configurations
 ```
+
+### Run instruction without docker:
+We need to have `npm` and `python` installed.
+
+```bash
+$ cd ~
+$ git clone https://gitlab.com/atomatic/dpr-deploy
+$ cd dpr-deploy
+$ pip install -r requirements.txt
+$ cp external_config.json.template external_config.json
+```
+
 ### For running the deployment:
+#### Using docker
 ```bash
 $ docker run -it dpr-deploy --extra-vars "@external_config.json"
+```
+#### Without Docker:
+In external_config.json remove `run_env` key
+We need to have `aws_credentials` in `~/.aws/credentials` file.
+```bash
+$ ansible-playbook app.yml dpr-deploy --extra-vars "@external_config.json"
 ```
 
 ## Configurations Options are:
