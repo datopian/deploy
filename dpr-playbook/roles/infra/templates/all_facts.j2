@@ -14,17 +14,6 @@
   },
   {% endif %}
 
-  {# Gathering Auth0 Facts#}
-  {% if auth0_client_id is defined %}
-  "auth0": {
-    "auth0_client_id": "{{auth0_client_id}}",
-    "auth0_client_secret": "{{auth0_client_secret}}",
-    "auth0_connection_name": "{{auth0_connection_name}}",
-    "auth0_application_name": "{{auth0_application_name}}",
-    "auth0_audiance": "{{auth0_audiance}}"
-  },
-  {% endif %}
-
   {# Gathering Zappa Facts#}
   {% if zappa_status_json is defined %}
   "zappa": {{zappa_status_json}},

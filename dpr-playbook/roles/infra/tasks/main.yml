@@ -2,10 +2,9 @@
 - { include_vars: "environment_tier/{{ environment_tier }}.yml", tags: ['always'] }
 - { include_vars: infrastructure/instances.yml, tags: ['always'] }
 
-- { include: common/aws_cred.yml, tags: ['always'], when: "'run_env' == 'docker'"}
+- { include: common/aws_cred.yml, tags: ['always'], when: "run_env == 'docker'"}
 - { include: bitstore.yml, tags: ['bitstore'] }
 - { include: instances.yml, tags: ['instances'] }
 - { include: cloud_front.yml, tags: ['cloud_front'] }
-- { include: auth0.yml, tags: ['auth0'] }
 - { include: zappa.yml, tags: ['zappa']}
 - { include: utils/all_facts.yml, tags: ['always']}

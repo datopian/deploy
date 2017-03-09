@@ -1,4 +1,2 @@
 ---
 - { include: utils/rds_facts.yml, system_role: zappa, when: "'zappa' in required_systems", tags: ['zappa_facts'] }
-- { include: common/auth0_token.yml, system_role: zappa, when: "'zappa' in required_systems", tags: ['zappa_facts'] }
-- { include: utils/auth0_facts.yml, system_role: zappa, when: "'zappa' in required_systems", tags: ['zappa_facts'] }

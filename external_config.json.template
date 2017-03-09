@@ -1,9 +1,10 @@
 {
-  "auth0_global_api_key": "",
-  "auth0_global_secret": "",
-  "auth0_domain": "",
+  "environment_tier": "",
+  "github_client_id": "",
+  "github_client_secret": "",
   "aws_key": "",
   "aws_secret": "",
+  "region": "",
   "domain_name": "",
   "bit_store_bucket_name": "",
   "run_env": "docker"

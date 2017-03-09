@@ -16,12 +16,6 @@ rds_database_password: test_pass
 rds_database_size: 10 # GB
 rds_database_backup_retention: 30
 
-auth0_application_name: "{{project}}-{{environment_tier}}-application"
-auth0_connection_name: "{{project}}-{{environment_tier}}-database"
-auth0_token_dir: /tmp/auth0_token
-auth0_uri: "https://{{auth0_domain}}/api/v2"
-auth0_audiance: "{{auth0_uri}}/"
-
 virtualenv_path: /tmp/zappa_venv
 dpr_api_path: /tmp/frictionlessdata/dpr-api
 zappa_config_dir: /tmp/frictionlessdata/config
