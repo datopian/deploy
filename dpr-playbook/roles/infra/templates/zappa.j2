@@ -11,8 +11,8 @@
         "profile_name": "default",
         "environment_variables": {
             "FLASK_CONFIGURATION": "stage",
-            "GITHUB_CLIENT_ID": {{ github_client_id }},
-            "GITHUB_CLIENT_SECRET": {{ github_client_secret }},
+            "GITHUB_CLIENT_ID": "{{ github_client_id }}",
+            "GITHUB_CLIENT_SECRET": "{{ github_client_secret }}",
 
             "SQLALCHEMY_DATABASE_URI": "{{ sql_alchemy_uri }}",
             "FLASKS3_BUCKET_NAME": "{{ bit_store_bucket_name }}",
