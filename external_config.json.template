@@ -1,11 +1,14 @@
 {
-  "environment_tier": "",
+  "project": "datahub",
+  "domain_base": "datapackaged.com",
+  "stage": "staging",
   "github_client_id": "",
   "github_client_secret": "",
   "aws_key": "",
   "aws_secret": "",
   "region": "",
-  "domain_name": "",
-  "bit_store_bucket_name": "",
-  "run_env": "docker"
+  "domain": "%(stage)s.%(domain_base)s",
+  "bit_store_bucket_name": "bits.%(domain)s",
+  "bit_store_url": "https://bits.%(domain)s",
+  "dpr_api_git": "https'://github.com/frictionlessdata/dpr-api.git"
 }
