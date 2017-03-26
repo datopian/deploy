@@ -4,42 +4,54 @@ import boto3
 import json
 import os
 import subprocess
+from moto import mock_rds
+from time import sleep
 
+#  'item', 'value', 'description'
+fullconfig = [
+    [ 'app_debug', False, '' ],
 
-fullconfig = {
-    'app_debug': False,
+    # aws
+    [ 'aws_access_key_id', '', 'AWS Access key'],
+
     # [postgres, MySQL],
-    'rds_suffix': 'ac143bs',
-    'rds_engine': 'postgres',
-    'rds_database_name': 'dpr_db',
-    'rds_database_username': "%(project)s",
-    'rds_database_password': 'test_pass',
-    'rds_database_size': 10, # GB
-    'rds_database_backup_retention': 30,
+    [ 'rds_suffix', 'ac143bs', '' ],
+    [ 'rds_engine', 'postgres', 'Database engine. May be postgres or MySQL' ],
+    [ 'rds_database_name', 'dpr_db', 'Database name' ],
+    [ 'rds_database_username', "%(project)s", 'User name for RDS DB' ],
+    [ 'rds_database_password', 'test_pass', 'Password for RDS' ],
+    [ 'rds_database_size', 10, 'Database size in GB'],
+    [ 'rds_database_backup_retention', 30, '' ],
+    [ 'rds_instance_class', 'db.t2.micro', 'Instance Class name Eg: db.t2.micro' ],
 
     # git stuff
-    'dpr_api_path': '/tmp/frictionlessdata/dpr-api',
-
-    'submodule_branch': 'gh-pages',
-    'submodule_path': 'dpr-js',
-    'override_region': '',
+    [ 'dpr_api_path', '/tmp/frictionlessdata/dpr-api', '' ],
+    [ 'override_region', '', '' ],
 
     # heroku
-    "heroku_app": "%(project)s-%(stage)s",
-    "git_heroku": "%(stage)s"
-}
+    [ "heroku_app", "%(project)s-%(stage)s", 'App name on heroku' ],
+    [ "git_heroku", "%(stage)s", 'Remote name for heroku' ]
+]
 
 class Deployer(object):
 
     def __init__(self, configfile='external_config.json'):
         extconfig = json.load(open(configfile))
+        config = dict([ x[:2] for x in fullconfig ])
+        # do config.update(extconfig) but allow for empty string keys in external config
+        # (override them with defaults)
+        for key,value in extconfig.items():
+            if value != '':
+                config[key] = value
+
         # TODO: do some checks to ensure we have all the config we need ...
-        config = dict(fullconfig)
-        config.update(extconfig)
+        # what ones MUST be set by user to non-default values ...
+        # if not config['aws_access_key_id']:
+        #     raise Exception('You need to provide: aws_access_key_id')
+
         # do this x times to make sure we do all variable substitutions
         for x in [1,2]:
             for key,value in config.items():
-                # print key, value
                 if isinstance(value, basestring):
                     config[key] = value % config
         self.config = config
@@ -72,7 +84,7 @@ class Deployer(object):
     def heroku(self):
         heroku_exists = self._check_heroku_app_exists(self.config['heroku_app'])
         if heroku_exists:
-            cmd = 'heroku git:remote -a %(heroku_app)s' % self.config
+            cmd = 'heroku git:remote -a %(heroku_app)s -r %(git_heroku)s' % self.config
         else:
             cmd = 'heroku apps:create %(heroku_app)s -r %(git_heroku)s' % self.config
         # execute commands
@@ -95,25 +107,116 @@ class Deployer(object):
             print e
             sys.exit()
 
+    def rds(self):
+        try:
+            return self.rds_create()
+        except Exception as e:
+            if 'DBInstanceAlreadyExists' in e.message:
+                print('RDS instance already exists - reusing')
+                return True
+            else:
+                print(e.message)
+                return False
+
+
+    def rds_create(self):
+        '''Create an RDS instance'''
+        rds = boto3.client(
+            'rds',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key']
+        )
+        rds_instance = '%(project)s-%(stage)s-%(rds_suffix)s' % self.config
+        rds.create_db_instance(
+            DBName=self.config['rds_database_name'],
+            DBInstanceIdentifier=rds_instance,
+            AllocatedStorage=self.config['rds_database_size'],
+            Engine=self.config['rds_engine'],
+            MasterUsername=self.config['rds_database_username'],
+            MasterUserPassword=self.config['rds_database_password'],
+            ### For some resons if AvailabilityZone is specified it is throwing error:
+            ### us-west-2 is not a valid availability zone. (does on any region)
+            # AvailabilityZone=self.config['aws_region'],
+            BackupRetentionPeriod=self.config['rds_database_backup_retention'],
+            Port=5423,
+            MultiAZ=False,
+            PubliclyAccessible=True,
+            DBInstanceClass=self.config['rds_instance_class']
+        )
+        # check it worked ...
+        if self.rds_exists(wait=1500):
+            response = rds.describe_db_instances(DBInstanceIdentifier=rds_instance)
+            status = response ['DBInstances'][0]['DBInstanceStatus']
+            zone = response ['DBInstances'][0]['AvailabilityZone']
+            print('RDS DB instance created in %s'% zone, 'status: %s' %status )
+            return True
+        else:
+            raise Exception('Failed to create database')
+
+    def rds_destroy(self):
+        rds = boto3.client(
+            'rds',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key']
+        )
+        rds_instance = '%(project)s-%(stage)s-%(rds_suffix)s' % self.config
+        rds.delete_db_instance(
+            DBInstanceIdentifier=rds_instance,
+            SkipFinalSnapshot=True,
+        )
+        if self.rds_exists(wait=1500):
+            print( 'RDS DB instance destroyed' )
+            return True
+        else:
+            raise Exception('Failed to Destroy database')
+
+
+    def rds_exists(self, wait=0):
+        rds = boto3.client(
+            'rds',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key']
+        )
+        rds_instance = '%(project)s-%(stage)s-%(rds_suffix)s' % self.config
+        seconds = 0
+        while True:
+            response = rds.describe_db_instances(DBInstanceIdentifier=rds_instance)
+            if response['DBInstances'][0]['DBInstanceStatus'] == "available":
+                break
+            print("%s: %d seconds elapsed"%(response['DBInstances'][0]['DBInstanceStatus'],seconds))
+            sleep(5)
+            seconds += 5
+            if seconds > wait:
+                return False
+        return True
 
 class TestItAll:
     def test_config(self):
         deploy = Deployer()
-        assert deploy.config['project'] == 'datahub'
+        assert deploy.config['project'] == 'dpr'
         assert deploy.config['domain'] == 'staging.datapackaged.com'
-        assert deploy.config['heroku_app'] == 'datahub-staging'
+        assert deploy.config['heroku_app'] == 'dpr-staging'
 
     def test__env_string_for_heroku(self):
-        deploy = Deployer()
+        deploy = Deployer(configfile='external_config.json')
         out = deploy._env_string_for_heroku()
         assert out == 'GITHUB_CLIENT_ID= GITHUB_CLIENT_SECRET= BIT_STORE_BUCKET_NAME=bits.staging.datapackaged.com'
+    #
+    # def test_heroku_app_exists(self):
+    #     deploy = Deployer()
+    #     out = deploy._check_heroku_app_exists('data-okfn-org')
+    #     assert(out)
+    #     out = deploy._check_heroku_app_exists('app-that-does-not-exist')
+    #     assert(not out)
 
-    def test_heroku_app_exists(self):
-        deploy = Deployer()
-        out = deploy._check_heroku_app_exists('data-okfn-org')
-        assert(out)
-        out = deploy._check_heroku_app_exists('app-that-does-not-exist')
-        assert(not out)
+    # @mock_rds
+    # def test_rds_exists(self):
+    #     deploy = Deployer()
+    #     out = deploy.rds_exists()
+    #     assert(out)
+    #     # out = deploy._check_heroku_app_exists('app-that-does-not-exist')
+    #     # assert(not out)
+
 
 
 ## ==============================================
