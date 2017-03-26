@@ -4,7 +4,7 @@ import boto3
 import json
 import os
 import subprocess
-from moto import mock_rds
+from moto import mock_rds, mock_s3
 from time import sleep
 
 #  'item', 'value', 'description'
@@ -190,6 +190,56 @@ class Deployer(object):
                 return False
         return True
 
+
+    def s3(self):
+        '''
+        Creates S3 Bucket if not exist
+        '''
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key']
+        )
+        try:
+            s3.create_bucket(
+                Bucket=self.config['s3_bucket_name'],
+                CreateBucketConfiguration={
+                    'LocationConstraint': self.config['aws_region']
+                }
+            )
+            return True
+        except Exception as e:
+            if 'BucketAlreadyOwnedByYou' in e.message:
+                print('S3 Bucket already exists')
+                return True
+            else:
+                print(e.message)
+                return False
+
+    def destroy_s3_bucket(self):
+        '''
+        Deletes s3 bucket
+        '''
+        s3 = boto3.resource(
+            's3',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key']
+        )
+        try:
+            bucket = s3.Bucket(self.config['s3_bucket_name'])
+            for key in bucket.objects.all():
+                key.delete()
+            bucket.delete()
+            return True
+        except Exception as e:
+            if 'NoSuchBucket' in e.message:
+                print('S3 Bucket does not  exist')
+                return True
+            else:
+                print(e.message)
+                return False
+
+
 class TestItAll:
     def test_config(self):
         deploy = Deployer(configfile='external_config.json.template')
@@ -217,7 +267,19 @@ class TestItAll:
         deploy = Deployer(configfile='external_config.json.template')
         out = deploy.rds()
         out = deploy.rds_exists()
-        assert(out)
+        assert(out == True)
+
+    @mock_s3
+    def test_s3_created(self):
+        deploy = Deployer(configfile='external_config.json.template')
+        out = deploy.s3()
+        assert(out == True)
+
+    @mock_s3
+    def test_s3_deleted(self):
+        deploy = Deployer(configfile='external_config.json.template')
+        out = deploy.destroy_s3_bucket()
+        assert(out == True)
 
 
 ## ==============================================
