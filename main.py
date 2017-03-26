@@ -192,31 +192,32 @@ class Deployer(object):
 
 class TestItAll:
     def test_config(self):
-        deploy = Deployer()
+        deploy = Deployer(configfile='external_config.json.template')
         assert deploy.config['project'] == 'dpr'
         assert deploy.config['domain'] == 'staging.datapackaged.com'
         assert deploy.config['heroku_app'] == 'dpr-staging'
 
     def test__env_string_for_heroku(self):
-        deploy = Deployer(configfile='external_config.json')
+        deploy = Deployer(configfile='external_config.json.template')
         out = deploy._env_string_for_heroku()
-        assert out == 'GITHUB_CLIENT_ID= GITHUB_CLIENT_SECRET= BIT_STORE_BUCKET_NAME=bits.staging.datapackaged.com'
-    #
-    # def test_heroku_app_exists(self):
-    #     deploy = Deployer()
-    #     out = deploy._check_heroku_app_exists('data-okfn-org')
-    #     assert(out)
-    #     out = deploy._check_heroku_app_exists('app-that-does-not-exist')
-    #     assert(not out)
+        assert out =='AWS_ACCESS_KEY_ID=access_key_id AWS_SECRET_ACCESS_KEY=secret_key '+\
+         'AWS_REGION=region GITHUB_CLIENT_ID=client_id GITHUB_CLIENT_SECRET=clien_secret '+\
+         'S3_BUCKET_NAME=bucket.name FLASKS3_BUCKET_NAME=flusk.bucket.name SQLALCHEMY_DATABASE_URI=database@uri'
 
-    # @mock_rds
-    # def test_rds_exists(self):
-    #     deploy = Deployer()
-    #     out = deploy.rds_exists()
-    #     assert(out)
-    #     # out = deploy._check_heroku_app_exists('app-that-does-not-exist')
-    #     # assert(not out)
 
+    def test_heroku_app_exists(self):
+        deploy = Deployer(configfile='external_config.json.template')
+        out = deploy._check_heroku_app_exists('dpr-staging')
+        assert(out)
+        out = deploy._check_heroku_app_exists('app-that-does-not-exist')
+        assert(not out)
+
+    @mock_rds
+    def test_rds_created_and_exists(self):
+        deploy = Deployer(configfile='external_config.json.template')
+        out = deploy.rds()
+        out = deploy.rds_exists()
+        assert(out)
 
 
 ## ==============================================
