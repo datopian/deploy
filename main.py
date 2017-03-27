@@ -201,12 +201,15 @@ class Deployer(object):
             aws_secret_access_key=self.config['aws_secret_access_key']
         )
         try:
-            s3.create_bucket(
-                Bucket=self.config['s3_bucket_name'],
+            response = s3.create_bucket(
+                Bucket=self.config['s3_bucket_name'].replace('.','-'),
                 CreateBucketConfiguration={
                     'LocationConstraint': self.config['aws_region']
-                }
+                },
+                ACL='public-read',
             )
+            self.s3_enable_cors()
+            print 'S3 bucket is created: '+response['Location']
             return True
         except Exception as e:
             if 'BucketAlreadyOwnedByYou' in e.message:
@@ -215,6 +218,34 @@ class Deployer(object):
             else:
                 print(e.message)
                 return False
+
+
+    def s3_enable_cors(self):
+        s3 = boto3.resource(
+            's3',
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key']
+        )
+        bucket_cors = s3.BucketCors(self.config['s3_bucket_name'].replace('.','-'))
+        response = bucket_cors.put(
+            CORSConfiguration={
+                'CORSRules': [
+                    {
+                        'AllowedHeaders': [
+                            '*',
+                        ],
+                        'AllowedMethods': [
+                            'GET'
+                        ],
+                        'AllowedOrigins': [
+                            '*',
+                        ]
+                    },
+                ]
+            }
+        )
+        return True
+
 
     def destroy_s3_bucket(self):
         '''
@@ -226,10 +257,11 @@ class Deployer(object):
             aws_secret_access_key=self.config['aws_secret_access_key']
         )
         try:
-            bucket = s3.Bucket(self.config['s3_bucket_name'])
+            bucket = s3.Bucket(self.config['s3_bucket_name'].replace('.','-'))
             for key in bucket.objects.all():
                 key.delete()
             bucket.delete()
+            print 'Bucket deleted'
             return True
         except Exception as e:
             if 'NoSuchBucket' in e.message:
