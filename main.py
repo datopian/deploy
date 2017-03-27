@@ -55,9 +55,21 @@ class Deployer(object):
                 if isinstance(value, basestring):
                     config[key] = value % config
         self.config = config
+        self.rds_client = boto3.client(
+            'rds',
+            aws_access_key_id=config['aws_access_key_id'],
+            aws_secret_access_key=config['aws_secret_access_key']
+        )
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=config['aws_access_key_id'],
+            aws_secret_access_key=config['aws_secret_access_key']
+        )
 
     def run(self):
-        pass
+        self.s3()
+        self.rds()
+        self.heroku()
 
     def _check_heroku_app_exists(self, app_name):
         existing_apps = subprocess.check_output(['heroku', 'apps', '--json'])
@@ -121,22 +133,16 @@ class Deployer(object):
 
     def rds_create(self):
         '''Create an RDS instance'''
-        rds = boto3.client(
-            'rds',
-            aws_access_key_id=self.config['aws_access_key_id'],
-            aws_secret_access_key=self.config['aws_secret_access_key']
-        )
+
         rds_instance = '%(project)s-%(stage)s-%(rds_suffix)s' % self.config
-        rds.create_db_instance(
+        self.rds_client.create_db_instance(
             DBName=self.config['rds_database_name'],
             DBInstanceIdentifier=rds_instance,
             AllocatedStorage=self.config['rds_database_size'],
             Engine=self.config['rds_engine'],
             MasterUsername=self.config['rds_database_username'],
             MasterUserPassword=self.config['rds_database_password'],
-            ### For some resons if AvailabilityZone is specified it is throwing error:
-            ### us-west-2 is not a valid availability zone. (does on any region)
-            # AvailabilityZone=self.config['aws_region'],
+            AvailabilityZone=self.config['aws_region']+'b',
             BackupRetentionPeriod=self.config['rds_database_backup_retention'],
             Port=5423,
             MultiAZ=False,
@@ -145,7 +151,17 @@ class Deployer(object):
         )
         # check it worked ...
         if self.rds_exists(wait=1500):
-            response = rds.describe_db_instances(DBInstanceIdentifier=rds_instance)
+            response = self.rds_client.describe_db_instances(DBInstanceIdentifier=rds_instance)
+            instance = response['DBInstances'][0]
+            # sets the DB URI for rds in config
+            self.config['sqlalchemy_database_uri'] = '{engine}://{user}:{password}@{endpoint}:{port}/{db}'.format(
+                engine=instance['Engine'],
+                user=instance['MasterUsername'],
+                password=self.config['rds_database_password'],
+                endpoint=instance['Endpoint']['Address'],
+                port=instance['Endpoint']['Port'],
+                db=instance['DBName']
+            )
             status = response ['DBInstances'][0]['DBInstanceStatus']
             zone = response ['DBInstances'][0]['AvailabilityZone']
             print('RDS DB instance created in %s'% zone, 'status: %s' %status )
@@ -154,13 +170,8 @@ class Deployer(object):
             raise Exception('Failed to create database')
 
     def rds_destroy(self):
-        rds = boto3.client(
-            'rds',
-            aws_access_key_id=self.config['aws_access_key_id'],
-            aws_secret_access_key=self.config['aws_secret_access_key']
-        )
         rds_instance = '%(project)s-%(stage)s-%(rds_suffix)s' % self.config
-        rds.delete_db_instance(
+        self.rds_client.delete_db_instance(
             DBInstanceIdentifier=rds_instance,
             SkipFinalSnapshot=True,
         )
@@ -172,15 +183,10 @@ class Deployer(object):
 
 
     def rds_exists(self, wait=0):
-        rds = boto3.client(
-            'rds',
-            aws_access_key_id=self.config['aws_access_key_id'],
-            aws_secret_access_key=self.config['aws_secret_access_key']
-        )
         rds_instance = '%(project)s-%(stage)s-%(rds_suffix)s' % self.config
         seconds = 0
         while True:
-            response = rds.describe_db_instances(DBInstanceIdentifier=rds_instance)
+            response = self.rds_client.describe_db_instances(DBInstanceIdentifier=rds_instance)
             if response['DBInstances'][0]['DBInstanceStatus'] == "available":
                 break
             print("%s: %d seconds elapsed"%(response['DBInstances'][0]['DBInstanceStatus'],seconds))
@@ -195,13 +201,8 @@ class Deployer(object):
         '''
         Creates S3 Bucket if not exist
         '''
-        s3 = boto3.client(
-            's3',
-            aws_access_key_id=self.config['aws_access_key_id'],
-            aws_secret_access_key=self.config['aws_secret_access_key']
-        )
         try:
-            response = s3.create_bucket(
+            response = self.s3_client.create_bucket(
                 Bucket=self.config['s3_bucket_name'].replace('.','-'),
                 CreateBucketConfiguration={
                     'LocationConstraint': self.config['aws_region']
@@ -209,7 +210,7 @@ class Deployer(object):
                 ACL='public-read',
             )
             self.s3_enable_cors()
-            print 'S3 bucket is created: '+response['Location']
+            print 'S3 bucket is created: %s'%response.get('Location')
             return True
         except Exception as e:
             if 'BucketAlreadyOwnedByYou' in e.message:
@@ -221,13 +222,8 @@ class Deployer(object):
 
 
     def s3_enable_cors(self):
-        s3 = boto3.resource(
-            's3',
-            aws_access_key_id=self.config['aws_access_key_id'],
-            aws_secret_access_key=self.config['aws_secret_access_key']
-        )
-        bucket_cors = s3.BucketCors(self.config['s3_bucket_name'].replace('.','-'))
-        response = bucket_cors.put(
+        response = self.s3_client.put_bucket_cors(
+            Bucket= self.config['s3_bucket_name'].replace('.','-'),
             CORSConfiguration={
                 'CORSRules': [
                     {
@@ -272,6 +268,31 @@ class Deployer(object):
                 return False
 
 
+    def test_deploy(self):
+        # S3
+        response = self.s3_client.get_bucket_acl(
+            Bucket=self.config['s3_bucket_name'].replace('.','-')
+        )
+
+        for permission in response['Grants']:
+            if permission['Grantee']['Type'] == 'Group':
+                assert(permission['Permission'] == 'READ')
+        response = self.s3_client.get_bucket_cors(
+            Bucket=self.config['s3_bucket_name'].replace('.','-')
+        )
+        assert(response['CORSRules'][0]['AllowedHeaders'][0] == '*')
+        assert(response['CORSRules'][0]['AllowedMethods'][0] == 'GET')
+        assert(response['CORSRules'][0]['AllowedOrigins'][0] == '*')
+
+        # RDS
+        response = self.rds_client.describe_db_instances(DBInstanceIdentifier='%(project)s-%(stage)s-%(rds_suffix)s' % self.config)
+        assert(response['DBInstances'][0]['DBInstanceStatus'] == "available")
+
+        # Heroku
+        response = self._check_heroku_app_exists(self.config['heroku_app'])
+        assert(response)
+        print 'Everything is OK'
+
 class TestItAll:
     def test_config(self):
         deploy = Deployer(configfile='external_config.json.template')
@@ -312,6 +333,8 @@ class TestItAll:
         deploy = Deployer(configfile='external_config.json.template')
         out = deploy.destroy_s3_bucket()
         assert(out == True)
+
+
 
 
 ## ==============================================
