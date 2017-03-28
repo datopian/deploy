@@ -228,7 +228,7 @@ class Deployer(object):
         '''
         try:
             response = self.s3_client.create_bucket(
-                Bucket=self.config['s3_bucket_name'],
+                Bucket=self.config['s3_bucket_name'].replace('.','-'),
                 CreateBucketConfiguration={
                     'LocationConstraint': self.config['aws_region']
                 },
@@ -248,7 +248,7 @@ class Deployer(object):
 
     def s3_enable_cors(self):
         response = self.s3_client.put_bucket_cors(
-            Bucket= self.config['s3_bucket_name'],
+            Bucket= self.config['s3_bucket_name'].replace('.','-'),
             CORSConfiguration={
                 'CORSRules': [
                     {
@@ -278,7 +278,7 @@ class Deployer(object):
             aws_secret_access_key=self.config['aws_secret_access_key']
         )
         try:
-            bucket = s3.Bucket(self.config['s3_bucket_name'])
+            bucket = s3.Bucket(self.config['s3_bucket_name'].replace('.','-'))
             for key in bucket.objects.all():
                 key.delete()
             bucket.delete()
@@ -296,14 +296,14 @@ class Deployer(object):
     def test_deploy(self):
         # S3
         response = self.s3_client.get_bucket_acl(
-            Bucket=self.config['s3_bucket_name']
+            Bucket=self.config['s3_bucket_name'].replace('.','-')
         )
 
         for permission in response['Grants']:
             if permission['Grantee']['Type'] == 'Group':
                 assert(permission['Permission'] == 'READ')
         response = self.s3_client.get_bucket_cors(
-            Bucket=self.config['s3_bucket_name']
+            Bucket=self.config['s3_bucket_name'].replace('.','-')
         )
         assert(response['CORSRules'][0]['AllowedHeaders'][0] == '*')
         assert(response['CORSRules'][0]['AllowedMethods'][0] == 'GET')
