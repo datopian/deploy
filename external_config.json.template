@@ -8,10 +8,8 @@
   "aws_secret_access_key": "secret_key",
   "aws_region": "region",
   "s3_bucket_name": "bucket.name",
-  "flasks3_bucket_name": "flusk.bucket.name",
+  "flasks3_bucket_name": "bucket.name",
   "sqlalchemy_database_uri": "database@uri",
   "domain": "%(stage)s.%(domain_base)s",
-  "bit_store_bucket_name": "bits.%(domain)s",
-  "bit_store_url": "https://bits.%(domain)s",
   "dpr_api_git": "https'://github.com/frictionlessdata/dpr-api.git"
 }
