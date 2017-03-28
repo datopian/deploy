@@ -76,6 +76,11 @@ class Deployer(object):
         self.rds()
         self.heroku()
 
+    def teardown(self):
+        self.destroy_s3_bucket()
+        self.rds_destroy()
+        self.heroku_destroy()
+
     def _check_heroku_app_exists(self, app_name):
         existing_apps = subprocess.check_output(['heroku', 'apps', '--json'])
         existing_apps = [ x['name'] for x in json.loads(existing_apps) ]
@@ -123,6 +128,10 @@ class Deployer(object):
         except Exception as e:
             print e
             sys.exit()
+
+    def heroku_destroy(self):
+        cmd = 'heroku apps:destroy -a %(heroku_app)s' % self.config
+        out = subprocess.check_output(cmd, shell=True)
 
     def rds(self):
         try:
@@ -293,7 +302,7 @@ class Deployer(object):
                 return False
 
 
-    def test_deploy(self):
+    def verify(self):
         # S3
         response = self.s3_client.get_bucket_acl(
             Bucket=self.config['s3_bucket_name']
@@ -330,7 +339,7 @@ class TestItAll:
         out = deploy._env_string_for_heroku()
         assert out =='AWS_ACCESS_KEY_ID=access_key_id AWS_SECRET_ACCESS_KEY=secret_key '+\
          'AWS_REGION=region GITHUB_CLIENT_ID=client_id GITHUB_CLIENT_SECRET=clien_secret '+\
-         'S3_BUCKET_NAME=bucket.name FLASKS3_BUCKET_NAME=flusk.bucket.name SQLALCHEMY_DATABASE_URI=database@uri'
+         'S3_BUCKET_NAME=bucket.name FLASKS3_BUCKET_NAME=bucket.name SQLALCHEMY_DATABASE_URI=database@uri'
 
 
     def test_heroku_app_exists(self):
@@ -406,6 +415,3 @@ Actions:
 
 if __name__ == '__main__':
     _main(Deployer)
-
-	# deploy = Deployer()
-    # deploy.run()
