@@ -1,3 +1,0 @@
----
-
-- { include: create/create_cloud_front.yml, system_role: cloud_front,  when: "'cloud_front' in required_systems and task_group == 'create'"}

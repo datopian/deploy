@@ -1,2 +1,0 @@
----
-- { include: utils/rds_facts.yml, system_role: zappa, when: "'zappa' in required_systems", tags: ['zappa_facts'] }
