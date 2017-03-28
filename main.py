@@ -65,6 +65,11 @@ class Deployer(object):
             aws_access_key_id=config['aws_access_key_id'],
             aws_secret_access_key=config['aws_secret_access_key']
         )
+        self.ec2_client = boto3.client(
+            'ec2',
+            aws_access_key_id=config['aws_access_key_id'],
+            aws_secret_access_key=config['aws_secret_access_key']
+        )
 
     def run(self):
         self.s3()
@@ -105,7 +110,7 @@ class Deployer(object):
 
             # set env variables
             envstring = self._env_string_for_heroku()
-            cmd = 'heroku config:set %s' %envstring
+            cmd = 'heroku config:set %s -a %s' %(envstring, self.config['heroku_app'])
             out = subprocess.check_output(cmd, shell=True)
 
             # push changes
@@ -121,7 +126,8 @@ class Deployer(object):
 
     def rds(self):
         try:
-            return self.rds_create()
+            self.rds_create()
+            return self.rds_enable_public_acces()
         except Exception as e:
             if 'DBInstanceAlreadyExists' in e.message:
                 print('RDS instance already exists - reusing')
@@ -144,7 +150,7 @@ class Deployer(object):
             MasterUserPassword=self.config['rds_database_password'],
             AvailabilityZone=self.config['aws_region']+'b',
             BackupRetentionPeriod=self.config['rds_database_backup_retention'],
-            Port=5423,
+            Port=5432,
             MultiAZ=False,
             PubliclyAccessible=True,
             DBInstanceClass=self.config['rds_instance_class']
@@ -195,6 +201,25 @@ class Deployer(object):
             if seconds > wait:
                 return False
         return True
+
+    def rds_enable_public_access(self):
+        try:
+            self.ec2_client.authorize_security_group_ingress(
+                GroupId='sg-a42732c2',
+                IpProtocol="-1",
+                CidrIp="0.0.0.0/0",
+                FromPort=0,
+                ToPort=65535
+            )
+            return True
+        except Exception as e:
+            if 'InvalidPermission.Duplicate' in e.message:
+                print('the specified rule already exists')
+                return True
+            else:
+                print(e.message)
+                return False
+
 
 
     def s3(self):
