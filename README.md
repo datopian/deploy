@@ -53,3 +53,22 @@ For tests
 ```bash
 pytest main.py
 ```
+---
+
+## Verify main flow for dpm
+
+Note: To verify post sign up flow for publishing and deleting datapackage,
+you should have already configured dpm configurations!
+
+###$ to verify
+
+```bash
+# install
+cd ~
+git clone https://gitlab.com/atomatic/dpr-deploy
+cd dpr-deploy
+pip install -r requirements.txt
+
+# run script
+
+python flow.py verify
