@@ -86,3 +86,7 @@ terraform.tfstate.backup
 # config
 external_config.json
 .DS_Store
+
+# floo
+.floo
+.flooignore
