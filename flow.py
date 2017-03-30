@@ -11,8 +11,8 @@ import re
 
 class Flow(object):
 
-    def __init__(self, configfile='external_config.json'):
-        self.config = json.load(open(configfile))
+    def __init__(self):
+        # self.config = json.load(open(configfile))
         self.tmpdir = tempfile.mkdtemp()
 
 
@@ -33,7 +33,7 @@ class Flow(object):
             assert(res.status_code == 200)
             print 'Successfully published'
 
-            ## delete and purge
+            ## delete and undelete
             subprocess.check_output(['dpm', 'delete'])
             res = requests.get(url)
             assert(res.status_code == 404)
@@ -41,6 +41,14 @@ class Flow(object):
             assert(res.status_code == 403)
             print 'Successfully deleted'
 
+            subprocess.check_output(['dpm', 'undelete'])
+            res = requests.get(url)
+            assert(res.status_code == 200)
+            res = requests.get(bit_store_urls[0])
+            assert(res.status_code == 200)
+            print 'Successfully undeleted'
+
+            ## purge
             subprocess.check_output(['dpm', 'purge'])
             res = requests.get(url)
             assert(res.status_code == 404)
@@ -61,20 +69,27 @@ class Flow(object):
             # assert('testing' in bit_store_urls[0])
             print 'Successfully published and tagged'
 
-            ## delete and purge taged datapackage
+            ## delete and undelete taged datapackage
             subprocess.check_output(['dpm', 'delete'])
             res = requests.get(url)
             assert(res.status_code == 404)
             res = requests.get(bit_store_urls[0])
             assert(res.status_code == 403)
-            print 'Successfully deleted tagged version'
+            print 'Successfully deleted the tagged version'
+
+            subprocess.check_output(['dpm', 'undelete'])
+            res = requests.get(url)
+            assert(res.status_code == 200)
+            res = requests.get(bit_store_urls[0])
+            assert(res.status_code == 200)
+            print 'Successfully undeleted the tagged version'
 
             subprocess.check_output(['dpm', 'purge'])
             res = requests.get(url)
             assert(res.status_code == 404)
             res = requests.get(bit_store_urls[0])
             assert(res.status_code == 404)
-            print 'Successfully purged tagged version'
+            print 'Successfully purged the tagged version'
         shutil.rmtree(self.tmpdir)
 
 
