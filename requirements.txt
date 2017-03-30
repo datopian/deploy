@@ -1,2 +1,4 @@
 boto3==1.4.2
 moto==0.4.27
+gitpython
+git+https://github.com/frictionlessdata/dpm-py.git
