@@ -6,9 +6,9 @@
   "github_client_secret": "clien_secret",
   "aws_access_key_id": "access_key_id",
   "aws_secret_access_key": "secret_key",
-  "aws_region": "region",
+  "aws_region": "us-west-2",
   "s3_bucket_name": "bucket.name",
-  "flasks3_bucket_name": "bucket.name",
+  "jwt_seed": "bucket.name",
   "sqlalchemy_database_uri": "database@uri",
   "domain": "%(stage)s.%(domain_base)s",
   "dpr_api_git": "https'://github.com/frictionlessdata/dpr-api.git"
