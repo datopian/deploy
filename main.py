@@ -57,16 +57,19 @@ class Deployer(object):
         self.config = config
         self.rds_client = boto3.client(
             'rds',
+            region_name = config['aws_region'],
             aws_access_key_id=config['aws_access_key_id'],
             aws_secret_access_key=config['aws_secret_access_key']
         )
         self.s3_client = boto3.client(
             's3',
+            region_name = config['aws_region'],
             aws_access_key_id=config['aws_access_key_id'],
             aws_secret_access_key=config['aws_secret_access_key']
         )
         self.ec2_client = boto3.client(
             'ec2',
+            region_name = config['aws_region'],
             aws_access_key_id=config['aws_access_key_id'],
             aws_secret_access_key=config['aws_secret_access_key']
         )
@@ -95,7 +98,7 @@ class Deployer(object):
             'github_client_id',
             'github_client_secret',
             's3_bucket_name',
-            'flasks3_bucket_name',
+            'jwt_seed',
             'sqlalchemy_database_uri'
         ]
         envstring = ' '.join(
@@ -283,6 +286,7 @@ class Deployer(object):
         '''
         s3 = boto3.resource(
             's3',
+            region_name = self.config['aws_region'],
             aws_access_key_id=self.config['aws_access_key_id'],
             aws_secret_access_key=self.config['aws_secret_access_key']
         )
@@ -338,8 +342,8 @@ class TestItAll:
         deploy = Deployer(configfile='external_config.json.template')
         out = deploy._env_string_for_heroku()
         assert out =='AWS_ACCESS_KEY_ID=access_key_id AWS_SECRET_ACCESS_KEY=secret_key '+\
-         'AWS_REGION=region GITHUB_CLIENT_ID=client_id GITHUB_CLIENT_SECRET=clien_secret '+\
-         'S3_BUCKET_NAME=bucket.name FLASKS3_BUCKET_NAME=bucket.name SQLALCHEMY_DATABASE_URI=database@uri'
+         'AWS_REGION=us-west-2 GITHUB_CLIENT_ID=client_id GITHUB_CLIENT_SECRET=clien_secret '+\
+         'S3_BUCKET_NAME=bucket.name JWT_SEED=bucket.name SQLALCHEMY_DATABASE_URI=database@uri'
 
 
     def test_heroku_app_exists(self):
