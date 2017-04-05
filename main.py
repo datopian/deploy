@@ -6,6 +6,7 @@ import subprocess
 import sys
 import optparse
 import inspect
+import requests
 from time import sleep
 
 #  'item', 'value', 'description'
@@ -369,6 +370,7 @@ class Deployer(object):
 
     def verify(self):
         """verify the infrastructure"""
+
         print "checking s3 is working..."
         response = self.s3_client.get_bucket_acl(
             Bucket=self.config['S3_BUCKET_NAME']
@@ -376,8 +378,8 @@ class Deployer(object):
 
         for permission in response['Grants']:
             if permission['Grantee']['Type'] == 'Group':
-                assert (permission['Permission'] == 'READ')
-        print "s3 permissions are OK"
+                assert (permission['Permission'] == 'READ' or permission['Permission'] == 'READ_ACP')
+        print "s3 permissions - OK"
         response = self.s3_client.get_bucket_cors(
             Bucket=self.config['S3_BUCKET_NAME']
         )
@@ -385,22 +387,53 @@ class Deployer(object):
         assert (response['CORSRules'][0]['AllowedMethods'][0] == 'GET')
         assert (response['CORSRules'][0]['AllowedOrigins'][0] == '*')
 
-        print "s3 CORS are OK"
+        print "s3 CORS - OK"
+
+        url = 'https://%s' %self.config['S3_BUCKET_NAME']
+        res = requests.get(url)
+        assert (res.status_code == 200)
+        print '%s is working over HTTPS - OK'%self.config['S3_BUCKET_NAME']
+
+        url = 'http://%s' %self.config['S3_BUCKET_NAME']
+        res = requests.get(url)
+        assert (res.status_code == 200)
+        print '%s is working over HTTP - OK'%self.config['S3_BUCKET_NAME']
 
         # RDS
+        print
         print "checking RDS is working..."
         response = self.rds_client.describe_db_instances(
             DBInstanceIdentifier='%(PROJECT)s-%(STAGE)s-%(RDS_SUFFIX)s' % self.config)
         assert (response['DBInstances'][0]['DBInstanceStatus'] == "available")
-        print "RDS is working OK"
+        print "RDS is working - OK"
 
         # Heroku
-        print "checking data package registry Heroku app is working..."
+        print
+        print "checking %s Heroku app is working..." % self.config['HEROKU_APP']
         response = self._check_heroku_app_exists(self.config['HEROKU_APP'])
         assert response
-        print "Heroku app is working OK"
-        print 'Everything is OK'
+        print "Heroku app is working - OK"
 
+        print
+        print 'Checking website is UP and working ...'
+        url = 'https://%s' %self.config['DOMAIN']
+        res = requests.get(url)
+        assert (res.status_code == 200)
+        print '%s is working over HTTPS - OK'%self.config['DOMAIN']
+
+        url = 'http://%s' %self.config['DOMAIN']
+        res = requests.get(url)
+        assert (res.status_code == 200)
+        print '%s is working over HTTP - OK'%self.config['DOMAIN']
+
+        url = 'https://%s' %self.config['DOMAIN']
+        res = requests.get(url)
+        assert (res.headers['Access-Control-Allow-Credentials'])
+        print 'Access-Control-Allow-Credentials - OK'
+        assert (res.headers['Access-Control-Allow-Origin'] == '*')
+        print 'Access-Control-Allow-Origin - OK'
+        print
+        print 'Everything is OK'
 
 # ==============================================
 # CLI
