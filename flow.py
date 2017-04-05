@@ -16,6 +16,7 @@ class Flow(object):
         self.tmpdir = tempfile.mkdtemp()
 
     def check_flow(self):
+        """Check flow for dpm - publish, tag, delete, undelete, purge"""
         git.Repo.clone_from('https://github.com/zelima/country-continents.git', self.tmpdir)
         with cd(self.tmpdir):
             # publish

@@ -88,11 +88,13 @@ class Deployer(object):
         return dict([x.strip().split('=') for x in content if '=' in x])
 
     def run(self):
+        """Create all The instances"""
         self.s3()
         self.rds()
         self.heroku()
 
     def teardown(self):
+        """Destroy all the instances"""
         self.destroy_s3_bucket()
         self.rds_destroy()
         self.heroku_destroy()
@@ -121,6 +123,7 @@ class Deployer(object):
         return envstring
 
     def heroku(self):
+        """Create Heroku application"""
         heroku_exists = self._check_heroku_app_exists(self.config['HEROKU_APP'])
         if heroku_exists:
             cmd = 'heroku git:remote -a %(HEROKU_APP)s -r %(GIT_HEROKU)s' % self.config
@@ -147,10 +150,12 @@ class Deployer(object):
             sys.exit()
 
     def heroku_destroy(self):
+        """Delete application from Heroku"""
         cmd = 'heroku apps:destroy -a %(HEROKU_APP)s' % self.config
         out = subprocess.check_output(cmd, shell=True)
 
     def rds(self):
+        """Create an RDS instance and enable public access"""
         try:
             self.rds_create()
             return self.rds_enable_public_access()
@@ -163,7 +168,7 @@ class Deployer(object):
                 return False
 
     def rds_create(self):
-        """Create an RDS instance"""
+        """Boot an RDS instance"""
 
         rds_instance = '%(PROJECT)s-%(STAGE)s-%(RDS_SUFFIX)s' % self.config
         self.rds_client.create_db_instance(
@@ -229,6 +234,7 @@ class Deployer(object):
         return True
 
     def rds_enable_public_access(self):
+        """Enable public access for RDS database """
         try:
             self.ec2_client.authorize_security_group_ingress(
                 GroupId='sg-a42732c2',
@@ -247,9 +253,7 @@ class Deployer(object):
                 return False
 
     def s3(self):
-        """
-        Creates S3 Bucket if not exist
-        """
+        """Creates regular and logging S3 Buckets if not exist"""
         try:
             response = self.s3_client.create_bucket(
                 Bucket=self.config['S3_BUCKET_NAME'],
@@ -280,6 +284,7 @@ class Deployer(object):
                 return False
 
     def s3_enable_cors(self):
+        """Enable s3 CORS"""
         response = self.s3_client.put_bucket_cors(
             Bucket=self.config['S3_BUCKET_NAME'],
             CORSConfiguration={
@@ -312,9 +317,7 @@ class Deployer(object):
         )
 
     def destroy_s3_bucket(self):
-        """
-        Deletes s3 bucket
-        """
+        """Deletes s3 bucket"""
         s3 = boto3.resource(
             's3',
             region_name=self.config['AWS_REGION'],
