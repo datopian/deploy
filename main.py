@@ -80,13 +80,7 @@ class Deployer(object):
 
     @classmethod
     def _load_env_file(cls, file_name=None):
-
-        if file_name:
-            dotenv = file_name
-        else:
-            dotenv = '.env'
-
-        with open(dotenv, 'r') as f:
+        with open(file_name, 'r') as f:
             content = f.readlines()
 
         # removes whitespace chars like '\n' at the end of each line
@@ -420,10 +414,13 @@ def _object_methods(obj):
 
 def _main(functions_or_object):
     is_object = inspect.isclass(functions_or_object)
-    if is_object:
-        _methods = _object_methods(functions_or_object)
-    else:
-        _methods = _module_functions(functions_or_object)
+
+    _methods = _object_methods(functions_or_object)
+    ## this is not working if some options are passed to Deployer
+    # if is_object:
+    #     _methods = _object_methods(functions_or_object)
+    # else:
+    #     _methods = _module_functions(functions_or_object)
 
     usage = '''%prog {action}
 Actions:
@@ -449,4 +446,4 @@ Actions:
 
 
 if __name__ == '__main__':
-    _main(Deployer)
+    _main(Deployer(configfile='.env'))
