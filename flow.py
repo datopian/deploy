@@ -9,95 +9,95 @@ import shutil
 import requests
 import re
 
-class Flow(object):
 
+class Flow(object):
     def __init__(self):
         # self.config = json.load(open(configfile))
         self.tmpdir = tempfile.mkdtemp()
 
-
-    def verify(self):
+    def check_flow(self):
         git.Repo.clone_from('https://github.com/zelima/country-continents.git', self.tmpdir)
         with cd(self.tmpdir):
-            ## publish
+            # publish
             out = subprocess.check_output(['dpm', 'publish'])
             url = out[out.find('http'):].replace('\n', '')
             res = requests.get(url)
-            ## get url for datapackage.json on s3
+            # get url for datapackage.json on s3
             bit_store_urls = re.findall(
                 'http[s]?://bits(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+.json', res.text
             )
-            assert(res.status_code == 200)
-            assert(len(bit_store_urls))
+            assert (res.status_code == 200)
+            assert (len(bit_store_urls))
             res = requests.get(bit_store_urls[0])
-            assert(res.status_code == 200)
+            assert (res.status_code == 200)
             print 'Successfully published'
 
-            ## delete and undelete
+            # delete and undelete
             subprocess.check_output(['dpm', 'delete'])
             res = requests.get(url)
-            assert(res.status_code == 404)
+            assert (res.status_code == 404)
             res = requests.get(bit_store_urls[0])
-            assert(res.status_code == 403)
+            assert (res.status_code == 403)
             print 'Successfully deleted'
 
             subprocess.check_output(['dpm', 'undelete'])
             res = requests.get(url)
-            assert(res.status_code == 200)
+            assert (res.status_code == 200)
             res = requests.get(bit_store_urls[0])
-            assert(res.status_code == 200)
+            assert (res.status_code == 200)
             print 'Successfully undeleted'
 
-            ## purge
+            # purge
             subprocess.check_output(['dpm', 'purge'])
             res = requests.get(url)
-            assert(res.status_code == 404)
+            assert (res.status_code == 404)
             res = requests.get(bit_store_urls[0])
-            assert(res.status_code == 404)
+            assert (res.status_code == 404)
             print 'Successfully purged'
 
-            ## publish and tag
+            # publish and tag
             subprocess.check_output(['dpm', 'publish'])
             subprocess.check_output(['dpm', 'tag', 'testing'])
             res = requests.get(url)
             bit_store_urls = re.findall(
                 'http[s]?://bits(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+.json', res.text
             )
-            assert(res.status_code == 200)
-            assert(len(bit_store_urls))
-            ##  for some reasons urls are still pointing to _v/latest. commenting for now
+            assert (res.status_code == 200)
+            assert (len(bit_store_urls))
+            #  for some reasons urls are still pointing to _v/latest. commenting for now
             # assert('testing' in bit_store_urls[0])
             print 'Successfully published and tagged'
 
-            ## delete and undelete taged datapackage
+            # delete and undelete taged datapackage
             subprocess.check_output(['dpm', 'delete'])
             res = requests.get(url)
-            assert(res.status_code == 404)
+            assert (res.status_code == 404)
             res = requests.get(bit_store_urls[0])
-            assert(res.status_code == 403)
+            assert (res.status_code == 403)
             print 'Successfully deleted the tagged version'
 
             subprocess.check_output(['dpm', 'undelete'])
             res = requests.get(url)
-            assert(res.status_code == 200)
+            assert (res.status_code == 200)
             res = requests.get(bit_store_urls[0])
-            assert(res.status_code == 200)
+            assert (res.status_code == 200)
             print 'Successfully undeleted the tagged version'
 
             subprocess.check_output(['dpm', 'purge'])
             res = requests.get(url)
-            assert(res.status_code == 404)
+            assert (res.status_code == 404)
             res = requests.get(bit_store_urls[0])
-            assert(res.status_code == 404)
+            assert (res.status_code == 404)
             print 'Successfully purged the tagged version'
         shutil.rmtree(self.tmpdir)
 
 
-## ==============================================
-## CD
+# ==============================================
+# CD
 
 class cd:
     """Context manager for changing the current working directory"""
+
     def __init__(self, newPath):
         self.newPath = os.path.expanduser(newPath)
 
@@ -109,18 +109,20 @@ class cd:
         os.chdir(self.savedPath)
 
 
-## ==============================================
-## CLI
+# ==============================================
+# CLI
 
 import sys
 import optparse
 import inspect
 
+
 def _object_methods(obj):
     methods = inspect.getmembers(obj, inspect.ismethod)
-    methods = filter(lambda (name,y): not name.startswith('_'), methods)
+    methods = filter(lambda (name, y): not name.startswith('_'), methods)
     methods = dict(methods)
     return methods
+
 
 def _main(functions_or_object):
     isobject = inspect.isclass(functions_or_object)
@@ -133,8 +135,8 @@ def _main(functions_or_object):
 Actions:
     '''
     usage += '\n    '.join(
-        [ '%s: %s' % (name, m.__doc__.split('\n')[0] if m.__doc__ else '') for (name,m)
-        in sorted(_methods.items()) ])
+        ['%s: %s' % (name, m.__doc__.split('\n')[0] if m.__doc__ else '') for (name, m)
+         in sorted(_methods.items())])
     parser = optparse.OptionParser(usage)
     # Optional: for a config file
     # parser.add_option('-c', '--config', dest='config',
@@ -150,6 +152,7 @@ Actions:
         getattr(functions_or_object(), method)(*args[1:])
     else:
         _methods[method](*args[1:])
+
 
 if __name__ == '__main__':
     _main(Flow)
