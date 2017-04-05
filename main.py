@@ -261,10 +261,11 @@ class Deployer(object):
             self.s3_enable_cors()
             print 'S3 bucket is created: %s' % response.get('Location')
             response = self.s3_client.create_bucket(
-                Bucket=self.config['S3_BUCKET_NAME'] + '_log',
+                Bucket=self.config['S3_BUCKET_NAME'] + '.log',
                 CreateBucketConfiguration={
                     'LocationConstraint': self.config['AWS_REGION']
-                }
+                },
+                ACL='log-delivery-write'
             )
             print 'S3 log bucket is created: %s' % response.get('Location')
             self._s3_enable_logs()
@@ -304,7 +305,7 @@ class Deployer(object):
             Bucket=self.config['S3_BUCKET_NAME'],
             BucketLoggingStatus={
                 'LoggingEnabled': {
-                    'TargetBucket': self.config['S3_BUCKET_NAME'] + '_log',
+                    'TargetBucket': self.config['S3_BUCKET_NAME'] + '.log',
                     'TargetPrefix': '%(PROJECT)s-%(STAGE)s' % self.config
                 }
             }
@@ -325,7 +326,12 @@ class Deployer(object):
             for key in bucket.objects.all():
                 key.delete()
             bucket.delete()
-            print 'Bucket deleted'
+            print '%s deleted' % self.config['S3_BUCKET_NAME']
+            bucket = s3.Bucket(self.config['S3_BUCKET_NAME']+'.log')
+            for key in bucket.objects.all():
+                key.delete()
+            bucket.delete()
+            print '%s deleted' % self.config['S3_BUCKET_NAME']+'.log'
             return True
         except Exception as e:
             if 'NoSuchBucket' in e.message:
@@ -398,6 +404,21 @@ class Deployer(object):
         res = requests.get(url)
         assert (res.status_code == 200)
         print '%s is working over HTTP - OK'%self.config['S3_BUCKET_NAME']
+
+        print
+        print 'Checking logging bucket is working'
+        response = self.s3_client.get_bucket_acl(
+            Bucket=self.config['S3_BUCKET_NAME'] + '.log'
+        )
+
+        for permission in response['Grants']:
+            if permission['Grantee']['Type'] == 'Group':
+                assert (permission['Permission'] == 'WRITE' or permission['Permission'] == 'READ_ACP')
+        print "s3 log bucket permissions - OK"
+        response = self.s3_client.get_bucket_cors(
+            Bucket=self.config['S3_BUCKET_NAME']
+        )
+
 
         # RDS
         print
