@@ -500,4 +500,8 @@ Actions:
 
 
 if __name__ == '__main__':
-    _main(Deployer(configfile='.env'))
+    import os
+    if os.path.exists('.env'):
+        _main(Deployer(configfile='.env'))
+    else:
+        _main(Deployer)
