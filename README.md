@@ -1,22 +1,54 @@
 Deployment automation for the DPR.
 
+These python scripts automate the setup and teardown of an entire Data Package Registry instance including all associated infrastructure.
+
+The scripts are designed to be idempotent so you can run them again and again for an instance without an issue.
+
+In addition, the scripts include two useful test utilities:
+
+* `verify`: verify all infrastructure is setup
+* `checkflow`: check basic publishing flow works (depends on python `dpm` library)
+
+    ```bash
+    python flow.py verify
+    ```
+
 ## Installation
 
 Make sure you have `npm` and `python` installed.
-Also you will need to have [Heroku account](https://signup.heroku.com/) and [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) installed
-to deploy application on Heroku
+
+Also you will need to have [Heroku account](https://signup.heroku.com/) and
+[Heroku
+CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
+installed to deploy application on Heroku.
+
+Grab the code and install requirements:
 
 ```bash
-cd ~
 git clone https://gitlab.com/atomatic/dpr-deploy
 cd dpr-deploy
 pip install -r requirements.txt
 
-# setup configuration and replace variables as needed in external_config.json
-# you can leave out sqlalchemy_database_uri (will be computed)
-cp external_config.json.template external_config.json
+# if you want to run tests
+pip install -r requirements.test.txt
 
-# Run script
+# if you want to run dpm
+pip install ...
+```
+
+## Setup configuration
+
+1. Copy over external config:
+
+    ```bash
+    cp external_config.json.template external_config.json
+    ```
+2. Edit config to set essential variables.
+3. There are many more variables you can set and replace their default values. Run `python main.py -h` to see details.
+
+## Run the script
+
+```bash
 python main.py run
 
 # Verify all is set up and running
@@ -48,27 +80,11 @@ python main.py rds_destroy
 python main.py heroku_destroy
 ```
 
-For tests
+## Tests
+
+Install pytest and then run:
 
 ```bash
 pytest main.py
 ```
----
 
-## Verify main flow for dpm
-
-Note: To verify post sign up flow for publishing and deleting datapackage,
-you should have already configured dpm configurations!
-
-###$ to verify
-
-```bash
-# install
-cd ~
-git clone https://gitlab.com/atomatic/dpr-deploy
-cd dpr-deploy
-pip install -r requirements.txt
-
-# run script
-
-python flow.py verify
