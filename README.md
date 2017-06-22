@@ -15,7 +15,7 @@ In addition, the scripts include two useful test utilities:
 
 ## Installation
 
-Make sure you have `npm` and `python` installed.
+Make sure you have `npm` and `python 2.7` installed.
 
 Also you will need to have [Heroku account](https://signup.heroku.com/) and
 [Heroku
@@ -25,7 +25,7 @@ installed to deploy application on Heroku.
 Grab the code and install requirements:
 
 ```bash
-git clone https://gitlab.com/atomatic/dpr-deploy
+git clone https://gitlab.com/datopian/datahub-deploy.git
 cd dpr-deploy
 pip install -r requirements.txt
 
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 pip install -r requirements.test.txt
 
 # if you want to run dpm
-pip install ...
+pip install git+https://github.com/frictionlessdata/dpm-py.git
 ```
 
 ## Setup configuration
@@ -41,7 +41,7 @@ pip install ...
 1. Copy over external config:
 
     ```bash
-    cp external_config.json.template external_config.json
+    cp env.template .env
     ```
 2. Edit config to set essential variables.
 3. There are many more variables you can set and replace their default values. Run `python main.py -h` to see details.
@@ -85,6 +85,5 @@ python main.py heroku_destroy
 Install pytest and then run:
 
 ```bash
-pytest main.py
+pytest test.py
 ```
-
