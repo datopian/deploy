@@ -1,89 +1,42 @@
-Deployment automation for the DPR.
-
-These python scripts automate the setup and teardown of an entire Data Package Registry instance including all associated infrastructure.
-
-The scripts are designed to be idempotent so you can run them again and again for an instance without an issue.
-
-In addition, the scripts include two useful test utilities:
-
-* `verify`: verify all infrastructure is setup
-* `checkflow`: check basic publishing flow works (depends on python `dpm` library)
-
-    ```bash
-    python flow.py verify
-    ```
+Deployment automation for the DataHub.
 
 ## Installation
 
-Make sure you have `npm` and `python 2.7` installed.
+Git clone then install the requirements:
 
-Also you will need to have [Heroku account](https://signup.heroku.com/) and
-[Heroku
-CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
-installed to deploy application on Heroku.
-
-Grab the code and install requirements:
-
-```bash
-git clone https://gitlab.com/datopian/datahub-deploy.git
-cd dpr-deploy
+```
 pip install -r requirements.txt
-
-# if you want to run tests
-pip install -r requirements.test.txt
-
-# if you want to run dpm
-pip install git+https://github.com/frictionlessdata/dpm-py.git
 ```
 
-## Setup configuration
+## Configuration
 
-1. Copy over external config:
+Set up your configuration variables in a file called `.env`. You can copy paste and `.env.template`.
 
-    ```bash
-    cp env.template .env
-    ```
-2. Edit config to set essential variables.
-3. There are many more variables you can set and replace their default values. Run `python main.py -h` to see details.
+Note: for multiline variable values you must replace newlines with `\n` and quote the variable e.g. a variable that looks like this originally:
 
-## Run the script
-
-```bash
-python main.py run
-
-# Verify all is set up and running
-python main.py verify
+```
+----BEGIN PUBLIC KEY-----
+...
+...
 ```
 
-You can run deploy script to boot each instance separately
+Must be in the `.env` file like this:
 
-```bash
-# boot s3
-python main.py s3
-
-# boot RDS
-python main.py rds
-
-# boot Heroku (in this case you will have to set sqlalchemy_database_uri variable manually)
-python main.py heroku
+```
+PUBLIC_KEY="----BEGIN PUBLIC KEY-----\n...\n..."
 ```
 
-Destroy Application
+## Running
 
-```bash
-# Tear down all together
-python main.py teardown
+Run the script and it will list the available commands:
 
-# Or separately
-python main.py destroy_s3_bucket
-python main.py rds_destroy
-python main.py heroku_destroy
+```
+python main.py
 ```
 
-## Tests
+Main one right now is:
 
-Install pytest and then run:
-
-```bash
-pytest test.py
 ```
+python main.py docker
+```
+

@@ -1,0 +1,28 @@
+auth:
+  image: datopian/auth
+  links:
+    - postgres
+  ports:
+    - "80:8000"
+    - "443:8000"
+  roles:
+    - global
+  target_num_containers: 1
+  environment:
+    DATABASE_URL: "postgresql://auth_service@postgres/auth_service"
+    EXTERNAL_ADDRESS: api.${DOMAIN}
+    PRIVATE_KEY:
+    PUBLIC_KEY:
+    GOOGLE_KEY:
+    GOOGLE_SECRET:
+    GITHUB_KEY:
+    GITHUB_SECRET:
+postgres:
+  image: postgres
+  target_num_containers: 1
+  ports:
+    - "5432:5432"
+  environment:
+    POSTGRES_USER: "auth_service"
+    POSTGRES_DB: "auth_service"
+

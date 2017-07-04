@@ -90,3 +90,7 @@ external_config.json
 # floo
 .floo
 .flooignore
+
+# archive and misc
+sandbox/*
+
