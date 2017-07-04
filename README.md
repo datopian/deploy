@@ -26,7 +26,7 @@ Must be in the `.env` file like this:
 PUBLIC_KEY="----BEGIN PUBLIC KEY-----\n...\n..."
 ```
 
-## Running
+## Using
 
 Run the script and it will list the available commands:
 
