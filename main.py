@@ -38,6 +38,7 @@ class Deployer(object):
             out = subprocess.check_output(cmd.split(' '))
         except subprocess.CalledProcessError:
             out = 'Error: ' + out
+        print(out)
         return out
     
     def docker(self):
@@ -53,14 +54,14 @@ class Deployer(object):
     def docker_create(self):
         '''Create the docker stack'''
         cmd = 'docker-cloud stack up -f docker-cloud.yml -n %s' % self.stackname
-        print(os.system(cmd))
+        self._run(cmd)
 
     def docker_update(self):
         '''Update the docker stack and redeploy'''
         cmd = 'docker-cloud stack update -f docker-cloud.yml %s' % self.stackname
         cmd2 = 'docker-cloud stack redeploy %s' % self.stackname
-        print(os.system(cmd))
-        print(os.system(cmd2))
+        self._run(cmd)
+        self._run(cmd2)
 
     def docker_terminate(self):
         '''...'''
