@@ -9,6 +9,7 @@ auth:
     - global
   target_num_containers: 1
   environment:
+    VIRTUAL_HOST: ${DOMAIN_API}/auth
     DATABASE_URL: "postgresql://auth_service@postgres/auth_service"
     EXTERNAL_ADDRESS: api.${DOMAIN}
     PRIVATE_KEY:
@@ -25,4 +26,12 @@ postgres:
   environment:
     POSTGRES_USER: "auth_service"
     POSTGRES_DB: "auth_service"
-
+apiproxy:
+  image: 'dockercloud/haproxy:latest'
+  links:
+    - auth
+  ports:
+    - '80:80'
+    - '443:443'
+  roles:
+    - global
