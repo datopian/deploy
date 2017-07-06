@@ -35,7 +35,7 @@ rawstore:
 frontend:
   image: datopian/datahub-frontend:latest
   ports:
-    - "80:4000"
+    - "4000:4000"
   environment:
     VIRTUAL_HOST: ${DOMAIN}
 proxy:
