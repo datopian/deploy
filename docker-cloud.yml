@@ -6,7 +6,7 @@ auth:
     - "8000:8000"
   target_num_containers: 1
   environment:
-    VIRTUAL_HOST: ${DOMAIN_API}/auth
+    VIRTUAL_HOST: ${DOMAIN_API}/auth/*,${DOMAIN_API}:443/auth/*
     GUNICORN_PORT: 8000
     DATABASE_URL: "postgresql://auth_service@postgres/auth_service"
     EXTERNAL_ADDRESS: api.${DOMAIN}
@@ -30,14 +30,14 @@ rawstore:
     - '8001:8001'
   target_num_containers: 1
   environment:
-    VIRTUAL_HOST: ${DOMAIN_API}/rawstore
+    VIRTUAL_HOST: ${DOMAIN_API}/rawstore/*,${DOMAIN_API}:443/rawstore/*
     GUNICORN_PORT: 8001
 frontend:
   image: datopian/datahub-frontend:latest
   ports:
     - "4000:4000"
   environment:
-    VIRTUAL_HOST: ${DOMAIN}
+    VIRTUAL_HOST: ${DOMAIN},${DOMAIN}:443
 proxy:
   image: 'dockercloud/haproxy:latest'
   links:
