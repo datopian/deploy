@@ -3,13 +3,11 @@ auth:
   links:
     - postgres
   ports:
-    - "80:8000"
-    - "443:8000"
-  roles:
-    - global
+    - "8000:8000"
   target_num_containers: 1
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/auth
+    GUNICORN_PORT: 8000
     DATABASE_URL: "postgresql://auth_service@postgres/auth_service"
     EXTERNAL_ADDRESS: api.${DOMAIN}
     PRIVATE_KEY:
@@ -26,10 +24,19 @@ postgres:
   environment:
     POSTGRES_USER: "auth_service"
     POSTGRES_DB: "auth_service"
+rawstore:
+  image: 'datopian/bitstore:latest'
+  ports:
+    - '8001:8001'
+  target_num_containers: 1
+  environment:
+    VIRTUAL_HOST: ${DOMAIN_API}:8001/rawstore
+    GUNICORN_PORT: 8001
 apiproxy:
   image: 'dockercloud/haproxy:latest'
   links:
     - auth
+    - rawstore
   ports:
     - '80:80'
     - '443:443'
