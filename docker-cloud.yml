@@ -30,13 +30,20 @@ rawstore:
     - '8001:8001'
   target_num_containers: 1
   environment:
-    VIRTUAL_HOST: ${DOMAIN_API}:8001/rawstore
+    VIRTUAL_HOST: ${DOMAIN_API}/rawstore
     GUNICORN_PORT: 8001
-apiproxy:
+frontend:
+  image: datopian/datahub-frontend:latest
+  ports:
+    - "80:4000"
+  environment:
+    VIRTUAL_HOST: ${DOMAIN}
+proxy:
   image: 'dockercloud/haproxy:latest'
   links:
     - auth
     - rawstore
+    - frontend
   ports:
     - '80:80'
     - '443:443'
