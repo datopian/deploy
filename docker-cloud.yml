@@ -1,9 +1,11 @@
 proxy:
   image: 'dockercloud/haproxy:latest'
   links:
+    - frontend
+    - assembler
     - auth
     - rawstore
-    - frontend
+    - specstore
   ports:
     - '80:80'
     - '443:80'
@@ -25,8 +27,8 @@ auth:
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/auth/*,https://${DOMAIN_API}/auth/*
     GUNICORN_PORT: 8000
-    DATABASE_URL: "postgresql://auth_service@postgres/auth_service"
-    EXTERNAL_ADDRESS: api.${DOMAIN}
+    DATABASE_URL: "postgresql://datahub@postgres/datahub"
+    EXTERNAL_ADDRESS: ${DOMAIN_API}
     PRIVATE_KEY:
     PUBLIC_KEY:
     GOOGLE_KEY:
@@ -49,3 +51,21 @@ rawstore:
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/rawstore/*,https://${DOMAIN_API}/rawstore/*
     GUNICORN_PORT: 8001
+assembler:
+  autoredeploy: true
+  environment:
+    - 'SOURCESPEC_REGISTRY_DB_ENGINE=postgresql://datahub@postgres/datahub'
+    - VIRTUAL_HOST=/pipelines/
+  image: 'datopian/assembler:latest'
+  restart: always
+specstore:
+  autoredeploy: true
+  environment:
+    - 'AUTH_SERVER=auth:8000'
+    - 'DATABASE_URL=postgresql://datahub@postgres/datahub'
+    - 'VIRTUAL_HOST=/source/*'
+  expose:
+    - '8000'
+  image: 'datopian/specstore:latest'
+  restart: always
+
