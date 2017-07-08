@@ -5,6 +5,7 @@ import os
 import subprocess
 import optparse
 import sys
+import time
 
 import boto3
 import dotenv
@@ -50,6 +51,8 @@ class Deployer(object):
             self.docker_create()
         else:
             self.docker_update()
+            print('Sleeping for 5s to allow time for update')
+            time.sleep(5)
             self.docker_deploy()
 
     def docker_create(self):
