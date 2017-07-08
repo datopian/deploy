@@ -1,3 +1,20 @@
+proxy:
+  image: 'dockercloud/haproxy:latest'
+  links:
+    - auth
+    - rawstore
+    - frontend
+  ports:
+    - '80:80'
+    - '443:80'
+  roles:
+    - global
+frontend:
+  image: datopian/datahub-frontend:latest
+  ports:
+    - "4000:4000"
+  environment:
+    VIRTUAL_HOST: ${DOMAIN},https://${DOMAIN}
 auth:
   image: datopian/auth
   links:
@@ -32,20 +49,3 @@ rawstore:
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/rawstore/*,${DOMAIN_API}:443/rawstore/*
     GUNICORN_PORT: 8001
-frontend:
-  image: datopian/datahub-frontend:latest
-  ports:
-    - "4000:4000"
-  environment:
-    VIRTUAL_HOST: ${DOMAIN},${DOMAIN}:443
-proxy:
-  image: 'dockercloud/haproxy:latest'
-  links:
-    - auth
-    - rawstore
-    - frontend
-  ports:
-    - '80:80'
-    - '443:443'
-  roles:
-    - global
