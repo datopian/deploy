@@ -40,3 +40,10 @@ Main one right now is:
 python main.py docker
 ```
 
+Sometimes this times out on the redeploy as the update hasn't finished. In that case just run:
+
+
+```
+python main.py docker_deploy
+```
+
