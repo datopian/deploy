@@ -1,4 +1,4 @@
-# !/usr/bin/python
+   # !/usr/bin/python
 # -*- coding: utf-8 -*-
 import inspect
 import os
@@ -32,7 +32,7 @@ class Deployer(object):
     def stackname(self):
         stackname = '{PROJECT}-{STAGE}'.format(**self.config)
         return stackname
-    
+
     def _run(self, cmd):
         out = ''
         try:
@@ -41,7 +41,7 @@ class Deployer(object):
             out = 'Error: ' + out
         print(out)
         return out
-    
+
     def docker(self):
         '''Deploy app to docker'''
         cmd = 'docker-cloud stack inspect %s' % self.stackname
@@ -74,18 +74,82 @@ class Deployer(object):
     def docker_terminate(self):
         '''...'''
         pass
-        
+
     def show_config(self):
         """Show computed config
-        
-        environment plus .env variables 
+
+        environment plus .env variables
         """
         config_options = '''Configs:'''
         for k in sorted(self.config.keys()):
             value = self.config[k]
             config_options = config_options + '\n \t{key}{s}: {desc}'.format(key=k, desc=value,
                                                                              s=' ' * (30 - len(k)))
-        print config_options
+        print (config_options)
+
+    def s3(self):
+        """Creates regular and logging S3 Buckets if not exist"""
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=self.config['OBJECT_STORAGE_ACCESS_KEY'],
+            aws_secret_access_key=self.config['OBJECT_STORATE_SECRET_KEY']
+        )
+        bucket_list = [self.config[env] for env in self.config if 'BUCKET' in env]
+        for bucket in bucket_list:
+            try:
+                response = s3_client.create_bucket(
+                    Bucket=bucket,
+                    ACL='public-read',
+                )
+                self._s3_enable_cors(s3_client, bucket)
+                print ('S3 bucket is created: %s' % response.get('Location'))
+                response = s3_client.create_bucket(
+                    Bucket=bucket + '.log',
+                    ACL='log-delivery-write'
+                )
+                print ('S3 log bucket is created: %s' % response.get('Location'))
+                self._s3_enable_logs(s3_client, bucket)
+                print ('S3 log enabled for bucket: %s' % response.get('Location'))
+                return True
+            except Exception as e:
+                if 'BucketAlreadyOwnedByYou' in e.message:
+                    print('S3 Bucket already exists')
+                else:
+                    print(e.message)
+                return False
+
+    def _s3_enable_cors(self, client, bucket):
+        """Enable s3 CORS"""
+        response = client.put_bucket_cors(
+            Bucket=bucket,
+            CORSConfiguration={
+                'CORSRules': [
+                    {
+                        'AllowedHeaders': [
+                            '*',
+                        ],
+                        'AllowedMethods': [
+                            'GET'
+                        ],
+                        'AllowedOrigins': [
+                            '*',
+                        ]
+                    },
+                ]
+            }
+        )
+
+    def _s3_enable_logs(self, client, bucket):
+        client.put_bucket_logging(
+            Bucket=bucket,
+            BucketLoggingStatus={
+                'LoggingEnabled': {
+                    'TargetBucket': bucket + '.log',
+                    'TargetPrefix': '%(PROJECT)s-%(STAGE)s' % self.config
+                }
+            }
+        )
+
 
 # ==============================================
 # CLI
@@ -131,4 +195,3 @@ Actions:
 
 if __name__ == '__main__':
     _main(Deployer)
-
