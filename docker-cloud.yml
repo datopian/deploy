@@ -17,6 +17,7 @@ frontend:
     - "4000:4000"
   environment:
     VIRTUAL_HOST: ${DOMAIN},https://${DOMAIN}
+    DATAHUB_API: https://${DOMAIN_API}
 auth:
   image: datopian/auth
   links:
