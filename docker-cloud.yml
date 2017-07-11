@@ -57,6 +57,8 @@ rawstore:
   ports:
     - '8000'
   target_num_containers: 1
+  links:
+    - auth
   environment:
     - 'VIRTUAL_HOST=${DOMAIN_API}/rawstore/*'
     - 'AUTH_SERVER=http://auth:8000'
@@ -71,6 +73,8 @@ assembler:
 specstore:
   autoredeploy: true
   restart: always
+  links:
+    - auth
   environment:
     - 'AUTH_SERVER=auth:8000'
     - 'DATABASE_URL=postgresql://datahub@postgres/datahub'
