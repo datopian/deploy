@@ -51,8 +51,6 @@ class Deployer(object):
             self.docker_create()
         else:
             self.docker_update()
-            print('Sleeping for 5s to allow time for update')
-            time.sleep(5)
             self.docker_deploy()
 
     def docker_create(self):
@@ -62,13 +60,13 @@ class Deployer(object):
 
     def docker_update(self):
         '''Update the docker stack and redeploy'''
-        cmd = 'docker-cloud stack update -f docker-cloud.yml %s' % self.stackname
+        cmd = 'docker-cloud stack update -f docker-cloud.yml --sync %s' % self.stackname
         self._run(cmd)
 
     def docker_deploy(self):
         '''(Re)Deploy stack.'''
         print('Redeploying stack ...')
-        cmd2 = 'docker-cloud stack redeploy %s' % self.stackname
+        cmd2 = 'docker-cloud stack redeploy --sync %s' % self.stackname
         self._run(cmd2)
 
     def docker_terminate(self):

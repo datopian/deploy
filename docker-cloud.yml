@@ -1,4 +1,5 @@
 proxy:
+  restart: always
   image: 'dockercloud/haproxy:latest'
   links:
     - frontend
@@ -8,24 +9,27 @@ proxy:
     - specstore
   ports:
     - '80:80'
-    - '443:80'
   roles:
     - global
 frontend:
+  autoredeploy: true
+  restart: always
   image: datopian/datahub-frontend:latest
   ports:
-    - "4000:4000"
+    - "4000"
   environment:
-    VIRTUAL_HOST: ${DOMAIN},https://${DOMAIN}
+    VIRTUAL_HOST: ${DOMAIN}
 auth:
+  autoredeploy: true
+  restart: always
   image: datopian/auth
   links:
     - postgres
   ports:
-    - "8000:8000"
+    - "8000"
   target_num_containers: 1
   environment:
-    VIRTUAL_HOST: ${DOMAIN_API}/auth/*,https://${DOMAIN_API}/auth/*
+    VIRTUAL_HOST: ${DOMAIN_API}/auth/*
     GUNICORN_PORT: 8000
     DATABASE_URL: "postgresql://datahub@postgres/datahub"
     EXTERNAL_ADDRESS: ${DOMAIN_API}
@@ -36,36 +40,41 @@ auth:
     GITHUB_KEY:
     GITHUB_SECRET:
 postgres:
+  autoredeploy: true
+  restart: always
   image: postgres
   target_num_containers: 1
   ports:
-    - "5432:5432"
+    - "5432"
   environment:
-    POSTGRES_USER: "auth_service"
-    POSTGRES_DB: "auth_service"
+    POSTGRES_USER: "datahub"
+    POSTGRES_DB: "datahub"
 rawstore:
+  autoredeploy: true
+  restart: always
   image: 'datopian/bitstore:latest'
   ports:
-    - '8001:8001'
+    - '8000'
   target_num_containers: 1
   environment:
-    VIRTUAL_HOST: ${DOMAIN_API}/rawstore/*,https://${DOMAIN_API}/rawstore/*
-    GUNICORN_PORT: 8001
+    - 'VIRTUAL_HOST=${DOMAIN_API}/rawstore/*'
+    - 'AUTH_SERVER=http://auth:8000'
 assembler:
   autoredeploy: true
+  restart: always
   environment:
     - 'SOURCESPEC_REGISTRY_DB_ENGINE=postgresql://datahub@postgres/datahub'
-    - VIRTUAL_HOST=/pipelines/
+    - 'VIRTUAL_HOST=${DOMAIN_API}/pipelines/*'
+    - 'DPP_BASE_PATH=/pipelines/'
   image: 'datopian/assembler:latest'
-  restart: always
 specstore:
   autoredeploy: true
+  restart: always
   environment:
     - 'AUTH_SERVER=auth:8000'
     - 'DATABASE_URL=postgresql://datahub@postgres/datahub'
-    - 'VIRTUAL_HOST=/source/*'
+    - 'VIRTUAL_HOST=${DOMAIN_API}/source/*'
   expose:
     - '8000'
   image: 'datopian/specstore:latest'
-  restart: always
 
