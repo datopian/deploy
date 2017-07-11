@@ -58,23 +58,23 @@ rawstore:
     - '8000'
   target_num_containers: 1
   environment:
-    - 'VIRTUAL_HOST=${DOMAIN_API}/rawstore/*'
-    - 'AUTH_SERVER=http://auth:8000'
+    VIRTUAL_HOST: ${DOMAIN_API}/rawstore/*
+    AUTH_SERVER: http://auth:8000
 assembler:
   autoredeploy: true
   restart: always
   environment:
-    - 'SOURCESPEC_REGISTRY_DB_ENGINE=postgresql://datahub@postgres/datahub'
-    - 'VIRTUAL_HOST=${DOMAIN_API}/pipelines/*'
-    - 'DPP_BASE_PATH=/pipelines/'
+    VIRTUAL_HOST: ${DOMAIN_API}/pipelines/*
+    SOURCESPEC_REGISTRY_DB_ENGINE: postgresql://datahub@postgres/datahub
+    DPP_BASE_PATH: /pipelines/
   image: 'datopian/assembler:latest'
 specstore:
   autoredeploy: true
   restart: always
   environment:
-    - 'AUTH_SERVER=auth:8000'
-    - 'DATABASE_URL=postgresql://datahub@postgres/datahub'
-    - 'VIRTUAL_HOST=${DOMAIN_API}/source/*'
+    VIRTUAL_HOST: ${DOMAIN_API}/source/*
+    AUTH_SERVER: auth:8000
+    DATABASE_URL: postgresql://datahub@postgres/datahub
   expose:
     - '8000'
   image: 'datopian/specstore:latest'
