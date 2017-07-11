@@ -90,7 +90,7 @@ class Deployer(object):
         s3_client = boto3.client(
             's3',
             aws_access_key_id=self.config['OBJECT_STORAGE_ACCESS_KEY'],
-            aws_secret_access_key=self.config['OBJECT_STORATE_SECRET_KEY']
+            aws_secret_access_key=self.config['OBJECT_STORAGE_SECRET_KEY']
         )
         bucket_list = [self.config[env] for env in self.config if 'BUCKET' in env]
         for bucket in bucket_list:

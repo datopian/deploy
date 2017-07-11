@@ -60,6 +60,9 @@ rawstore:
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/rawstore/*
     AUTH_SERVER: http://auth:8000
+    STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY}
+    STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_KEY}
+    STORAGE_BUCKET_NAME: ${RAWSTORE_BUCKET_NAME}
 assembler:
   autoredeploy: true
   restart: always
