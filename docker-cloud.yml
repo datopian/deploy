@@ -69,6 +69,9 @@ assembler:
     - 'SOURCESPEC_REGISTRY_DB_ENGINE=postgresql://datahub@postgres/datahub'
     - 'VIRTUAL_HOST=${DOMAIN_API}/pipelines/*'
     - 'DPP_BASE_PATH=/pipelines/'
+    - 'PKGSTORE_BUCKET=${PKGSTORE_BUCKET}'
+    - 'AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}'
+    - 'AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}'
   image: 'datopian/assembler:latest'
 specstore:
   autoredeploy: true
