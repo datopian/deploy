@@ -89,8 +89,8 @@ class Deployer(object):
         """Creates regular and logging S3 Buckets if not exist"""
         s3_client = boto3.client(
             's3',
-            aws_access_key_id=self.config['OBJECT_STORAGE_ACCESS_KEY'],
-            aws_secret_access_key=self.config['OBJECT_STORAGE_SECRET_KEY']
+            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
+            aws_secret_access_key=self.config['AWS_SECRET_KEY']
         )
         bucket_list = [self.config[env] for env in self.config if 'BUCKET' in env]
         for bucket in bucket_list:

@@ -62,20 +62,20 @@ rawstore:
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/rawstore/*
     AUTH_SERVER: http://auth:8000
-    STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY}
-    STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_KEY}
-    STORAGE_BUCKET_NAME: ${RAWSTORE_BUCKET_NAME}
+    STORAGE_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+    STORAGE_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
+    STORAGE_BUCKET_NAME: ${RAWSTORE_BUCKET}
     STORAGE_PATH_PATTERN: '{md5}'
 assembler:
   autoredeploy: true
   restart: always
   environment:
-    VIRTUAL_HOST=${DOMAIN_API}/pipelines/*
-    SOURCESPEC_REGISTRY_DB_ENGINE=postgresql://datahub@postgres/datahub
-    DPP_BASE_PATH=/pipelines/
-    PKGSTORE_BUCKET=${PACKAGESTORE_BUCKET_NAME}
-    AWS_ACCESS_KEY_ID=${OBJECT_STORAGE_ACCESS_KEY}
-    AWS_SECRET_ACCESS_KEY=${OBJECT_STORAGE_SECRET_KEY}
+    VIRTUAL_HOST: ${DOMAIN_API}/pipelines/*
+    SOURCESPEC_REGISTRY_DB_ENGINE: postgresql://datahub@postgres/datahub
+    DPP_BASE_PATH: /pipelines/
+    PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
+    AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
   image: 'datopian/assembler:latest'
 specstore:
   autoredeploy: true
