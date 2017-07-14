@@ -30,7 +30,7 @@ auth:
     - "8000"
   target_num_containers: 1
   environment:
-      VIRTUAL_HOST: ${DOMAIN_API}/auth/*
+    VIRTUAL_HOST: ${DOMAIN_API}/auth/*
     GUNICORN_PORT: 8000
     DATABASE_URL: "postgresql://datahub@postgres/datahub"
     EXTERNAL_ADDRESS: ${DOMAIN_API}
