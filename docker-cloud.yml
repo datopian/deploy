@@ -89,4 +89,19 @@ specstore:
   expose:
     - '8000'
   image: 'datopian/specstore:latest'
-
+elasticsearch:
+  autoredeploy: true
+  image: 'elasticsearch:latest'
+  restart: always
+metastore:
+  autoredeploy: true
+  restart: always
+  links:
+    - elasticsearch
+  environment:
+    VIRTUAL_HOST: ${DOMAIN_API}/metastore/*
+    DATAHUB_ELASTICSEARCH_ADDRESS: elasticsearch:9200
+    PRIVATE_KEY:
+  expose:
+    - '8000'
+  image: 'datopian/metastore:latest'
