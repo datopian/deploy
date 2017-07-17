@@ -24,15 +24,13 @@ auth:
   autoredeploy: true
   restart: always
   image: datopian/auth
-  links:
-    - postgres
   ports:
     - "8000"
   target_num_containers: 1
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/auth/*
     GUNICORN_PORT: 8000
-    DATABASE_URL: "postgresql://datahub@postgres/datahub"
+    DATABASE_URL: ${RDS_DATABASE_URI}
     EXTERNAL_ADDRESS: ${DOMAIN_API}
     PRIVATE_KEY:
     PUBLIC_KEY:
@@ -40,16 +38,6 @@ auth:
     GOOGLE_SECRET:
     GITHUB_KEY:
     GITHUB_SECRET:
-postgres:
-  autoredeploy: true
-  restart: always
-  image: postgres
-  target_num_containers: 1
-  ports:
-    - "5432"
-  environment:
-    POSTGRES_USER: "datahub"
-    POSTGRES_DB: "datahub"
 rawstore:
   autoredeploy: true
   restart: always
@@ -71,7 +59,7 @@ assembler:
   restart: always
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/pipelines/*
-    SOURCESPEC_REGISTRY_DB_ENGINE: postgresql://datahub@postgres/datahub
+    SOURCESPEC_REGISTRY_DB_ENGINE:  ${RDS_DATABASE_URI}
     DPP_BASE_PATH: /pipelines/
     PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
@@ -85,8 +73,7 @@ specstore:
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/source/*
     AUTH_SERVER: auth:8000
-    DATABASE_URL: postgresql://datahub@postgres/datahub
+    DATABASE_URL:  ${RDS_DATABASE_URI}
   expose:
     - '8000'
   image: 'datopian/specstore:latest'
-

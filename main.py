@@ -5,9 +5,10 @@ import os
 import subprocess
 import optparse
 import sys
-import time
+from time import sleep
 
 import boto3
+from botocore.exceptions import ClientError
 import dotenv
 
 
@@ -27,6 +28,16 @@ class Deployer(object):
             # we need stuff in the environment for docker
             os.environ.update(out)
         self.config = os.environ
+        self.rds_client = boto3.client(
+            'rds',
+            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
+            aws_secret_access_key=self.config['AWS_SECRET_KEY']
+        )
+        # Set the RDS_DATABASE_URI if instance created
+        try:
+            self._rds_exists()
+        except ClientError as e:
+            print(e.response['Error']['Message'])
 
     @property
     def stackname(self):
@@ -147,6 +158,89 @@ class Deployer(object):
                 }
             }
         )
+
+    def rds(self):
+        """Create an RDS instance and enable public access"""
+        try:
+            self._rds_create()
+            return self._rds_enable_public_access()
+        except Exception as e:
+            if 'DBInstanceAlreadyExists' in e.message:
+                print('RDS instance already exists - reusing')
+                return True
+            else:
+                print(e.message)
+                return False
+
+    def _rds_create(self):
+        """Boot an RDS instance"""
+
+        rds_instance = '%(PROJECT)s-%(STAGE)s' % self.config
+        self.rds_client.create_db_instance(
+            DBName=rds_instance.replace('-','_'),
+            DBInstanceIdentifier=rds_instance,
+            AllocatedStorage=10,
+            Engine='postgres',
+            MasterUsername=self.config['RDS_DATABASE_USERNAME'],
+            MasterUserPassword=self.config['RDS_DATABASE_PASSWORD'],
+            BackupRetentionPeriod=30,
+            Port=5432,
+            MultiAZ=False,
+            PubliclyAccessible=True,
+            DBInstanceClass='db.t2.micro'
+        )
+        self._rds_exists(wait=1500)
+
+
+    def _rds_exists(self, wait=0):
+        """Will check rds instance is already exists or not"""
+        rds_instance = '%(PROJECT)s-%(STAGE)s' % self.config
+        seconds = 0
+        while True:
+            response = self.rds_client.describe_db_instances(DBInstanceIdentifier=rds_instance)
+            instance = response['DBInstances'][0]
+            if instance['DBInstanceStatus'] == "available":
+                rds_uri = 'postgres://{user}:{password}@{endpoint}:{port}/{db}'\
+                    .format(
+                        user=self.config['RDS_DATABASE_USERNAME'],
+                        password=self.config['RDS_DATABASE_PASSWORD'],
+                        endpoint=instance['Endpoint']['Address'],
+                        port=5432,
+                        db=rds_instance.replace('-','_')
+                    )
+                self.config['RDS_DATABASE_URI'] = rds_uri
+                # print('RDS database URI: %s' % rds_uri)
+                break
+            print("%s: %d seconds elapsed" % (response['DBInstances'][0]['DBInstanceStatus'], seconds))
+            sleep(5)
+            seconds += 5
+            if seconds > wait:
+                return False
+        return True
+
+    def _rds_enable_public_access(self):
+        """Enable public access for RDS database """
+        client = boto3.client(
+            'ec2',
+            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
+            aws_secret_access_key=self.config['AWS_SECRET_KEY']
+        )
+        try:
+            client.authorize_security_group_ingress(
+                GroupId='sg-c20048bf',
+                IpProtocol="-1",
+                CidrIp="0.0.0.0/0",
+                FromPort=0,
+                ToPort=65535
+            )
+            return True
+        except Exception as e:
+            if 'InvalidPermission.Duplicate' in e.message:
+                print('the specified rule already exists')
+                return True
+            else:
+                print(e.message)
+                return False
 
 
 # ==============================================
