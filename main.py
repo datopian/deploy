@@ -28,7 +28,7 @@ class Deployer(object):
             # we need stuff in the environment for docker
             os.environ.update(out)
         self.config = os.environ
-        rds_uri = self.config.get('RDS_DATABASE_URI')
+        rds_uri = self.config.get('RDS_URI')
         if not rds_uri:
             print('Warning: RDS_DATABASE_URI is not set. please set, or run `python main.py rds`')
 
