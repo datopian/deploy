@@ -147,7 +147,7 @@ class Deployer(object):
             BucketLoggingStatus={
                 'LoggingEnabled': {
                     'TargetBucket': bucket + '.log',
-                    'TargetPrefix': self.config['RDS_INSTANCE']
+                    'TargetPrefix': '%(PROJECT)s-%(STAGE)s' % self.config
                 }
             }
         )
@@ -174,7 +174,7 @@ class Deployer(object):
     def _rds_create(self, client):
         """Boot an RDS instance"""
 
-        rds_instance = self.config['RDS_INSTANCE']
+        rds_instance = '%(PROJECT)s-%(STAGE)s' % self.config
         client.create_db_instance(
             DBName=rds_instance.replace('-','_'),
             DBInstanceIdentifier=rds_instance,
@@ -193,7 +193,7 @@ class Deployer(object):
 
     def _rds_exists(self, client, wait=0):
         """Will check rds instance is already exists or not"""
-        rds_instance = self.config['RDS_INSTANCE']
+        rds_instance = '%(PROJECT)s-%(STAGE)s' % self.config
         seconds = 0
         while True:
             response = client.describe_db_instances(DBInstanceIdentifier=rds_instance)
