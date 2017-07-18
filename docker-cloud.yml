@@ -16,7 +16,7 @@ proxy:
 frontend:
   autoredeploy: true
   restart: always
-  image: datopian/datahub-frontend:latest
+  image: datopian/frontend:latest
   ports:
     - "4000"
   environment:
