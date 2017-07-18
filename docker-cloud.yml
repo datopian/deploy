@@ -21,7 +21,9 @@ frontend:
     - "4000"
   environment:
     VIRTUAL_HOST: ${DOMAIN},https://${DOMAIN}
-    DATAHUB_API: https://${DOMAIN_API}
+    SITE_URL: https://${DOMAIN}
+    API_URL: https://${DOMAIN_API}
+    BITSTORE_URL: https://${PKGSTORE_BUCKET}
   tags:
     - ${PROJECT}-${STAGE}
 auth:
