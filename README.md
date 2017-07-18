@@ -42,8 +42,8 @@ python main.py docker
 
 Sometimes this times out on the redeploy as the update hasn't finished. In that case just run:
 
+Note: Node cluster with tag name ${PROJECT}-${STAGE} should exist on docker-cloud
 
 ```
 python main.py docker_deploy
 ```
-

@@ -11,6 +11,8 @@ proxy:
     - '80:80'
   roles:
     - global
+  tags:
+    - ${PROJECT}-${STAGE}
 frontend:
   autoredeploy: true
   restart: always
@@ -20,6 +22,8 @@ frontend:
   environment:
     VIRTUAL_HOST: ${DOMAIN},https://${DOMAIN}
     DATAHUB_API: https://${DOMAIN_API}
+  tags:
+    - ${PROJECT}-${STAGE}
 auth:
   autoredeploy: true
   restart: always
@@ -38,6 +42,8 @@ auth:
     GOOGLE_SECRET:
     GITHUB_KEY:
     GITHUB_SECRET:
+  tags:
+    - ${PROJECT}-${STAGE}
 rawstore:
   autoredeploy: true
   restart: always
@@ -54,6 +60,8 @@ rawstore:
     STORAGE_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
     STORAGE_BUCKET_NAME: ${RAWSTORE_BUCKET}
     STORAGE_PATH_PATTERN: '{md5}'
+  tags:
+    - ${PROJECT}-${STAGE}
 assembler:
   autoredeploy: true
   restart: always
@@ -65,6 +73,8 @@ assembler:
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
   image: 'datopian/assembler:latest'
+  tags:
+    - ${PROJECT}-${STAGE}
 specstore:
   autoredeploy: true
   restart: always
@@ -77,3 +87,5 @@ specstore:
   expose:
     - '8000'
   image: 'datopian/specstore:latest'
+  tags:
+    - ${PROJECT}-${STAGE}
