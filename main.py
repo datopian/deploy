@@ -28,16 +28,9 @@ class Deployer(object):
             # we need stuff in the environment for docker
             os.environ.update(out)
         self.config = os.environ
-        self.rds_client = boto3.client(
-            'rds',
-            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
-            aws_secret_access_key=self.config['AWS_SECRET_KEY']
-        )
-        # Set the RDS_DATABASE_URI if instance created
-        try:
-            self._rds_exists()
-        except ClientError as e:
-            print(e.response['Error']['Message'])
+        rds_uri = self.config.get('RDS_DATABASE_URI')
+        if not rds_uri:
+            print('Warning: RDS_DATABASE_URI is not set. please set, or run `python main.py rds`')
 
     @property
     def stackname(self):
@@ -154,29 +147,35 @@ class Deployer(object):
             BucketLoggingStatus={
                 'LoggingEnabled': {
                     'TargetBucket': bucket + '.log',
-                    'TargetPrefix': '%(PROJECT)s-%(STAGE)s' % self.config
+                    'TargetPrefix': self.config['RDS_INSTANCE']
                 }
             }
         )
 
     def rds(self):
         """Create an RDS instance and enable public access"""
+        client = boto3.client(
+            'rds',
+            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
+            aws_secret_access_key=self.config['AWS_SECRET_KEY']
+        )
         try:
-            self._rds_create()
+            self._rds_create(client)
             return self._rds_enable_public_access()
         except Exception as e:
             if 'DBInstanceAlreadyExists' in e.message:
                 print('RDS instance already exists - reusing')
+                self._rds_exists(client)
                 return True
             else:
                 print(e.message)
                 return False
 
-    def _rds_create(self):
+    def _rds_create(self, client):
         """Boot an RDS instance"""
 
-        rds_instance = '%(PROJECT)s-%(STAGE)s' % self.config
-        self.rds_client.create_db_instance(
+        rds_instance = self.config['RDS_INSTANCE']
+        client.create_db_instance(
             DBName=rds_instance.replace('-','_'),
             DBInstanceIdentifier=rds_instance,
             AllocatedStorage=10,
@@ -189,15 +188,15 @@ class Deployer(object):
             PubliclyAccessible=True,
             DBInstanceClass='db.t2.micro'
         )
-        self._rds_exists(wait=1500)
+        self._rds_exists(client, wait=1500)
 
 
-    def _rds_exists(self, wait=0):
+    def _rds_exists(self, client, wait=0):
         """Will check rds instance is already exists or not"""
-        rds_instance = '%(PROJECT)s-%(STAGE)s' % self.config
+        rds_instance = self.config['RDS_INSTANCE']
         seconds = 0
         while True:
-            response = self.rds_client.describe_db_instances(DBInstanceIdentifier=rds_instance)
+            response = client.describe_db_instances(DBInstanceIdentifier=rds_instance)
             instance = response['DBInstances'][0]
             if instance['DBInstanceStatus'] == "available":
                 rds_uri = 'postgres://{user}:{password}@{endpoint}:{port}/{db}'\
@@ -209,7 +208,7 @@ class Deployer(object):
                         db=rds_instance.replace('-','_')
                     )
                 self.config['RDS_DATABASE_URI'] = rds_uri
-                # print('RDS database URI: %s' % rds_uri)
+                print('Please set RDS_DATABASE_URI in your .env file:\n%s' % rds_uri)
                 break
             print("%s: %d seconds elapsed" % (response['DBInstances'][0]['DBInstanceStatus'], seconds))
             sleep(5)
@@ -236,7 +235,7 @@ class Deployer(object):
             return True
         except Exception as e:
             if 'InvalidPermission.Duplicate' in e.message:
-                print('the specified rule already exists')
+                print('The specified rule already exists')
                 return True
             else:
                 print(e.message)
