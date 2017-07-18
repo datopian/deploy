@@ -175,13 +175,15 @@ class Deployer(object):
         """Boot an RDS instance"""
 
         rds_instance = '%(PROJECT)s-%(STAGE)s' % self.config
+        while not self.config.get('RDS_PASSWORD'):
+            self.config['RDS_PASSWORD'] = raw_input('Please enter password for RDS: ')
         client.create_db_instance(
             DBName=rds_instance.replace('-','_'),
             DBInstanceIdentifier=rds_instance,
             AllocatedStorage=10,
             Engine='postgres',
-            MasterUsername=self.config['RDS_DATABASE_USERNAME'],
-            MasterUserPassword=self.config['RDS_DATABASE_PASSWORD'],
+            MasterUsername=self.config['PROJECT'],
+            MasterUserPassword=self.config['RDS_PASSWORD'],
             BackupRetentionPeriod=30,
             Port=5432,
             MultiAZ=False,
@@ -199,10 +201,10 @@ class Deployer(object):
             response = client.describe_db_instances(DBInstanceIdentifier=rds_instance)
             instance = response['DBInstances'][0]
             if instance['DBInstanceStatus'] == "available":
-                rds_uri = 'postgres://{user}:{password}@{endpoint}:{port}/{db}'\
+                rds_uri = 'postgresql://{user}:{password}@{endpoint}:{port}/{db}'\
                     .format(
-                        user=self.config['RDS_DATABASE_USERNAME'],
-                        password=self.config['RDS_DATABASE_PASSWORD'],
+                        user=self.config['PROJECT'],
+                        password=self.config.get('RDS_PASSWORD', '<Replace this with Password>'),
                         endpoint=instance['Endpoint']['Address'],
                         port=5432,
                         db=rds_instance.replace('-','_')

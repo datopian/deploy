@@ -30,7 +30,7 @@ auth:
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/auth/*
     GUNICORN_PORT: 8000
-    DATABASE_URL: ${RDS_DATABASE_URI}
+    DATABASE_URL: ${RDS_URI}
     EXTERNAL_ADDRESS: ${DOMAIN_API}
     PRIVATE_KEY:
     PUBLIC_KEY:
@@ -59,7 +59,7 @@ assembler:
   restart: always
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/pipelines/*
-    SOURCESPEC_REGISTRY_DB_ENGINE:  ${RDS_DATABASE_URI}
+    SOURCESPEC_REGISTRY_DB_ENGINE:  ${RDS_URI}
     DPP_BASE_PATH: /pipelines/
     PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
@@ -73,7 +73,7 @@ specstore:
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/source/*
     AUTH_SERVER: auth:8000
-    DATABASE_URL:  ${RDS_DATABASE_URI}
+    DATABASE_URL:  ${RDS_URI}
   expose:
     - '8000'
   image: 'datopian/specstore:latest'
