@@ -30,7 +30,7 @@ class Deployer(object):
         self.config = os.environ
         rds_uri = self.config.get('RDS_URI')
         if not rds_uri:
-            print('Warning: RDS_DATABASE_URI is not set. please set, or run `python main.py rds`')
+            print('Warning: RDS_URI is not set. please set, or run `python main.py rds`')
 
     @property
     def stackname(self):
@@ -209,8 +209,8 @@ class Deployer(object):
                         port=5432,
                         db=rds_instance.replace('-','_')
                     )
-                self.config['RDS_DATABASE_URI'] = rds_uri
-                print('Please set RDS_DATABASE_URI in your .env file:\n%s' % rds_uri)
+                self.config['RDS_URI'] = rds_uri
+                print('Please set RDS_URI in your .env file:\n%s' % rds_uri)
                 break
             print("%s: %d seconds elapsed" % (response['DBInstances'][0]['DBInstanceStatus'], seconds))
             sleep(5)
