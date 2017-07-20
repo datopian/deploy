@@ -6,10 +6,13 @@ import subprocess
 import optparse
 import sys
 from time import sleep
+import datetime
 
 import boto3
 from botocore.exceptions import ClientError
 import dotenv
+import psycopg2 
+import jwt
 
 
 class Deployer(object):
@@ -242,8 +245,28 @@ class Deployer(object):
             else:
                 print(e.message)
                 return False
-
-
+    
+    def create_user(self):
+        try:
+            con = psycopg2.connect(self.config['RDS_URI']) 
+            cur = con.cursor()
+            cur.execute("insert into users values ('core', 'core', 'core', 'Core Datasets', 'datasets@okfn.org', '', '%s')" % datetime.datetime.now())       
+            con.commit()   
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if con is not None:
+                con.close()
+                
+    def generate_token_for_user(self, userid='core'):
+        ret = {
+            "userid": userid,
+            "permissions": "*",
+            "service": "world"
+        }
+        token = jwt.encode(ret, self.config['PRIVATE_KEY'], algorithm='RS256').decode('ascii')
+        return token
+        
 # ==============================================
 # CLI
 
