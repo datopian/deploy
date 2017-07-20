@@ -267,7 +267,7 @@ class Deployer(object):
             "permissions": "*",
             "service": "world"
         }
-        token = jwt.encode(ret, self.config['PRIVATE_KEY'], algorithm='RS256').decode('ascii')
+        token = jwt.encode(ret, self.config['PRIVATE_KEY'])
         print(token)
         
 # ==============================================
