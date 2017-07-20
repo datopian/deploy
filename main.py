@@ -246,7 +246,8 @@ class Deployer(object):
                 print(e.message)
                 return False
     
-    def create_user(self):
+    def user_create(self, userid='core'):
+        '''Create user in the database directly.'''
         try:
             con = psycopg2.connect(self.config['RDS_URI']) 
             cur = con.cursor()
@@ -258,14 +259,16 @@ class Deployer(object):
             if con is not None:
                 con.close()
                 
-    def generate_token_for_user(self, userid='core'):
+    def user_token(self, userid='core'):
+        '''Generate an authorization token for user with userid supplied on cli (defaults to core)
+        '''
         ret = {
             "userid": userid,
             "permissions": "*",
             "service": "world"
         }
         token = jwt.encode(ret, self.config['PRIVATE_KEY'], algorithm='RS256').decode('ascii')
-        return token
+        print(token)
         
 # ==============================================
 # CLI
