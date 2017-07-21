@@ -61,7 +61,7 @@ rawstore:
     STORAGE_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
     STORAGE_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
     STORAGE_BUCKET_NAME: ${RAWSTORE_BUCKET}
-    STORAGE_PATH_PATTERN: '{md5}'
+    STORAGE_PATH_PATTERN: '{md5_hex}{extension}'
   tags:
     - ${PROJECT}-${STAGE}
 assembler:
