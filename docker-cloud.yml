@@ -69,6 +69,8 @@ rawstore:
 assembler:
   autoredeploy: true
   restart: always
+  links:
+    - elasticsearch
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/pipelines/*
     SOURCESPEC_REGISTRY_DB_ENGINE:  ${RDS_URI}
@@ -76,6 +78,7 @@ assembler:
     PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
+    DPP_ELASTICSEARCH: elasticsearch:9200
   image: 'datopian/assembler:latest'
   tags:
     - ${PROJECT}-${STAGE}
