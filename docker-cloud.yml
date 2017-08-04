@@ -107,13 +107,14 @@ resolver:
   tags:
     - ${PROJECT}-${STAGE}
 elasticsearch:
-  autoredeploy: true
+  autoredeploy: false
   restart: always
-  image: 'elasticsearch:latest'
+  image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
   ports:
-    - "9200"
+    - "9200:9200"
   environment:
-    ES_JAVA_OPTS: -Xms120m -Xmx120m
+    - xpack.security.enabled=false
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
   tags:
     - ${PROJECT}-${STAGE}
 metastore:
