@@ -130,3 +130,12 @@ metastore:
     PRIVATE_KEY:
   tags:
     - ${PROJECT}-${STAGE}
+# so we can ssh in and fix ElasticSearch vm.max_map_count
+authorizedkeys:
+  image: dockercloud/authorizedkeys
+  deployment_strategy: every_node
+  autodestroy: always
+  environment:
+    - AUTHORIZED_KEYS=${ADMIN_KEY}
+  volumes:
+    - /root:/user:rw
