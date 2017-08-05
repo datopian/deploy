@@ -2,3 +2,5 @@ boto3
 python-dotenv
 psycopg2
 pyjwt
+python-dockercloud
+requests
