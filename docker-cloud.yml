@@ -87,10 +87,12 @@ specstore:
   restart: always
   links:
     - auth
+    - assembler
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/source/*
     AUTH_SERVER: auth:8000
     DATABASE_URL:  ${RDS_URI}
+    DPP_URL: 'http://assembler:5000/pipelines/'
   expose:
     - '8000'
   image: 'datopian/specstore:latest'
