@@ -11,7 +11,7 @@ import datetime
 import boto3
 from botocore.exceptions import ClientError
 import dotenv
-import psycopg2 
+import psycopg2
 import jwt
 
 
@@ -245,20 +245,117 @@ class Deployer(object):
             else:
                 print(e.message)
                 return False
-    
+
+    def elasticsearch(self):
+        '''Create AWS elasticsearch Domain
+        '''
+        client = boto3.client(
+            'es',
+            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
+            aws_secret_access_key=self.config['AWS_SECRET_KEY']
+        )
+        message = 'Please provide Docker Node IP'
+        message += '\nTo get node IP run:'
+        message += '\ndocker-cloud node ls\ndocker-cloud node inspect UUID\n'
+        node_ip = raw_input(message)
+        self.config.update(node_ip=node_ip)
+        client.create_elasticsearch_domain(
+            DomainName= '%(PROJECT)s-%(STAGE)s' % self.config,
+            ElasticsearchVersion='5.3',
+            ElasticsearchClusterConfig={
+                'InstanceType': 't2.small.elasticsearch',
+                'InstanceCount': 1,
+                'DedicatedMasterEnabled': False,
+                'ZoneAwarenessEnabled': False
+            },
+            AccessPolicies= '''{
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "AWS": "*"
+                      },
+                      "Action": [
+                        "es:*"
+                      ],
+                      "Condition": {
+                        "IpAddress": {
+                          "aws:SourceIp": [
+                            "%(node_ip)s"
+                          ]
+                        }
+                      },
+                      "Resource": "arn:aws:es:us-east-1:280736841384:domain/%(PROJECT)s-%(STAGE)s/*"
+                    }
+                ]
+            }''' % self.config,
+            EBSOptions={
+                'EBSEnabled': True,
+                'VolumeType': 'standard',
+                'VolumeSize': 10
+            }
+        )
+        status  = self._check_es_status(client, process='creating', wait=1500)
+
+        if status:
+            print('Making sure everything is ok.\nThis will take 30 seconds')
+            sleep(30)
+            response = client.describe_elasticsearch_domain(
+                DomainName= '%(PROJECT)s-%(STAGE)s' % self.config
+            )
+            print('Elastic Search Domain has been created successfully!')
+            print('Endpoint: %s' % response['DomainStatus']['Endpoint'])
+            return True
+        return False
+
+    def elasticsearch_destroy(self):
+        '''Delete AWS elasticsearch Domain
+        '''
+        client = boto3.client(
+            'es',
+            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
+            aws_secret_access_key=self.config['AWS_SECRET_KEY']
+        )
+        response = client.delete_elasticsearch_domain(
+            DomainName= '%(PROJECT)s-%(STAGE)s' % self.config
+        )
+        self._check_es_status(client, process='deleting', wait=1500)
+        return True
+
+    def _check_es_status(self, client, process='creating', wait=0):
+        seconds = 0
+        while True:
+            try:
+                response = client.describe_elasticsearch_domain(
+                    DomainName= '%(PROJECT)s-%(STAGE)s' % self.config
+                )
+            except ClientError as ex:
+                if ex.response['Error']['Code'] == 'ResourceNotFoundException':
+                    print('Elastic Search Domain deleted successfully!')
+                    break
+            if not response['DomainStatus']['Processing']:
+                break
+            print("%d seconds elapsed - %s..." % (seconds, process))
+            sleep(5)
+            seconds += 5
+            if seconds > wait:
+                return False
+        return True
+
     def user_create(self, userid='core'):
         '''Create user in the database directly.'''
         try:
-            con = psycopg2.connect(self.config['RDS_URI']) 
+            con = psycopg2.connect(self.config['RDS_URI'])
             cur = con.cursor()
-            cur.execute("insert into users values ('core', 'core', 'core', 'Core Datasets', 'datasets@okfn.org', '', '%s')" % datetime.datetime.now())       
-            con.commit()   
+            cur.execute("insert into users values ('core', 'core', 'core', 'Core Datasets', 'datasets@okfn.org', '', '%s')" % datetime.datetime.now())
+            con.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
             if con is not None:
                 con.close()
-                
+
     def user_token(self, userid='core'):
         '''Generate an authorization token for user with userid supplied on cli (defaults to core)
         '''
@@ -269,7 +366,7 @@ class Deployer(object):
         }
         token = jwt.encode(ret, self.config['PRIVATE_KEY'])
         print(token)
-        
+
 # ==============================================
 # CLI
 
