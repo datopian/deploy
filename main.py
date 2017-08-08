@@ -12,7 +12,7 @@ from urlparse import urljoin
 import boto3
 from botocore.exceptions import ClientError
 import dotenv
-import psycopg2 
+import psycopg2
 import jwt
 import dockercloud
 import requests
@@ -248,20 +248,117 @@ class Deployer(object):
             else:
                 print(e.message)
                 return False
-    
+
+    def elasticsearch(self):
+        '''Create AWS elasticsearch Domain
+        '''
+        client = boto3.client(
+            'es',
+            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
+            aws_secret_access_key=self.config['AWS_SECRET_KEY']
+        )
+        message = 'Please provide Docker Node IP'
+        message += '\nTo get node IP run:'
+        message += '\ndocker-cloud node ls\ndocker-cloud node inspect UUID\n'
+        node_ip = raw_input(message)
+        self.config.update(node_ip=node_ip)
+        client.create_elasticsearch_domain(
+            DomainName= '%(PROJECT)s-%(STAGE)s' % self.config,
+            ElasticsearchVersion='5.3',
+            ElasticsearchClusterConfig={
+                'InstanceType': 't2.small.elasticsearch',
+                'InstanceCount': 1,
+                'DedicatedMasterEnabled': False,
+                'ZoneAwarenessEnabled': False
+            },
+            AccessPolicies= '''{
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "AWS": "*"
+                      },
+                      "Action": [
+                        "es:*"
+                      ],
+                      "Condition": {
+                        "IpAddress": {
+                          "aws:SourceIp": [
+                            "%(node_ip)s"
+                          ]
+                        }
+                      },
+                      "Resource": "arn:aws:es:us-east-1:280736841384:domain/%(PROJECT)s-%(STAGE)s/*"
+                    }
+                ]
+            }''' % self.config,
+            EBSOptions={
+                'EBSEnabled': True,
+                'VolumeType': 'standard',
+                'VolumeSize': 10
+            }
+        )
+        status  = self._check_es_status(client, process='creating', wait=1500)
+
+        if status:
+            print('Making sure everything is ok.\nThis will take 30 seconds')
+            sleep(30)
+            response = client.describe_elasticsearch_domain(
+                DomainName= '%(PROJECT)s-%(STAGE)s' % self.config
+            )
+            print('Elastic Search Domain has been created successfully!')
+            print('Endpoint: %s' % response['DomainStatus']['Endpoint'])
+            return True
+        return False
+
+    def elasticsearch_destroy(self):
+        '''Delete AWS elasticsearch Domain
+        '''
+        client = boto3.client(
+            'es',
+            aws_access_key_id=self.config['AWS_ACCESS_KEY'],
+            aws_secret_access_key=self.config['AWS_SECRET_KEY']
+        )
+        response = client.delete_elasticsearch_domain(
+            DomainName= '%(PROJECT)s-%(STAGE)s' % self.config
+        )
+        self._check_es_status(client, process='deleting', wait=1500)
+        return True
+
+    def _check_es_status(self, client, process='creating', wait=0):
+        seconds = 0
+        while True:
+            try:
+                response = client.describe_elasticsearch_domain(
+                    DomainName= '%(PROJECT)s-%(STAGE)s' % self.config
+                )
+            except ClientError as ex:
+                if ex.response['Error']['Code'] == 'ResourceNotFoundException':
+                    print('Elastic Search Domain deleted successfully!')
+                    break
+            if not response['DomainStatus']['Processing']:
+                break
+            print("%d seconds elapsed - %s..." % (seconds, process))
+            sleep(5)
+            seconds += 5
+            if seconds > wait:
+                return False
+        return True
+
     def user_create(self, userid='core'):
         '''Create user in the database directly.'''
         try:
-            con = psycopg2.connect(self.config['RDS_URI']) 
+            con = psycopg2.connect(self.config['RDS_URI'])
             cur = con.cursor()
-            cur.execute("insert into users values ('core', 'core', 'core', 'Core Datasets', 'datasets@okfn.org', '', '%s')" % datetime.datetime.now())       
-            con.commit()   
+            cur.execute("insert into users values ('core', 'core', 'core', 'Core Datasets', 'datasets@okfn.org', '', '%s')" % datetime.datetime.now())
+            con.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
             if con is not None:
                 con.close()
-                
+
     def user_token(self, userid='core'):
         '''Generate an authorization token for user with userid supplied on cli (defaults to core)
         '''
@@ -306,10 +403,10 @@ class Deployer(object):
             
         url_auth_update = urljoin(api_base_url, 'auth/update')
         data = '''
-            {
-        "Auth-Token": "test",
-        "username": "test"
-            }
+        {
+          "Auth-Token": "test",
+          "username": "test"
+        }
         '''
         response = requests.post(url_auth_update, data)
         assert (response.status_code == 200)
@@ -334,56 +431,57 @@ class Deployer(object):
         url_home = urljoin(api_base_url, '/')
         response = requests.get(url_home)
         assert (response.status_code == 200)
-        print("Home page - successfull connected")
+        print("Home page - successfully connected")
         # Showcase page
         url_showpage = urljoin(api_base_url, 'core/co2-ppm')
         response = requests.get(url_showpage)
         assert (response.status_code == 200)
-        print("Showcase page - successfull connected")
+        print("Showcase page - successfully connected")
         # Search page
         # include query string
-        url_search = urljoin(api_base_url, 'search')
+        url_search = urljoin(api_base_url, 'search?q=co2')
         response = requests.get(url_search)
         assert (response.status_code == 200)
-        print("Search page - successfull connected")
+        print("Search page - successfully connected")
         # Pricing page
         url_pricing = urljoin(api_base_url, 'pricing')
         response = requests.get(url_pricing)
         assert (response.status_code == 200)
-        print("Pricing page - successfull connected")
+        print("Pricing page - successfully connected")
         # Owner page
         url_owner = urljoin(api_base_url, 'core')
         response = requests.get(url_owner)
         assert (response.status_code == 200)
-        print("Owner page for valid publisher - successfull connected")
+        print("Owner page for valid publisher - successfully connected")
         
-        url_owner = urljoin(api_base_url, 'dore')
+        url_owner = urljoin(api_base_url, 'getsdfrbdbgrge')
         response = requests.get(url_owner)
         assert (response.status_code == 404)
-        print("Owner page for invalid publisher - successfull connected")
+        print("Owner page for invalid publisher - successfully connected")
         # Logout page
         url_logout = urljoin(api_base_url, 'logout')
         response = requests.get(url_logout)
         assert (response.status_code == 200)
         
-        print("Logout page - successfull connected")
+        print("Logout page - successfully connected")
         # Login page
         url_login = urljoin(api_base_url, 'login')
         response = requests.get(url_login)
         assert (response.status_code == 200)
-        print("Login page - successfull connected")
+        print("Login page - successfully connected")
         # Dashboard page
         url_dashboard = urljoin(api_base_url, 'dashboard')
         cookies = dict(cookies=invalid_token)
         response = requests.get(url_dashboard, cookies=cookies)
         assert (response.status_code == 404)
-        print("Dashboard page without cookie - successfull connected")
+        print("Dashboard page without cookies - successfully connected")
         
         cookies = dict(cookies=valid_token)
         response = requests.get(url_dashboard, cookies=cookies)
         assert (response.status_code == 200)
-        print("Dashboard page with cookie - successfull connected")
+        print("Dashboard page with cookies - successfully connected")
         
+
 # ==============================================
 # CLI
 
