@@ -7,12 +7,15 @@ import optparse
 import sys
 from time import sleep
 import datetime
+from urlparse import urljoin
 
 import boto3
 from botocore.exceptions import ClientError
 import dotenv
 import psycopg2
 import jwt
+import dockercloud
+import requests
 
 
 class Deployer(object):
@@ -366,6 +369,118 @@ class Deployer(object):
         }
         token = jwt.encode(ret, self.config['PRIVATE_KEY'])
         print(token)
+    
+    def check_docker(self):
+        '''Check docker services status'''
+        dockercloud.user = self.config['DOCKERCLOUD_USER']
+        dockercloud.apikey = self.config['DOCKERCLOUD_APIKEY']
+        dockercloud.namespace = self.config['DOCKERCLOUD_NAMESPACE']
+        d = dockercloud.Service.list()
+        for service in d:
+            print(service.name + " : " + service.state)
+            
+    def check_apis(self):
+        ''' Check API call for all services'''
+        valid_token = self.config['JWT_TOKEN']
+        invalid_token = 'ivalid_token'
+        api_base_url = 'http://' + self.config['DOMAIN_API'] 
+        # Auth service
+        url_auth_authorize = urljoin(api_base_url,'auth/authorize')
+        response = requests.get(url_auth_authorize)
+        assert (response.status_code == 200)
+        print("Get permission for a service - successfull connected")
+        url_auth_check = urljoin(api_base_url, 'auth/check')
+        response = requests.get(url_auth_check, headers={'Auth-Token': valid_token})
+        assert (response.status_code == 200) 
+        if "true" in response.text:
+            print("Check an authentication token's validity for VALID token - successfull connected")
+        
+        url_auth_check = urljoin(api_base_url, 'auth/check')
+        response = requests.get(url_auth_check, headers={'Auth-Token': invalid_token})
+        assert (response.status_code == 200)
+        if "false" in response.text:
+            print("Check an authentication token's validity for INVALID token - successfull connected")
+            
+        url_auth_update = urljoin(api_base_url, 'auth/update')
+        data = '''
+        {
+          "Auth-Token": "test",
+          "username": "test"
+        }
+        '''
+        response = requests.post(url_auth_update, data)
+        assert (response.status_code == 200)
+        print("Change the username - successfully connected")
+        
+        url_auth_public_key = urljoin(api_base_url, 'auth/public-key')
+        response = requests.get(url_auth_public_key)
+        assert (response.status_code == 200)
+        print("Receive authorization public key - successfully connected")
+        # Metastore service   
+        url_metastore_search = urljoin(api_base_url, 'metastore/search')
+        response = requests.get(url_metastore_search)
+        assert (response.status_code == 200)
+        print("Metastore search service - successfully connected")
+        
+    def check_frontend(self):
+        ''' Check fronend API'''
+        valid_token = self.config['JWT_TOKEN']
+        invalid_token = 'ivalid_token'
+        api_base_url = 'http://' + self.config['DOMAIN'] 
+        # Home page
+        url_home = urljoin(api_base_url, '/')
+        response = requests.get(url_home)
+        assert (response.status_code == 200)
+        print("Home page - successfully connected")
+        # Showcase page
+        url_showpage = urljoin(api_base_url, 'core/co2-ppm')
+        response = requests.get(url_showpage)
+        assert (response.status_code == 200)
+        print("Showcase page - successfully connected")
+        # Search page
+        # include query string
+        url_search = urljoin(api_base_url, 'search?q=co2')
+        response = requests.get(url_search)
+        assert (response.status_code == 200)
+        print("Search page - successfully connected")
+        # Pricing page
+        url_pricing = urljoin(api_base_url, 'pricing')
+        response = requests.get(url_pricing)
+        assert (response.status_code == 200)
+        print("Pricing page - successfully connected")
+        # Owner page
+        url_owner = urljoin(api_base_url, 'core')
+        response = requests.get(url_owner)
+        assert (response.status_code == 200)
+        print("Owner page for valid publisher - successfully connected")
+        
+        url_owner = urljoin(api_base_url, 'getsdfrbdbgrge')
+        response = requests.get(url_owner)
+        assert (response.status_code == 404)
+        print("Owner page for invalid publisher - successfully connected")
+        # Logout page
+        url_logout = urljoin(api_base_url, 'logout')
+        response = requests.get(url_logout)
+        assert (response.status_code == 200)
+        
+        print("Logout page - successfully connected")
+        # Login page
+        url_login = urljoin(api_base_url, 'login')
+        response = requests.get(url_login)
+        assert (response.status_code == 200)
+        print("Login page - successfully connected")
+        # Dashboard page
+        url_dashboard = urljoin(api_base_url, 'dashboard')
+        cookies = dict(cookies=invalid_token)
+        response = requests.get(url_dashboard, cookies=cookies)
+        assert (response.status_code == 404)
+        print("Dashboard page without cookies - successfully connected")
+        
+        cookies = dict(cookies=valid_token)
+        response = requests.get(url_dashboard, cookies=cookies)
+        assert (response.status_code == 200)
+        print("Dashboard page with cookies - successfully connected")
+        
 
 # ==============================================
 # CLI
