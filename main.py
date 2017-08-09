@@ -423,9 +423,8 @@ class Deployer(object):
         print("Metastore search service - successfully connected")
         
     def check_frontend(self):
-        ''' Check fronend API'''
-        valid_token = self.config['JWT_TOKEN']
-        invalid_token = 'ivalid_token'
+        ''' Check frontend'''
+
         api_base_url = 'http://' + self.config['DOMAIN'] 
         # Home page
         url_home = urljoin(api_base_url, '/')
@@ -448,6 +447,7 @@ class Deployer(object):
         response = requests.get(url_pricing)
         assert (response.status_code == 200)
         print("Pricing page - successfully connected")
+
         # Owner page
         url_owner = urljoin(api_base_url, 'core')
         response = requests.get(url_owner)
@@ -469,17 +469,23 @@ class Deployer(object):
         response = requests.get(url_login)
         assert (response.status_code == 200)
         print("Login page - successfully connected")
+
         # Dashboard page
-        url_dashboard = urljoin(api_base_url, 'dashboard')
-        cookies = dict(cookies=invalid_token)
-        response = requests.get(url_dashboard, cookies=cookies)
-        assert (response.status_code == 404)
-        print("Dashboard page without cookies - successfully connected")
-        
-        cookies = dict(cookies=valid_token)
-        response = requests.get(url_dashboard, cookies=cookies)
-        assert (response.status_code == 200)
-        print("Dashboard page with cookies - successfully connected")
+        valid_token = self.config.get('JWT_TOKEN', '')
+        if valid_token:
+            invalid_token = 'ivalid_token'
+            url_dashboard = urljoin(api_base_url, 'dashboard')
+            cookies = dict(cookies=invalid_token)
+            response = requests.get(url_dashboard, cookies=cookies)
+            assert (response.status_code == 404)
+            print("Dashboard page without cookies - successfully connected")
+            
+            cookies = dict(cookies=valid_token)
+            response = requests.get(url_dashboard, cookies=cookies)
+            assert (response.status_code == 200)
+            print("Dashboard page with cookies - successfully connected")
+        else:
+            print('Skipping dashboard test as no login token')
         
 
 # ==============================================
