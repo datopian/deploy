@@ -25,6 +25,9 @@ Must be in the `.env` file like this:
 ```
 PUBLIC_KEY="----BEGIN PUBLIC KEY-----\n...\n..."
 ```
+### Env vars
+
+* `JWT_TOKEN` - authentication token
 
 ## Using
 
@@ -47,3 +50,10 @@ Note: Node cluster with tag name ${PROJECT}-${STAGE} should exist on docker-clou
 ```
 python main.py docker_deploy
 ```
+
+To check docker, API, frontend:
+```
+python main.py check
+```
+
+
