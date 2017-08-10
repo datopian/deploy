@@ -372,7 +372,10 @@ class Deployer(object):
     def check_docker(self):
         '''Check docker services status'''
         stack = 'docker-cloud stack inspect %s' % self.stackname
-        self._run(stack)
+        process= subprocess.Popen(stack.split(), stdout=subprocess.PIPE)
+        output, error = process.communicate()
+        output = output.split(',')
+        print(output[5])
         
     def check_apis(self):
         '''Check API call for all services'''
@@ -401,8 +404,9 @@ class Deployer(object):
         }
         '''
         response = requests.post(url_auth_update, data)
-        assert response.status_code == 200, "Change the username is unavailable"
-        print("Change the username - OK")
+        success = response.json()['success']
+        assert not success, "Username should not change with invalid token"
+        print("Not changing username with invalid token  - OK")
         url_auth_public_key = urljoin(api_base_url, 'auth/public-key')
         response = requests.get(url_auth_public_key)
         assert response.status_code == 200, "Receive authorization public key is unavailable"
@@ -456,14 +460,11 @@ class Deployer(object):
         # Dashboard page
         valid_token = self.config.get('JWT_TOKEN')
         if valid_token:
-            invalid_token = 'ivalid_token'
             url_dashboard = urljoin(api_base_url, 'dashboard')
-            cookies = dict(cookies=invalid_token)
-            response = requests.get(url_dashboard, cookies=cookies)
+            response = requests.get(url_dashboard)
             assert (response.status_code == 404)
             print("Dashboard page without token - OK")
-            
-            cookies = dict(cookies=valid_token)
+            cookies = dict(jwt=valid_token)
             response = requests.get(url_dashboard, cookies=cookies)
             assert response.status_code == 200, "Dashboard page with token is unavailable"
             print("Dashboard page with token - OK")
