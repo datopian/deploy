@@ -484,6 +484,52 @@ class Deployer(object):
         frontend = self.check_frontend()
         return docker, apis, frontend
         
+    def users_total(self):
+        '''Query number of users'''
+        try:
+            con = psycopg2.connect(self.config['RDS_URI'])
+            cur = con.cursor()
+            cur.execute("SELECT COUNT(*) FROM users")
+            con.commit()
+            result = cur.fetchone()
+            print("The number of users: %s" %result[0])
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        
+        finally:
+            if con is not None:
+                con.close()
+                
+    def users_last_day(self):
+        '''Query number of users for the last day'''
+        try:
+            con = psycopg2.connect(self.config['RDS_URI'])
+            cur = con.cursor()
+            cur.execute("SELECT COUNT(*) FROM users WHERE join_date > (NOW() - INTERVAL '24 hours')")
+            con.commit()
+            result = cur.fetchone()
+            print("Then number of users registered in last day: %s" %result[0])
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if con is not None:
+                con.close()
+                
+    def number_datasets(self):
+        '''Total number of datasets returned from metastore'''
+        valid_token = self.config['JWT_TOKEN']
+        api_base_url = 'https://' + self.config['DOMAIN_API']
+        if self.config['STAGE'] == "production":
+            api_base_url = api_base_url.replace('-%s'%self.config['STAGE'], '')
+        # Metastore service   
+        url_metastore_search = urljoin(api_base_url, 'metastore/search')
+        headers = {'Auth-Token': valid_token}
+        response = requests.get(url_metastore_search, headers=headers)
+        assert response.status_code == 200, "Metastore search service is unavailable"
+        test = response.text
+        test = json.loads(test)
+        print("Total number of datasest: %s" %test['total'])
+        
 # ==============================================
 # CLI
 
