@@ -8,6 +8,7 @@ import sys
 from time import sleep
 import datetime
 from urlparse import urljoin
+import json
 
 import boto3
 from botocore.exceptions import ClientError
@@ -374,8 +375,8 @@ class Deployer(object):
         stack = 'docker-cloud stack inspect %s' % self.stackname
         process= subprocess.Popen(stack.split(), stdout=subprocess.PIPE)
         output, error = process.communicate()
-        output = output.split(',')
-        print(output[5])
+        output = json.loads(output)
+        print("Docker status: %s" %output['state'])
         
     def check_apis(self):
         '''Check API call for all services'''
