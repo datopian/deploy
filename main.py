@@ -17,7 +17,6 @@ import jwt
 import dockercloud
 import requests
 
-
 class Deployer(object):
 
     def __init__(self, configfile='.env'):
@@ -372,35 +371,31 @@ class Deployer(object):
     
     def check_docker(self):
         '''Check docker services status'''
-        dockercloud.user = self.config['DOCKERCLOUD_USER']
-        dockercloud.apikey = self.config['DOCKERCLOUD_APIKEY']
-        dockercloud.namespace = self.config['DOCKERCLOUD_NAMESPACE']
-        d = dockercloud.Service.list()
-        for service in d:
-            print(service.name + " : " + service.state)
-            
+        stack = 'docker-cloud stack inspect %s' % self.stackname
+        process= subprocess.Popen(stack.split(), stdout=subprocess.PIPE)
+        output, error = process.communicate()
+        output = output.split(',')
+        print(output[5])
+        
     def check_apis(self):
-        ''' Check API call for all services'''
+        '''Check API call for all services'''
         valid_token = self.config['JWT_TOKEN']
-        invalid_token = 'ivalid_token'
-        api_base_url = 'http://' + self.config['DOMAIN_API'] 
+        api_base_url = 'https://' + self.config['DOMAIN_API']
+        if self.config['STAGE'] == "production":
+            api_base_url = api_base_url.replace('-%s'%self.config['STAGE'], '')
         # Auth service
         url_auth_authorize = urljoin(api_base_url,'auth/authorize')
         response = requests.get(url_auth_authorize)
-        assert (response.status_code == 200)
-        print("Get permission for a service - successfull connected")
-        url_auth_check = urljoin(api_base_url, 'auth/check')
-        response = requests.get(url_auth_check, headers={'Auth-Token': valid_token})
-        assert (response.status_code == 200) 
-        if "true" in response.text:
-            print("Check an authentication token's validity for VALID token - successfull connected")
-        
-        url_auth_check = urljoin(api_base_url, 'auth/check')
-        response = requests.get(url_auth_check, headers={'Auth-Token': invalid_token})
-        assert (response.status_code == 200)
-        if "false" in response.text:
-            print("Check an authentication token's validity for INVALID token - successfull connected")
-            
+        assert response.status_code == 200, "Get permission for a auth service is unavailable"
+        print("Get permission for a auth service - OK")
+        if valid_token:
+            url_auth_check = urljoin(api_base_url, 'auth/check')
+            response = requests.get(url_auth_check, headers={'Auth-Token': valid_token})
+            assert response.status_code == 200, "Check an authentication token's validity for VALID token is unavailable"
+            if "true" in response.text:
+                print("Check an authentication token's validity for VALID token - OK")
+        else:
+            print('Skipping Check an authentication token validity for VALID token')
         url_auth_update = urljoin(api_base_url, 'auth/update')
         data = '''
         {
@@ -409,85 +404,85 @@ class Deployer(object):
         }
         '''
         response = requests.post(url_auth_update, data)
-        assert (response.status_code == 200)
-        print("Change the username - successfully connected")
-        
+        success = response.json()['success']
+        assert not success, "Username should not change with invalid token"
+        print("Not changing username with invalid token  - OK")
         url_auth_public_key = urljoin(api_base_url, 'auth/public-key')
         response = requests.get(url_auth_public_key)
-        assert (response.status_code == 200)
-        print("Receive authorization public key - successfully connected")
+        assert response.status_code == 200, "Receive authorization public key is unavailable"
+        print("Receive authorization public key - OK")
         # Metastore service   
         url_metastore_search = urljoin(api_base_url, 'metastore/search')
         response = requests.get(url_metastore_search)
-        assert (response.status_code == 200)
-        print("Metastore search service - successfully connected")
-        
+        assert response.status_code == 200, "Metastore search service is unavailable"
+        print("Metastore search service - OK")
+    
     def check_frontend(self):
-        ''' Check frontend'''
-
-        api_base_url = 'http://' + self.config['DOMAIN'] 
+        '''Check frontend'''
+        api_base_url = 'https://' + self.config['DOMAIN']
+        if self.config['STAGE'] == "production":
+            api_base_url = 'https://' + self.config['DOMAIN_BASE'] 
         # Home page
         url_home = urljoin(api_base_url, '/')
         response = requests.get(url_home)
-        assert (response.status_code == 200)
-        print("Home page - successfully connected")
+        assert response.status_code == 200, "Home page is unavailable"
+        print("Home page - OK")
         # Showcase page
         url_showpage = urljoin(api_base_url, 'core/co2-ppm')
         response = requests.get(url_showpage)
-        assert (response.status_code == 200)
-        print("Showcase page - successfully connected")
+        assert response.status_code == 200, "Showcase page is unavailable"
+        print("Showcase page - OK")
         # Search page
         # include query string
         url_search = urljoin(api_base_url, 'search?q=co2')
         response = requests.get(url_search)
-        assert (response.status_code == 200)
-        print("Search page - successfully connected")
+        assert response.status_code == 200, "Search page is unavailable"
+        print("Search page - OK")
         # Pricing page
         url_pricing = urljoin(api_base_url, 'pricing')
         response = requests.get(url_pricing)
-        assert (response.status_code == 200)
-        print("Pricing page - successfully connected")
-
+        assert response.status_code == 200, "Pricing page is unavailable"
+        print("Pricing page - OK")
         # Owner page
         url_owner = urljoin(api_base_url, 'core')
         response = requests.get(url_owner)
-        assert (response.status_code == 200)
-        print("Owner page for valid publisher - successfully connected")
-        
+        assert response.status_code == 200, "Owner page for valid publisher is unavailable"
+        print("Owner page for valid publisher - OK")
         url_owner = urljoin(api_base_url, 'getsdfrbdbgrge')
         response = requests.get(url_owner)
-        assert (response.status_code == 404)
-        print("Owner page for invalid publisher - successfully connected")
+        assert response.status_code == 404, "Owner page for invalid publisher is unavailable"
+        print("Owner page for invalid publisher - OK")
         # Logout page
         url_logout = urljoin(api_base_url, 'logout')
         response = requests.get(url_logout)
-        assert (response.status_code == 200)
-        
-        print("Logout page - successfully connected")
-        # Login page
-        url_login = urljoin(api_base_url, 'login')
-        response = requests.get(url_login)
-        assert (response.status_code == 200)
-        print("Login page - successfully connected")
-
+        assert response.status_code == 200, "Logout page is unavailable"
+        print("Logout page - OK")
         # Dashboard page
-        valid_token = self.config.get('JWT_TOKEN', '')
+        valid_token = self.config.get('JWT_TOKEN')
         if valid_token:
-            invalid_token = 'ivalid_token'
             url_dashboard = urljoin(api_base_url, 'dashboard')
-            cookies = dict(cookies=invalid_token)
-            response = requests.get(url_dashboard, cookies=cookies)
+            response = requests.get(url_dashboard)
             assert (response.status_code == 404)
-            print("Dashboard page without cookies - successfully connected")
-            
-            cookies = dict(cookies=valid_token)
+            print("Dashboard page without token - OK")
+            cookies = dict(jwt=valid_token)
             response = requests.get(url_dashboard, cookies=cookies)
-            assert (response.status_code == 200)
-            print("Dashboard page with cookies - successfully connected")
+            assert response.status_code == 200, "Dashboard page with token is unavailable"
+            print("Dashboard page with token - OK")
         else:
             print('Skipping dashboard test as no login token')
+    
+    def check(self):
+        '''Check docker, API and services all together'''
+        print("Checking docker stack status...")
+        docker = self.check_docker()
+        print("\n")
+        print("Checking service API ...\n")
+        apis = self.check_apis()
+        print("\n")
+        print("Checking frontend pages...\n")
+        frontend = self.check_frontend()
+        return docker, apis, frontend
         
-
 # ==============================================
 # CLI
 

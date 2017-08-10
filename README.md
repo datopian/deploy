@@ -25,6 +25,14 @@ Must be in the `.env` file like this:
 ```
 PUBLIC_KEY="----BEGIN PUBLIC KEY-----\n...\n..."
 ```
+### Env vars
+
+* `JWT_TOKEN` - authentication token
+You can get it from `~/.datahub.json` file.
+* `DOMAIN_API` - base API
+* `STAGE` - e.g. testing, staging, production
+* `DOMAIN_BASE` - base domain to which prefixes are added such as `STAGE` and specific services
+* `DOMAIN` - `STAGE`.`DOMAIN_BASE`
 
 ## Using
 
@@ -47,3 +55,10 @@ Note: Node cluster with tag name ${PROJECT}-${STAGE} should exist on docker-clou
 ```
 python main.py docker_deploy
 ```
+
+To check docker, API, frontend:
+```
+python main.py check
+```
+
+
