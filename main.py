@@ -377,7 +377,7 @@ class Deployer(object):
     def check_apis(self):
         '''Check API call for all services'''
         valid_token = self.config['JWT_TOKEN']
-        api_base_url = 'http://' + self.config['DOMAIN_API']
+        api_base_url = 'https://' + self.config['DOMAIN_API']
         if self.config['STAGE'] == "production":
             api_base_url = api_base_url.replace('-%s'%self.config['STAGE'], '')
         # Auth service
@@ -415,9 +415,9 @@ class Deployer(object):
     
     def check_frontend(self):
         '''Check frontend'''
-        api_base_url = 'http://' + self.config['DOMAIN']
+        api_base_url = 'https://' + self.config['DOMAIN']
         if self.config['STAGE'] == "production":
-            api_base_url = 'http://' + self.config['DOMAIN_BASE'] 
+            api_base_url = 'https://' + self.config['DOMAIN_BASE'] 
         # Home page
         url_home = urljoin(api_base_url, '/')
         response = requests.get(url_home)
