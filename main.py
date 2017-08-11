@@ -508,7 +508,7 @@ class Deployer(object):
             cur.execute("SELECT COUNT(*) FROM users WHERE join_date > (NOW() - INTERVAL '24 hours')")
             con.commit()
             result = cur.fetchone()
-            print("Then number of users registered in last day: %s" %result[0])
+            print("The number of users registered in last day: %s" %result[0])
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
@@ -528,7 +528,7 @@ class Deployer(object):
         assert response.status_code == 200, "Metastore search service is unavailable"
         test = response.text
         test = json.loads(test)
-        print("Total number of datasest: %s" %test['total'])
+        print("Total number of datasets: %s" %test['total'])
         
 # ==============================================
 # CLI
