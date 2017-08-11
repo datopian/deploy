@@ -515,7 +515,7 @@ class Deployer(object):
             if con is not None:
                 con.close()
                 
-    def number_datasets(self):
+    def datasets_total(self):
         '''Total number of datasets returned from metastore'''
         valid_token = self.config['JWT_TOKEN']
         api_base_url = 'https://' + self.config['DOMAIN_API']
