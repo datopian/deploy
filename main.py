@@ -528,7 +528,7 @@ class Deployer(object):
         assert response.status_code == 200, "Metastore search service is unavailable"
         test = response.text
         test = json.loads(test)
-        print("Total number of datasets: %s" %test['total'])
+        print("Total number of datasets: %s" %test['summary'][ u'total'])
         
 # ==============================================
 # CLI
