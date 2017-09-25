@@ -516,7 +516,7 @@ class Deployer(object):
                 con.close()
                 
     def datasets_total(self):
-        '''Total number of datasets returned from metastore'''
+        '''Total number of datasets and bytes returned from metastore'''
         valid_token = self.config['JWT_TOKEN']
         api_base_url = 'https://' + self.config['DOMAIN_API']
         if self.config['STAGE'] == "production":
@@ -529,6 +529,7 @@ class Deployer(object):
         test = response.text
         test = json.loads(test)
         print("Total number of datasets: %s" %test['summary'][ u'total'])
+        print("Total number of bytes: %s" %test['summary'][ u'totalBytes'])
         
 # ==============================================
 # CLI
