@@ -66,25 +66,23 @@ rawstore:
     STORAGE_PATH_PATTERN: '{md5_hex}'
   tags:
     - ${PROJECT}-${STAGE}
-redis:
-  autoredeploy: false
-  restart: always
-  image: 'redis:3.2.11-alpine'
-  tags:
-    - ${PROJECT}-${STAGE}
 assembler:
-  autoredeploy: true
+  autoredeploy: false
   restart: always
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/pipelines/*
-    SOURCESPEC_REGISTRY_DB_ENGINE: ${RDS_URI}
+    SOURCESPEC_REGISTRY_DB_ENGINE:  ${RDS_URI}
     DPP_BASE_PATH: /pipelines/
     PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
     DPP_ELASTICSEARCH: ${ELASTICEARCH_URI}
-    DPP_REDIS_HOST: redis
   image: 'datopian/assembler:latest'
+  tags:
+    - ${STAGE}-assembler
+redis:
+  image: 'redis:3.2.11-alpine'
+  restart: always
   tags:
     - ${PROJECT}-${STAGE}
 specstore:
