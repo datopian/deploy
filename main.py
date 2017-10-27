@@ -528,7 +528,21 @@ class Deployer(object):
         assert response.status_code == 200, "Metastore search service is unavailable"
         test = response.text
         test = json.loads(test)
-        print("Total number of datasets: %s" %test['summary'][ u'total'])
+        try:
+            con = psycopg2.connect(self.config['RDS_URI'])
+            cur = con.cursor()
+            cur.execute("SELECT COUNT(*) FROM specs")
+            con.commit()
+            result = cur.fetchone()
+            print(result)
+            print("The total number of datasets: %s" %result[0])
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        
+        finally:
+            if con is not None:
+                con.close()
+        print("Number of published datasets: %s" %test['summary'][ u'total'])
         print("Total number of bytes: %s" %test['summary'][ u'totalBytes'])
         
 # ==============================================
