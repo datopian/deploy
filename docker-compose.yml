@@ -1,0 +1,151 @@
+version: '2'
+services:
+  proxy:
+    image: 'dockercloud/haproxy:latest'
+    links:
+      - frontend
+      - assembler
+      - auth
+      - rawstore
+      - specstore
+      - resolver
+      - metastore
+    ports:
+      - '80:80'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  frontend:
+    build: ../frontend
+    ports:
+      - "4000"
+    environment:
+      VIRTUAL_HOST: localhost,http://localhost
+      SITE_URL: http://localhost
+      API_URL: http://localhost
+      AUTH_URL: http://auth:8000/
+      BITSTORE_URL: http://motoserver:5000/pkgstore-bucket/
+      METASTORE_URL: http://metastore:8000/
+      RESOLVER_URL: http://resolver:8000/
+      FLOWMANAGER_URL: http://specstore:8000/
+
+  auth:
+    build: ../auth
+    restart: always
+    ports:
+      - "8000"
+    links:
+      - postgres
+    environment:
+      VIRTUAL_HOST: localhost/auth/*
+      GUNICORN_PORT: 8000
+      DATABASE_URL: postgresql://postgres:postgres@postgres/datahub
+      EXTERNAL_ADDRESS: localhost
+      PRIVATE_KEY: "-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAwwFReakOWgdQEvhR7m8+jRBnx8gJ7BaOLm7wg9+BD+3PaQpR\nG/KWwpSqNP+SV7ck3ymJM47uB/1yWOaxZ2lRPHLlqha1Sr3gDMPvVN1JOpg8+s8r\nWXDrc1C4zkHTVZXH/3D263IGHPFyHH4ZSLx4Z/bXpFy1qHdPzB4/uWTuJg6PCIe7\non3wTGXZllEYkgaKdyKzRtwn9h2ny0rvwPVR5vyl0IRnv/iy57qWdkTT/kwfXVrm\nzwTr1IwY4+q8gb+MFHkAQbdRrsoJ47we5ShUTNNMRXwyPn2nBaafwa9HQL+pkc7I\nw7gttFxhrGYcvSvrIu6uIvszHyYogUQZfNlmQQIDAQABAoIBAHSGwyMKDJNrr0PG\ns17hhuVQmlNdi+BSEiBZFswWsM7N8pT4H0OuELyxjYwh9FcKD7Ry45O1ozOPFddd\n80CyRGL03Zxn+WlyUQIPy2JQ4UNsWXQee+70dR3xbJ2D5D9OQ7a20DYdat28wc2Y\n5I78YI7viCilZcAHm92DbdzhHRYLrcVBTzElDN/wMVEwwnMsR3HYV8MR/k7p1imJ\nil0CSUA0eO0xe8o+OkDjDvBI8JkA7TZcSXx7ZMeAZkaj/RTlv+vCArT8nraMn0kH\n1NIt7+lLRagg4Ymvay0oX7EXGUmM4peDHBz4h89/zTPHuAQRZvXqjEIX/vqscZKd\ndP128AkCgYEA6kBhK+/Ak63IH/587VyJvzRBnPVHGNDcYykA+29hAyPpl4v1t9Fj\nEVempNL9LRuY2vSyNspL/CkoNkUJJ+1z+rxJLgNfUl+pIWzvTyJMy7UxaCDli5yh\nzl8AIv083mZZhWeRBW8Tmy/XGu8hfpISFCn0XiiLjzkC8BfdD2Rm7dsCgYEA1Rwk\ns7ALfcS+5fhM8qN8iqLbKtKIHrycS2xjG/SD2+eUHSXo00kbqVWhBoVoJdi3BJzk\ndmI4nuf64IxT3HQqzJk+MxNLuQ4uiDq32uZp4a7RV90pidBN2FVcGrrOaHuZWc37\nD/t83J7NOwBvinD1ZWQYbvxAb7rQgAy9tXmm7RMCgYApiZLxfIj0ZttWuQSj/kW6\nruR3lZKu1tJNjwbKjvxv1x1jrwC6QJnFiHpXPcaBCiS3pq43QvXoV8/2l5VBDD0F\nl/+N9jEf5TCTacKhkJ53fMCvCy5I7FRQyM24Zpk1goabPjsb8I9UdE47S23wCKzG\nAI6BZ8Ufd2eK9WBQi2gpAwKBgFQ3kf18pZ3nIXWqIWaF2xLCdxA+MNLMwItB4wzK\nHU3K/4phT9gnfQn3L/JuyBCkyvbEtbhe6ndJv6f7bKyjL8K5EI6IopUYGKV3Zu7X\nvaIVPt+VI/Q1YH4MhaB+kFFT/u8xanUPcnGRRBN8AZhZOXD/FHTPtPsyfXENF+9e\niuwHAoGAUaHHxLqsUf88vV9zyprkGNlhXfKOT60nPdUMkdI6RTiq0kOy/93v5dhZ\ndqeNrbxBc7UTw3MwL3O0vL0R9K3dTsbLIdE+iDIr8HTY5BiFaPxzbfON99Xaj6AS\nO7+AzMxYVz3ZYU4xqFqT5XgDJU4AOVsNy48/oPL6iFdEWOI0hHE=\n-----END RSA PRIVATE KEY-----\n"
+      PUBLIC_KEY: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwwFReakOWgdQEvhR7m8+\njRBnx8gJ7BaOLm7wg9+BD+3PaQpRG/KWwpSqNP+SV7ck3ymJM47uB/1yWOaxZ2lR\nPHLlqha1Sr3gDMPvVN1JOpg8+s8rWXDrc1C4zkHTVZXH/3D263IGHPFyHH4ZSLx4\nZ/bXpFy1qHdPzB4/uWTuJg6PCIe7on3wTGXZllEYkgaKdyKzRtwn9h2ny0rvwPVR\n5vyl0IRnv/iy57qWdkTT/kwfXVrmzwTr1IwY4+q8gb+MFHkAQbdRrsoJ47we5ShU\nTNNMRXwyPn2nBaafwa9HQL+pkc7Iw7gttFxhrGYcvSvrIu6uIvszHyYogUQZfNlm\nQQIDAQAB\n-----END PUBLIC KEY-----\n"
+      GOOGLE_KEY:
+      GOOGLE_SECRET:
+      GITHUB_KEY:
+      GITHUB_SECRET:
+
+  rawstore:
+    build: ../bitstore
+    restart: always
+    ports:
+      - '8000'
+    links:
+      - auth
+    environment:
+      VIRTUAL_HOST: localhost/rawstore/*
+      AUTH_SERVER: http://auth:8000
+      STORAGE_ACCESS_KEY_ID: AKIAIZ4NXBF4HFCRGNUQ
+      STORAGE_SECRET_ACCESS_KEY: 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
+      STORAGE_BUCKET_NAME: rawstore-bucket
+      STORAGE_PATH_PATTERN: '{md5_hex}{extension}'
+      S3_ENDPOINT_URL: http://motoserver:5000
+
+  assembler:
+    build: ../assembler
+    restart: always
+    links:
+      - postgres
+      - elasticsearch
+      - motoserver
+    environment:
+      VIRTUAL_HOST: localhost/pipelines/*
+      SOURCESPEC_REGISTRY_DB_ENGINE: postgresql://postgres:postgres@postgres/datahub
+      DPP_BASE_PATH: /pipelines/
+      PKGSTORE_BUCKET: pkgstore-bucket
+      AWS_ACCESS_KEY_ID: AKIAIZ4NXBF4HFCRGNUQ
+      AWS_SECRET_ACCESS_KEY: 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
+      S3_ENDPOINT_URL: http://motoserver:5000
+      DPP_ELASTICSEARCH: elasticsearch:9200
+      DPP_REDIS_HOST: redis
+
+  redis:
+    image: 'redis:3.2.11-alpine'
+
+  specstore:
+    build: ../specstore
+    restart: always
+    links:
+      - auth
+      - assembler
+      - postgres
+    environment:
+      VIRTUAL_HOST: localhost/source/*
+      AUTH_SERVER: auth:8000
+      DATABASE_URL:  postgresql://postgres:postgres@postgres/datahub
+      DPP_URL: 'http://assembler:5000/pipelines/'
+      PKGSTORE_BUCKET: pkgstore-bucket
+      FLOWMANAGER_HOOK_URL: 'http://specstore:8000/source/update'
+      S3_ENDPOINT_URL: http://motoserver:5000/
+    ports:
+      - '8000'
+
+  resolver:
+    build: ../resolver
+    restart: always
+    ports:
+      - '8000'
+    links:
+      - auth
+    environment:
+      VIRTUAL_HOST: localhost/resolver/*
+      AUTH_SERVER: http://auth:8000
+
+  metastore:
+    build: ../metastore
+    restart: always
+    ports:
+      - '8000'
+    links:
+      - elasticsearch
+    environment:
+      VIRTUAL_HOST: localhost/metastore/*
+      DATAHUB_ELASTICSEARCH_ADDRESS: elasticsearch:9200
+      PRIVATE_KEY:
+
+#### Dev services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: 'false'
+    ports:
+      - "9200:9200"
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: datahub
+    ports:
+      - "15432:5432"
+
+  motoserver:
+    build: ../moto
+    ports:
+      - "5000:5000"

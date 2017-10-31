@@ -1,0 +1,11 @@
+{
+  "api": "http://localhost",
+  "domain": "http://localhost",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiJjb3JlIiwic2VydmljZSI6IndvcmxkIiwicGVybWlzc2lvbnMiOiIqIn0.dI4tCQpEepLIYxRUle8RJOVmCX6ByLRAohZXRXlXTAc",
+  "email": "info@datopian.com",
+  "username": "core",
+  "profile": {
+     "id": "core",
+     "username": "core"
+  }
+}
