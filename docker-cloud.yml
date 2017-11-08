@@ -16,7 +16,7 @@ proxy:
   tags:
     - ${PROJECT}-${STAGE}
 frontend:
-  autoredeploy: ${DOCKER_AUTO_REDEPLOY}
+  autoredeploy: false
   restart: always
   image: datopian/frontend:latest
   ports:
@@ -33,7 +33,7 @@ frontend:
   tags:
     - ${PROJECT}-${STAGE}
 auth:
-  autoredeploy: ${DOCKER_AUTO_REDEPLOY}
+  autoredeploy: false
   restart: always
   image: datopian/auth
   ports:
@@ -53,7 +53,7 @@ auth:
   tags:
     - ${PROJECT}-${STAGE}
 rawstore:
-  autoredeploy: ${DOCKER_AUTO_REDEPLOY}
+  autoredeploy: false
   restart: always
   image: 'datopian/bitstore:latest'
   ports:
@@ -71,7 +71,7 @@ rawstore:
   tags:
     - ${PROJECT}-${STAGE}
 assembler:
-  autoredeploy: ${DOCKER_AUTO_REDEPLOY}
+  autoredeploy: false
   restart: always
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/pipelines/*
@@ -91,7 +91,7 @@ redis:
   tags:
     - ${PROJECT}-${STAGE}
 specstore:
-  autoredeploy: ${DOCKER_AUTO_REDEPLOY}
+  autoredeploy: false
   restart: always
   links:
     - auth
@@ -110,7 +110,7 @@ specstore:
   tags:
     - ${PROJECT}-${STAGE}
 resolver:
-  autoredeploy: ${DOCKER_AUTO_REDEPLOY}
+  autoredeploy: false
   restart: always
   image: 'datopian/resolver:latest'
   ports:
@@ -123,7 +123,7 @@ resolver:
   tags:
     - ${PROJECT}-${STAGE}
 metastore:
-  autoredeploy: ${DOCKER_AUTO_REDEPLOY}
+  autoredeploy: false
   restart: always
   image: 'datopian/metastore:latest'
   ports:
