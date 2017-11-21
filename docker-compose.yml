@@ -96,6 +96,7 @@ services:
       VIRTUAL_HOST: localhost/source/*
       AUTH_SERVER: auth:8000
       DATABASE_URL:  postgresql://postgres:postgres@postgres/datahub
+      EVENTS_ELASTICSEARCH_HOST: elasticsearch:9200
       DPP_URL: 'http://assembler:5000/pipelines/'
       PKGSTORE_BUCKET: pkgstore-bucket
       FLOWMANAGER_HOOK_URL: 'http://specstore:8000/source/update'
