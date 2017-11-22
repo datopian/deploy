@@ -101,6 +101,7 @@ specstore:
     AUTH_SERVER: auth:8000
     DATABASE_URL:  ${RDS_URI}
     DPP_URL: 'http://assembler:5000/pipelines/'
+    EVENTS_ELASTICSEARCH_HOST: ${ELASTICEARCH_URI}
     FLOWMANAGER_HOOK_URL: http://specstore:8000/source/update
     PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
 
