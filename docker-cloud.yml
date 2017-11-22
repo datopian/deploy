@@ -16,7 +16,7 @@ proxy:
   tags:
     - ${PROJECT}-${STAGE}
 frontend:
-  autoredeploy: true
+  autoredeploy: false
   restart: always
   image: datopian/frontend:latest
   ports:
@@ -26,10 +26,14 @@ frontend:
     SITE_URL: https://${DOMAIN}
     API_URL: https://${DOMAIN_API}
     BITSTORE_URL: https://${PKGSTORE_BUCKET}
+    AUTH_UR: http://auth:8000/
+    FLOWMANAGER_URL: http://specstore:8000/
+    METASTORE_URL: http://metastore:8000/
+    RESOLVER_URL: http://resolver:8000/
   tags:
     - ${PROJECT}-${STAGE}
 auth:
-  autoredeploy: true
+  autoredeploy: false
   restart: always
   image: datopian/auth
   ports:
@@ -49,7 +53,7 @@ auth:
   tags:
     - ${PROJECT}-${STAGE}
 rawstore:
-  autoredeploy: true
+  autoredeploy: false
   restart: always
   image: 'datopian/bitstore:latest'
   ports:
@@ -63,7 +67,7 @@ rawstore:
     STORAGE_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
     STORAGE_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
     STORAGE_BUCKET_NAME: ${RAWSTORE_BUCKET}
-    STORAGE_PATH_PATTERN: '{md5_hex}'
+    STORAGE_PATH_PATTERN: '{md5_hex}{extension}'
   tags:
     - ${PROJECT}-${STAGE}
 assembler:
@@ -77,6 +81,7 @@ assembler:
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
     DPP_ELASTICSEARCH: ${ELASTICEARCH_URI}
+    DPP_REDIS_HOST: redis
   image: 'datopian/assembler:latest'
   tags:
     - ${STAGE}-assembler
@@ -86,7 +91,7 @@ redis:
   tags:
     - ${PROJECT}-${STAGE}
 specstore:
-  autoredeploy: true
+  autoredeploy: false
   restart: always
   links:
     - auth
@@ -97,13 +102,16 @@ specstore:
     DATABASE_URL:  ${RDS_URI}
     DPP_URL: 'http://assembler:5000/pipelines/'
     EVENTS_ELASTICSEARCH_HOST: ${ELASTICEARCH_URI}
+    FLOWMANAGER_HOOK_URL: http://specstore:8000/source/update
+    PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
+
   expose:
     - '8000'
   image: 'datopian/specstore:latest'
   tags:
     - ${PROJECT}-${STAGE}
 resolver:
-  autoredeploy: true
+  autoredeploy: false
   restart: always
   image: 'datopian/resolver:latest'
   ports:
@@ -116,7 +124,7 @@ resolver:
   tags:
     - ${PROJECT}-${STAGE}
 metastore:
-  autoredeploy: true
+  autoredeploy: false
   restart: always
   image: 'datopian/metastore:latest'
   ports:
