@@ -104,7 +104,8 @@ specstore:
     EVENTS_ELASTICSEARCH_HOST: ${ELASTICEARCH_URI}
     FLOWMANAGER_HOOK_URL: http://specstore:8000/source/update
     PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
-
+    AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
   expose:
     - '8000'
   image: 'datopian/specstore:latest'

@@ -101,6 +101,8 @@ services:
       PKGSTORE_BUCKET: pkgstore-bucket
       FLOWMANAGER_HOOK_URL: 'http://specstore:8000/source/update'
       S3_ENDPOINT_URL: http://motoserver:5000/
+      AWS_ACCESS_KEY_ID: AKIAIZ4NXBF4HFCRGNUQ
+      AWS_SECRET_ACCESS_KEY: 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
     ports:
       - '8000'
 
