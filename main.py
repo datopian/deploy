@@ -531,10 +531,9 @@ class Deployer(object):
         try:
             con = psycopg2.connect(self.config['RDS_URI'])
             cur = con.cursor()
-            cur.execute("SELECT COUNT(*) FROM specs")
+            cur.execute("SELECT COUNT(*) FROM dataset")
             con.commit()
             result = cur.fetchone()
-            print(result)
             print("The total number of datasets: %s" %result[0])
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -542,8 +541,8 @@ class Deployer(object):
         finally:
             if con is not None:
                 con.close()
-        print("Number of published datasets: %s" %test['summary'][ u'total'])
-        print("Total number of bytes: %s" %test['summary'][ u'totalBytes'])
+        print("Total number of published datasets: %s" %test['summary'][ u'total'])
+        print("Total bytes for published datasets: %s" %test['summary'][ u'totalBytes'])
         
 # ==============================================
 # CLI
