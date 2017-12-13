@@ -150,3 +150,15 @@ filemanager:
   tags:
     - ${PROJECT}-${STAGE}
 # so we can ssh in and fix ElasticSearch vm.max_map_count
+datadog:
+  image: 'datadog/docker-dd-agent:latest'
+  deployment_strategy: every_node
+  environment:
+    API_KEY: ${DATADOG_API}
+    HOSTNAME: $DOCKERCLOUD_NODE_HOSTNAME
+  privileged: true
+  restart: on-failure
+  volumes:
+    - '/var/run/docker.sock:/var/run/docker.sock'
+    - '/proc:/host/proc:ro'
+    - '/sys/fs/cgroup:/host/sys/fs/cgroup:ro'
