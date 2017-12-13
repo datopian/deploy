@@ -74,6 +74,7 @@ services:
     environment:
       VIRTUAL_HOST: localhost/pipelines/*
       SOURCESPEC_REGISTRY_DB_ENGINE: postgresql://postgres:postgres@postgres/datahub
+      FILEMANAGER_DATABASE_URL: postgresql://postgres:postgres@postgres/datahub
       DPP_BASE_PATH: /pipelines/
       PKGSTORE_BUCKET: pkgstore-bucket
       AWS_ACCESS_KEY_ID: AKIAIZ4NXBF4HFCRGNUQ
@@ -103,6 +104,16 @@ services:
       S3_ENDPOINT_URL: http://motoserver:5000/
       AWS_ACCESS_KEY_ID: AKIAIZ4NXBF4HFCRGNUQ
       AWS_SECRET_ACCESS_KEY: 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
+    ports:
+      - '8000'
+
+  filemanager:
+    build: ../filemanager
+    restart: always
+    links:
+      - postgres
+    environment:
+      DATABASE_URL:  postgresql://postgres:postgres@postgres/datahub
     ports:
       - '8000'
 

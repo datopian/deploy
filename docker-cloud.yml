@@ -82,6 +82,7 @@ assembler:
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
     DPP_ELASTICSEARCH: ${ELASTICEARCH_URI}
     DPP_REDIS_HOST: redis
+    FILEMANAGER_DATABASE_URL: ${RDS_URI}
   image: 'datopian/assembler:latest'
   tags:
     - ${STAGE}-assembler
@@ -134,6 +135,18 @@ metastore:
     VIRTUAL_HOST: ${DOMAIN_API}/metastore/*
     DATAHUB_ELASTICSEARCH_ADDRESS: ${ELASTICEARCH_URI}
     PRIVATE_KEY:
+  tags:
+    - ${PROJECT}-${STAGE}
+filemanager:
+  autoredeploy: false
+  restart: always
+  image: 'datopian/filemanager:latest'
+  ports:
+    - '8000'
+  links:
+    - postgres
+  environment:
+    DATABASE_URL: ${RDS_URI}
   tags:
     - ${PROJECT}-${STAGE}
 # so we can ssh in and fix ElasticSearch vm.max_map_count
