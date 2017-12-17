@@ -142,7 +142,7 @@ filemanager:
   restart: always
   image: 'datopian/filemanager:latest'
   ports:
-    - '8000'
+    - '8000${FILEMANAGER_EXPOSE_PORT}'
   links:
     - postgres
   environment:
