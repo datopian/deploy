@@ -144,8 +144,6 @@ filemanager:
   image: 'datopian/filemanager:latest'
   ports:
     - '8000${FILEMANAGER_EXPOSE_PORT}'
-  links:
-    - postgres
   environment:
     DATABASE_URL: ${RDS_URI}
   tags:
