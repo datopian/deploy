@@ -30,6 +30,7 @@ frontend:
     FLOWMANAGER_URL: http://specstore:8000/
     METASTORE_URL: http://metastore:8000/
     RESOLVER_URL: http://resolver:8000/
+    FILEMANAGER_URL: http://filemanager:8000
   tags:
     - ${PROJECT}-${STAGE}
 auth:
