@@ -100,6 +100,8 @@ specstore:
     - assembler
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/source/*
+    DATASETS_INDEX_NAME: datahub
+    EVENTS_INDEX_NAME: events
     AUTH_SERVER: auth:8000
     DATABASE_URL:  ${RDS_URI}
     DPP_URL: 'http://assembler:5000/pipelines/'
