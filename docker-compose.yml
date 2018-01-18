@@ -10,6 +10,7 @@ services:
       - specstore
       - resolver
       - metastore
+      - plans
     ports:
       - '80:80'
     volumes:
@@ -31,7 +32,9 @@ services:
       FILEMANAGER_URL: http://filemanager:8000
 
   auth:
-    build: ../auth
+    build:
+      context: ../plans
+      dockerfile: auth-docker/Dockerfile
     restart: always
     ports:
       - "8000"
@@ -48,6 +51,22 @@ services:
       GOOGLE_SECRET:
       GITHUB_KEY:
       GITHUB_SECRET:
+
+  plans:
+    build: ../plans
+    restart: always
+    ports:
+      - "8000"
+    links:
+      - postgres
+    environment:
+      VIRTUAL_HOST: localhost/plans/*,localhost/plans
+      DATABASE_URL: postgresql://postgres:postgres@postgres/datahub
+      GUNICORN_PORT: 8000
+      # Pick something secret for production!
+      BASIC_AUTH_USERNAME: datopian
+      BASIC_AUTH_PASSWORD: datopian
+      SESSION_SECRET_KEY: datopian
 
   rawstore:
     build: ../bitstore
