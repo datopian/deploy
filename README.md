@@ -1,3 +1,5 @@
+![](https://img.shields.io/badge/Python-2.7-brightgreen.svg)
+
 Deployment automation for the DataHub.
 
 ## Installation
