@@ -9,6 +9,7 @@ proxy:
     - specstore
     - resolver
     - metastore
+    - plans
   ports:
     - '80:80'
   roles:
@@ -36,7 +37,7 @@ frontend:
 auth:
   autoredeploy: false
   restart: always
-  image: datopian/auth
+  image: datopian/auth-datahub
   ports:
     - "8000"
   target_num_containers: 1
@@ -51,6 +52,23 @@ auth:
     GOOGLE_SECRET: ${GOOGLE_SECRET}
     GITHUB_KEY:
     GITHUB_SECRET:
+  tags:
+    - ${PROJECT}-${STAGE}
+plans:
+  autoredeploy: false
+  restart: always
+  image: datopian/plans
+  ports:
+    - "8000"
+  target_num_containers: 1
+  environment:
+      VIRTUAL_HOST: ${DOMAIN_API}/plans/*,${DOMAIN_API}/plans'
+      DATABASE_URL: ${RDS_URI}
+      GUNICORN_PORT: 8000
+      # Pick something secret for production!
+      BASIC_AUTH_USERNAME: ${PLANS_ADMIN_USERNAME}
+      BASIC_AUTH_PASSWORD: ${PLANS_ADMIN_PASSWORD}
+      SESSION_SECRET_KEY: ${PLANS_SESSION_SECRET_KEY}
   tags:
     - ${PROJECT}-${STAGE}
 rawstore:
