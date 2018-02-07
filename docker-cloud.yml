@@ -62,7 +62,7 @@ plans:
     - "8000"
   target_num_containers: 1
   environment:
-      VIRTUAL_HOST: ${DOMAIN_API}/plans/*,${DOMAIN_API}/plans'
+      VIRTUAL_HOST: ${DOMAIN_API}/plans/*,${DOMAIN_API}/plans
       DATABASE_URL: ${RDS_URI}
       GUNICORN_PORT: 8000
       # Pick something secret for production!
