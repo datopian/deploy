@@ -45,11 +45,14 @@ class Deployer(object):
     def _run(self, cmd):
         out = ''
         try:
-            out = subprocess.check_output(cmd.split(' '))
-        except subprocess.CalledProcessError:
-            out = 'Error: ' + out
-        print(out)
-        return out
+            output = subprocess.check_output(cmd.split(' '), stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as process_error:
+            all_output = filter(None, process_error.output.split('\n'))
+            for output in all_output:
+                if not 'Error:' in output:
+                    output = 'Error: ' + str(output.strip())
+        print(output)
+        return output
 
     def docker(self):
         '''Deploy app to docker'''
