@@ -369,7 +369,7 @@ class Deployer(object):
         }
         token = jwt.encode(ret, self.config['PRIVATE_KEY'])
         print(token)
-    
+
     def check_docker(self):
         '''Check docker services status'''
         stack = 'docker-cloud stack inspect %s' % self.stackname
@@ -377,7 +377,7 @@ class Deployer(object):
         output, error = process.communicate()
         output = json.loads(output)
         print("Docker status: %s" %output['state'])
-        
+
     def check_apis(self):
         '''Check API call for all services'''
         valid_token = self.config['JWT_TOKEN']
@@ -412,17 +412,17 @@ class Deployer(object):
         response = requests.get(url_auth_public_key)
         assert response.status_code == 200, "Receive authorization public key is unavailable"
         print("Receive authorization public key - OK")
-        # Metastore service   
+        # Metastore service
         url_metastore_search = urljoin(api_base_url, 'metastore/search')
         response = requests.get(url_metastore_search)
         assert response.status_code == 200, "Metastore search service is unavailable"
         print("Metastore search service - OK")
-    
+
     def check_frontend(self):
         '''Check frontend'''
         api_base_url = 'https://' + self.config['DOMAIN']
         if self.config['STAGE'] == "production":
-            api_base_url = 'https://' + self.config['DOMAIN_BASE'] 
+            api_base_url = 'https://' + self.config['DOMAIN_BASE']
         # Home page
         url_home = urljoin(api_base_url, '/')
         response = requests.get(url_home)
@@ -471,7 +471,7 @@ class Deployer(object):
             print("Dashboard page with token - OK")
         else:
             print('Skipping dashboard test as no login token')
-    
+
     def check(self):
         '''Check docker, API and services all together'''
         print("Checking docker stack status...")
@@ -483,7 +483,7 @@ class Deployer(object):
         print("Checking frontend pages...\n")
         frontend = self.check_frontend()
         return docker, apis, frontend
-        
+
     def users_total(self):
         '''Query number of users'''
         try:
@@ -495,11 +495,11 @@ class Deployer(object):
             print("The number of users: %s" %result[0])
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-        
+
         finally:
             if con is not None:
                 con.close()
-                
+
     def users_last_day(self):
         '''Query number of users for the last day'''
         try:
@@ -514,14 +514,14 @@ class Deployer(object):
         finally:
             if con is not None:
                 con.close()
-                
+
     def datasets_total(self):
         '''Total number of datasets and bytes returned from metastore'''
         valid_token = self.config['JWT_TOKEN']
         api_base_url = 'https://' + self.config['DOMAIN_API']
         if self.config['STAGE'] == "production":
             api_base_url = api_base_url.replace('-%s'%self.config['STAGE'], '')
-        # Metastore service   
+        # Metastore service
         url_metastore_search = urljoin(api_base_url, 'metastore/search')
         headers = {'Auth-Token': valid_token}
         response = requests.get(url_metastore_search, headers=headers)
@@ -537,13 +537,13 @@ class Deployer(object):
             print("The total number of datasets: %s" %result[0])
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-        
+
         finally:
             if con is not None:
                 con.close()
         print("Total number of published datasets: %s" %test['summary'][ u'total'])
         print("Total bytes for published datasets: %s" %test['summary'][ u'totalBytes'])
-        
+
 # ==============================================
 # CLI
 
