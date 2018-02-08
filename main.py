@@ -15,7 +15,6 @@ from botocore.exceptions import ClientError
 import dotenv
 import psycopg2
 import jwt
-import dockercloud
 import requests
 
 class Deployer(object):
