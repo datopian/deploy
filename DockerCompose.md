@@ -7,9 +7,13 @@
 +- deploy (git cloned from git@github.com:datahq/deploy)
 +- assembler (git cloned from git@github.com:datahq/assembler)
 +- auth (git cloned from git@github.com:datahq/auth)
++- plans (git cloned from git@github.com:datahq/plans)
 +- resolver (git cloned from git@github.com:datahq/resolver)
++- filemanager (git cloned from git@github.com:datahq/filemanager)
 +- specstore (git cloned from git@github.com:datahq/specstore)
    +- ...
+   +- events_repo (git cloned from git@github.com:datahq/events)
+   +- events (symlink to events_repo/events)
    +- planner_repo (git cloned from git@github.com:datahq/planner)
    +- planner (symlink to planner_repo/planner)
 +- bitstore (git cloned from git@github.com:datahq/bitstore)
@@ -20,6 +24,19 @@
 
 ## Starting everything
 
+You will need to resolve 127.0.0.1 to `motoserver`. Add the following line to hosts file: `127.0.0.1 motoserver`.
+
+Your `etc/hosts` file should look something like this:
+
+```
+127.0.0.1 localhost
+127.0.0.1 motoserver
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+...
+```
+
 This will start everything up and create the `core` user.
 
 When in `/deploy/`, run:
@@ -27,7 +44,7 @@ When in `/deploy/`, run:
 ```
 $ docker-compose down && docker-compose up --build -d
 
-# After everything is up, you shoudl create the default user ('core'):
+# After everything is up, you should create the default user ('core'):
 $ python2 main.py user_create
 ```
 
