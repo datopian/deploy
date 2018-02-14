@@ -1,4 +1,4 @@
-Deployment automation for the DataHub.
+Deployment automation for the DataHub. This will setup all services on existing docker node, to set up everything locally, via docker-compose, please take a look at [DockerCompose.md](https://github.com/datahq/deploy/blob/master/DockerCompose.md)
 
 ## Installation
 
@@ -60,5 +60,3 @@ To check docker, API, frontend:
 ```
 python main.py check
 ```
-
-
