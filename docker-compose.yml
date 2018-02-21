@@ -4,7 +4,6 @@ services:
     image: 'dockercloud/haproxy:latest'
     links:
       - frontend
-      - assembler
       - auth
       - rawstore
       - specstore
@@ -84,41 +83,19 @@ services:
       STORAGE_PATH_PATTERN: '{md5_hex}{extension}'
       S3_ENDPOINT_URL: http://motoserver:5000
 
-  assembler:
-    build: ../assembler
-    restart: always
-    links:
-      - postgres
-      - elasticsearch
-      - motoserver
-    environment:
-      VIRTUAL_HOST: localhost/pipelines/*
-      SOURCESPEC_REGISTRY_DB_ENGINE: postgresql://postgres:postgres@postgres/datahub
-      FILEMANAGER_DATABASE_URL: postgresql://postgres:postgres@postgres/datahub
-      DPP_BASE_PATH: /pipelines/
-      PKGSTORE_BUCKET: pkgstore-bucket
-      AWS_ACCESS_KEY_ID: AKIAIZ4NXBF4HFCRGNUQ
-      AWS_SECRET_ACCESS_KEY: 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
-      S3_ENDPOINT_URL: http://motoserver:5000
-      DPP_ELASTICSEARCH: elasticsearch:9200
-      DPP_REDIS_HOST: redis
-
-  redis:
-    image: 'redis:3.2.11-alpine'
-
   specstore:
     build: ../specstore
     restart: always
     links:
       - auth
-      - assembler
       - postgres
     environment:
       VIRTUAL_HOST: localhost/source/*
       AUTH_SERVER: auth:8000
       DATABASE_URL:  postgresql://postgres:postgres@postgres/datahub
+      FILEMANAGER_DATABASE_URL: postgresql://postgres:postgres@postgres/datahub
       EVENTS_ELASTICSEARCH_HOST: elasticsearch:9200
-      DPP_URL: 'http://assembler:5000/pipelines/'
+      DPP_ELASTICSEARCH: elasticsearch:9200
       PKGSTORE_BUCKET: pkgstore-bucket
       FLOWMANAGER_HOOK_URL: 'http://specstore:8000/source/update'
       S3_ENDPOINT_URL: http://motoserver:5000/
