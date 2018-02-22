@@ -3,7 +3,6 @@ proxy:
   image: 'dockercloud/haproxy:latest'
   links:
     - frontend
-    - assembler
     - auth
     - rawstore
     - specstore
@@ -89,42 +88,21 @@ rawstore:
     STORAGE_PATH_PATTERN: '{md5_hex}{extension}'
   tags:
     - ${PROJECT}-${STAGE}
-assembler:
-  autoredeploy: false
-  restart: always
-  environment:
-    VIRTUAL_HOST: ${DOMAIN_API}/pipelines/*
-    SOURCESPEC_REGISTRY_DB_ENGINE:  ${RDS_URI}
-    DPP_BASE_PATH: /pipelines/
-    PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
-    AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
-    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
-    DPP_ELASTICSEARCH: ${ELASTICEARCH_URI}
-    DPP_REDIS_HOST: redis
-    FILEMANAGER_DATABASE_URL: ${RDS_URI}
-  image: 'datopian/assembler:latest'
-  tags:
-    - ${STAGE}-assembler
-redis:
-  image: 'redis:3.2.11-alpine'
-  restart: always
-  tags:
-    - ${PROJECT}-${STAGE}
+
 specstore:
   autoredeploy: false
   restart: always
   links:
     - auth
-    - assembler
   environment:
     VIRTUAL_HOST: ${DOMAIN_API}/source/*
     DATASETS_INDEX_NAME: datahub
     EVENTS_INDEX_NAME: events
     AUTH_SERVER: auth:8000
     DATABASE_URL:  ${RDS_URI}
-    DPP_URL: 'http://assembler:5000/pipelines/'
     EVENTS_ELASTICSEARCH_HOST: ${ELASTICEARCH_URI}
-    FLOWMANAGER_HOOK_URL: http://specstore:8000/source/update
+    FILEMANAGER_DATABASE_URL: ${RDS_URI}
+    DPP_ELASTICSEARCH: ${ELASTICEARCH_URI}
     PKGSTORE_BUCKET: ${PKGSTORE_BUCKET}
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
@@ -133,6 +111,7 @@ specstore:
   image: 'datopian/specstore:latest'
   tags:
     - ${PROJECT}-${STAGE}
+
 resolver:
   autoredeploy: false
   restart: always
