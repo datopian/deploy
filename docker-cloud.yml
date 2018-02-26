@@ -110,7 +110,7 @@ specstore:
     - '8000'
   image: 'datopian/specstore:latest'
   tags:
-    - ${PROJECT}-${STAGE}
+    - ${STAGE}-flowmanager
 
 resolver:
   autoredeploy: false
