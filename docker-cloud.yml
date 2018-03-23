@@ -86,6 +86,7 @@ rawstore:
     STORAGE_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
     STORAGE_BUCKET_NAME: ${RAWSTORE_BUCKET}
     STORAGE_PATH_PATTERN: '{md5_hex}{extension}'
+    DATABASE_URL: ${RDS_URI}
   tags:
     - ${PROJECT}-${STAGE}
 

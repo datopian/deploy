@@ -82,6 +82,7 @@ services:
       STORAGE_BUCKET_NAME: rawstore-bucket
       STORAGE_PATH_PATTERN: '{md5_hex}{extension}'
       S3_ENDPOINT_URL: http://motoserver:5000
+      DATABASE_URL: postgresql://postgres:postgres@postgres/datahub
 
   specstore:
     build: ../specstore
