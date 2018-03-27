@@ -1,0 +1,7 @@
+filemanager:
+  enabled: true
+  replicas: 1
+  resources: >
+    {"requests": {"cpu": "100m", "memory": "200Mi"}, "limits": {"cpu": "300m", "memory": "400Mi"}}
+  #  kubectl create secret generic db --from-literal=RDS_URI=postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
+  # dbSecretName: db

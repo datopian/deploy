@@ -1,0 +1,40 @@
+{{ if .Values.filemanager.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: filemanager
+spec:
+  ports:
+  - name: '8000'
+    port: 8000
+  selector:
+    app: filemanager
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: filemanager
+spec:
+  replicas: {{ .Values.filemanager.replicas }}
+  template:
+    metadata:
+      labels:
+        app: filemanager
+    spec:
+      containers:
+      - name: filemanager
+        image: {{ .Values.filemanager.image | default "datopian/filemanager:latest" | quote }}
+        ports:
+        - containerPort: 8000
+        resources: {{ .Values.filemanager.resources }}
+        env:
+        - name: DATABASE_URL
+        {{ if .Values.filemanager.dbSecretName }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.filemanager.dbSecretName | quote }}
+              key: "RDS_URI"
+        {{ else }}
+          value: "postgresql://postgres:123456@db/postgres"
+        {{ end }}
+{{ end }}
