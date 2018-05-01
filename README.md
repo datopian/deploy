@@ -33,7 +33,7 @@ PUBLIC_KEY="----BEGIN PUBLIC KEY-----\n...\n..."
 * `JWT_TOKEN` - authentication token
 You can get it from `~/.datahub.json` file.
 * `DOMAIN_API` - base API
-* `STAGE` - e.g. testing, staging, production
+* `STAGE` - e.g. production, testing
 * `DOMAIN_BASE` - base domain to which prefixes are added such as `STAGE` and specific services
 * `DOMAIN` - `STAGE`.`DOMAIN_BASE`
 
