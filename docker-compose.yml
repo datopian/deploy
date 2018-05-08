@@ -52,7 +52,11 @@ services:
       GOOGLE_SECRET:
       GITHUB_KEY:
       GITHUB_SECRET:
-
+      MAILCHIMP_USER:
+      MAILCHIMP_SECRET:
+      MAILCHIMP_LIST_ID:
+      ALLOWED_SERVICES:
+      INSTALLED_EXTENSIONS:
   plans:
     build: ../plans
     restart: always
