@@ -1,2 +1,0 @@
--r requirements.txt
-moto==0.4.27
