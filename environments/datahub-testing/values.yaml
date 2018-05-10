@@ -1,0 +1,5 @@
+auth:
+  # see the auth configmap for the required keys
+  secretName: auth
+  # prevent unexpected upgrade / discrepency of images between nodes
+  image: datopian/datahub-auth:master

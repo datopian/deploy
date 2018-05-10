@@ -1,0 +1,2 @@
+auth:
+  image: datopian/auth-datahub:latest

@@ -1,0 +1,30 @@
+{{ if .Values.enabled }}
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: auth
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: auth
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: auth
+        image: {{ .Values.image | default "datopian/auth-datahub:latest" | quote }}
+        ports:
+        - containerPort: 8000
+        resources: {{ .Values.resources }}
+        envFrom:
+        - configMapRef:
+            name: auth
+        {{ if .Values.secretName }}
+        # override the values from configmap
+        - secretRef:
+            name: {{ .Values.secretName | quote }}
+        {{ end }}
+{{ end }}
