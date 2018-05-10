@@ -1,0 +1,4 @@
+auth:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
