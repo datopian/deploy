@@ -1,0 +1,13 @@
+language: bash
+sudo: required
+services:
+- docker
+install:
+- curl -L https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | sudo bash
+script:
+- bash helm_lint_all.sh
+deploy:
+  provider: script
+  script: bash .travis_deploy.sh
+  on:
+    branch: master
