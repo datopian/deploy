@@ -1,0 +1,46 @@
+{{ if .Values.enabled }}
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  {{ if .Values.enableAntiAffinity }}
+  affinity:
+    # ensure nginx won't be on the same node as specstore
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - specstore
+            - frontend
+            - auth
+        topologyKey: "kubernetes.io/hostname"
+  {{ end }}
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      {{ if .Values.global.persistentDataVolume.hostname }}
+      nodeSelector:
+        kubernetes.io/hostname: {{ .Values.global.persistentDataVolume.hostname | quote }}
+      {{ end }}
+      containers:
+      - name: nginx
+        image: {{ .Values.image | default "datopian/nginx:latest" | quote }}
+        ports:
+        - containerPort: 80
+        - containerPort: 5601
+        resources: {{ .Values.resources }}
+        {{ if .Values.overrideStartupScript }}
+        command:
+        - sh
+        - "-c"
+        - |
+          {{ .Values.overrideStartupScript }}
+        {{ end }}
+{{ end }}

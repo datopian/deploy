@@ -1,0 +1,9 @@
+{{ if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metastore
+data:
+  DATAHUB_ELASTICSEARCH_ADDRESS: http://localhost:9200
+  PRIVATE_KEY: private
+{{ end }}

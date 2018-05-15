@@ -1,0 +1,33 @@
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  name: {{ .Values.name }}
+spec:
+  {{ if .Values.node }}
+  nodeSelector:
+    kubernetes.io/hostname: {{ .Values.node | quote }}
+  {{ end }}
+  containers:
+  - name: "ops"
+    image: {{ .Values.image | default "alpine" | quote }}
+    command:
+    - sh
+    - "-c"
+    - {{ .Values.shScript | default "while true; do sleep 86400; done" | quote }}
+    volumeMounts:
+    - name: hostpath-var
+      mountPath: /hostpath/var
+    {{ if .Values.gcepd }}
+    - name: gcepd
+      mountPath: /gcepd
+    {{ end }}
+  volumes:
+  - name: hostpath-var
+    hostPath:
+      path: /var
+      type: Directory
+  {{ if .Values.gcepd }}
+  - name: gcepd
+    gcePersistentDisk:
+      pdName: {{ .Values.gcepd | quote }}
+  {{ end }}

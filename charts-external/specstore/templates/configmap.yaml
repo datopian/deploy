@@ -1,0 +1,16 @@
+{{ if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: specstore
+data:
+  AUTH_SERVER: auth:8000
+  DATABASE_URL: postgresql://datahq:123456@postgres/datahub
+  DATASETS_INDEX_NAME: datahub
+  DPP_ELASTICSEARCH: http://localhost:9200
+  EVENTS_ELASTICSEARCH_HOST: http://localhost:9200
+  EVENTS_INDEX_NAME: events
+  FILEMANAGER_DATABASE_URL: postgresql://datahq:123456@postgres/datahub
+  PKGSTORE_BUCKET: pkgstore-testing.datahub.io
+  VIRTUAL_HOST: api-testing.datahub.io/source/*
+{{ end }}

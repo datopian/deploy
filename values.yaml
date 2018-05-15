@@ -1,4 +1,40 @@
+global:
+  persistentDataVolume:
+    type: emptyDir
+
 auth:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
+filemanager:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
+frontend:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
+metastore:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
+nginx:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "100m", "memory": "150Mi"}, "limits": {"memory": "500Mi"}}
+plans:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
+rawstore:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
+resolver:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
+specstore:
   enabled: true
   resources: >
     {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
