@@ -2,26 +2,26 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: auth
+  name: specstore
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: auth
+        app: specstore
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       terminationGracePeriodSeconds: 5
       containers:
-      - name: auth
-        image: {{ .Values.image | default "datopian/auth-datahub:d21d938492242adf1b6576910686c176001e041e" | quote }}
+      - name: specstore
+        image: {{ .Values.image | default "datopian/specstore:latest" | quote }}
         ports:
         - containerPort: 8000
         resources: {{ .Values.resources }}
         envFrom:
         - configMapRef:
-            name: auth
+            name: specstore
         {{ if .Values.secretName }}
         # override the values from configmap
         - secretRef:

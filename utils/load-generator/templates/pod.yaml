@@ -1,0 +1,71 @@
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  name: {{ .Values.name }}
+spec:
+  {{ if .Values.node }}
+  nodeSelector:
+    kubernetes.io/hostname: {{ .Values.node | quote }}
+  {{ end }}
+  terminationGracePeriodSeconds: 0
+  containers:
+  - name: load-generator
+    {{ if .Values.postgres }}
+    image: budgetkey/budgetkey-postgres:latest
+    command:
+    - bash
+    - "-c"
+    - |
+      for table in $TABLES; do
+        echo $table
+        (
+          for i in `seq 1 $DURATION`; do
+            for j in `seq 1 50`; do
+              su postgres -c "{{ .Values.postgres }} -c 'select "'*'" from ${table} limit 10' >/dev/null" &
+            done
+            sleep 1
+          done; wait
+        ) &
+      done; echo waiting; wait; echo Done; exit 0
+    {{ else }}
+    image: orihoch/budgetkey-utils-load-generator:1
+    command:
+    - bash
+    - "-c"
+    - |
+      [ "${PARAMS}" == "" ] && PARAMS="-t1 -c2 -d${DURATION:-10}s ${EXTRA_PARAMS}"
+      for url in $urls; do
+        wrk \
+          $PARAMS \
+          {{ if .Values.kibana }}-H "Authorization: Basic {{ .Values.kibana | b64enc }}"{{ end }} \
+          "${url}" &
+      done; echo waiting; wait; echo Done; exit 0
+    {{ end }}
+    resources: {"requests": {"cpu": "50m", "memory": "100Mi"}, "limits": {"cpu": "100m", "memory": "200Mi"}}
+    env:
+    - name: PARAMS
+      value: {{ .Values.params | quote }}
+    - name: DURATION
+      value: {{ .Values.duration | quote }}
+    - name: URLS
+      value: |
+        {{ if .Values.kibana }}
+        {{ .Values.kibanaUrl | default "https://kibana.obudget.org" }}/app/kibana
+        {{ .Values.kibanaUrl | default "https://kibana.obudget.org" }}/es_admin/budgetkey
+        {{ .Values.kibanaUrl | default "https://kibana.obudget.org" }}/es_admin/budgetkey/_search?q=test
+        {{ .Values.kibanaUrl | default "https://kibana.obudget.org" }}/es_admin/budgetkey/_search?q=foobar
+        {{ .Values.kibanaUrl | default "https://kibana.obudget.org" }}/es_admin/foobaz
+        {{ else }}
+        {{ .Values.url | default "https://next.obudget.org" }}/
+        {{ .Values.url | default "https://next.obudget.org" }}/assets/styles/budgetkey-ng2-components.css
+        {{ .Values.url | default "https://next.obudget.org" }}/_fonts/stylesheet.css
+        {{ .Values.url | default "https://next.obudget.org" }}/_fonts/AbrahamTRIAL-Medium.woff2
+        {{ .Values.url | default "https://next.obudget.org" }}/assets/img/hasadna.png
+        {{ .Values.url | default "https://next.obudget.org" }}/s/?q=test&range=last_decade&dd=all
+        {{ .Values.url | default "https://next.obudget.org" }}/search/all/test/2008-04-26/2028-04-26/10/0
+        {{ .Values.url | default "https://next.obudget.org" }}/i/org/company/512694613?li=0
+        {{ .Values.url | default "https://next.obudget.org" }}/api/query?query=SELECT%20SUPPORT_TITLE%20AS%20%22%D7%A0%D7%95%D7%A9%D7%90%22%2C%20%20budget_code%20%7C%7C%20%27%23budget%23%27%20%7C%7C%20budget_code%20AS%20%22%D7%9E%D7%A1%D7%A4%D7%A8%20%D7%AA%D7%A7%D7%A0%D7%94%22%2C%20%20sum(amount_approved)%20as%20%22%D7%A1%D7%94%D7%B4%D7%9B%22%2C%20min(year_requested)%20%7C%7C%20%27-%27%20%7C%7C%20max(year_requested)%20%20as%20%22%D7%AA%D7%A7%D7%95%D7%A4%D7%94%22%20FROM%20raw_supports%20WHERE%20year_requested%20%3E0%20AND%20%20entity_id%3D%27512694613%27%20GROUP%20BY%201%2C%202%20ORDER%20BY%203%20DESC%20nulls%20last
+        {{ .Values.url | default "https://next.obudget.org" }}/auth/check?jwt=kjnvkdsjvflkjdslfnsdlk&next=http%3A%2F%2Fnext.obudget.org%2Fi%2Forg%2Fcompany%2F512694613%3Fli%3D0
+        {{ end }}
+    - name: TABLES
+      value: budget entities people

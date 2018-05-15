@@ -1,2 +1,18 @@
 auth:
-  image: datopian/auth-datahub:latest
+  image: datopian/auth-datahub:d21d938492242adf1b6576910686c176001e041e
+filemanager:
+  image: datopian/filemanager:latest
+frontend:
+  image: datopian/frontend:latest
+metastore:
+  image: datopian/metastore:latest
+nginx:
+  image: datopian/datahub-nginx:latest
+plans:
+  image: datopian/plans:latest
+rawstore:
+  image: datopian/bitstore:latest
+resolver:
+  image: datopian/resolver:latest
+specstore:
+  image: datopian/specstore:latest

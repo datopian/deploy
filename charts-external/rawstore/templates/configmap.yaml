@@ -1,0 +1,12 @@
+{{ if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rawstore
+data:
+  AUTH_SERVER: http://auth:8000
+  DATABASE_URL: postgresql://datahq:123456@postgres/datahub
+  STORAGE_BUCKET_NAME: rawstore-testing.datahub.io
+  STORAGE_PATH_PATTERN: '{md5_hex}{extension}'
+  VIRTUAL_HOST: api-testing.datahub.io/rawstore/*
+{{ end }}

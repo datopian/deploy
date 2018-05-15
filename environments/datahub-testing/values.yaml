@@ -1,5 +1,78 @@
+global:
+  namespace: datahub
+  serverName: testing.datahub.io
+
 auth:
-  # see the auth configmap for the required keys
+  # kubectl create secret generic auth --from-literal=DATABASE_URL= \
+                                       # --from-literal=EXTERNAL_ADDRESS= \
+                                       # --from-literal=GITHUB_KEY= \
+                                       # --from-literal=GITHUB_SECRET= \
+                                       # --from-literal=GOOGLE_KEY= \
+                                       # --from-literal=GUNICORN_PORT= \
+                                       # --from-literal=GOOGLE_SECRET= \
+                                       # --from-literal=INSTALLED_EXTENSIONS= \
+                                       # --from-literal=MAILCHIMP_LIST_ID=97878f666d \
+                                       # --from-literal=MAILCHIMP_SECRET= \
+                                       # --from-literal=MAILCHIMP_USER= \
+                                       # --from-literal= \
+                                       # --from-literal=
   secretName: auth
-  # prevent unexpected upgrade / discrepency of images between nodes
-  image: datopian/datahub-auth:master
+  image: datopian/auth-datahub:d21d938492242adf1b6576910686c176001e041e
+filemanager:
+  # kubectl create secret generic auth --from-literal=DATABASE_URL=
+  secretName: filemanager
+  image: datopian/filemanager:latest
+frontend:
+  secretName: frontend
+  image: datopian/frontend:latest
+  metastore:
+  # kubectl create secret generic metastore --from-literal=DATAHUB_ELASTICSEARCH_ADDRESS= \
+  #                                          --from-literal=PRIVATE_KEY=
+  secretName: metastore
+  image: datopian/metastore:latest
+nginx:
+  enableLoadBalancer: true
+  # gcloud --project=datahub-k8s  compute addresses create datahub-nginx (region: 13)
+  # gcloud --project=datahub-k8s  compute addresses describe datahub-nginx | grep ^address:
+  loadBalancerIP: 35.225.241.192
+  # prevents nginx from scheduling on the same node as auth
+  enableAntiAffinity: true
+  image: datopian/datahub-nginx:latest
+plans:
+  # kubectl create secret generic plans --from-literal=BASIC_AUTH_PASSWORD= \
+  #                                     --from-literal=DATABASE_URL= \
+  #                                     --from-literal=BASIC_AUTH_USERNAME= \
+  #                                     --from-literal=GUNICORN_PORT= \
+  #                                     --from-literal=SESSION_SECRET_KEY= \
+  #                                     --from-literal=VIRTUAL_HOST=
+  secretName: plans
+  image: datopian/plans:latest
+rawstore:
+  # kubectl create secret generic rawstore --from-literal=AUTH_SERVER= \
+  #                                        --from-literal=DATABASE_URL= \
+  #                                        --from-literal=STORAGE_ACCESS_KEY_ID= \
+  #                                        --from-literal=STORAGE_SECRET_ACCESS_KEY= \
+  #                                        --from-literal=STORAGE_BUCKET_NAME= \
+  #                                        --from-literal=STORAGE_PATH_PATTERN= \
+  #                                        --from-literal=VIRTUAL_HOST=
+  secretName: rawstore
+  image: datopian/bitstore:latest
+resolver:
+  # kubectl create secret generic resolver --from-literal=AUTH_SERVER= \
+  #                                        --from-literal=VIRTUAL_HOST=
+  secretName: resolver
+  image: datopian/resolver:latest
+specstore:
+  # kubectl create secret generic specstore --from-literal=AUTH_SERVER= \
+  #                                         --from-literal=DATABASE_URL= \
+  #                                         --from-literal=AWS_ACCESS_KEY_ID= \
+  #                                         --from-literal=AWS_SECRET_ACCESS_KEY= \
+  #                                         --from-literal=DATASETS_INDEX_NAME= \
+  #                                         --from-literal=DPP_ELASTICSEARCH= \
+  #                                         --from-literal=EVENTS_ELASTICSEARCH_HOST= \
+  #                                         --from-literal=EVENTS_INDEX_NAME= \
+  #                                         --from-literal=FILEMANAGER_DATABASE_URL= \
+  #                                         --from-literal=PKGSTORE_BUCKET= \
+  #                                         --from-literal=VIRTUAL_HOST=
+  secretName: specstore
+  image: datopian/specstore:latest
