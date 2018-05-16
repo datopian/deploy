@@ -11,7 +11,7 @@ nginx:
 plans:
   image: datopian/plans:12bd9ff6f725703e7a73f3ad90680f5ade8cebdf
 rawstore:
-  image: datopian/bitstore:latest
+  image: datopian/bitstore:d759c1182f028c9373d5f81da4284d25d4d4058c
 resolver:
   image: datopian/resolver:a897a90021432691ace81974dd261e48ee34fc95
 specstore:
