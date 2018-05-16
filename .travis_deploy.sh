@@ -2,8 +2,10 @@
 
 echo "${TRAVIS_COMMIT_MESSAGE}" | grep -- --no-deploy && echo skipping deployment && exit 0
 
-openssl aes-256-cbc -K $encrypted_075bf2c88471_key -iv $encrypted_075bf2c88471_iv -in environments/datahub-testing/deploy-ops-secret.json.enc -out environments/datahub-testing/secret-k8s-ops.json -d
-K8S_ENVIRONMENT_NAME="datahub-testing"
+K8S_ENVIRONMENT_NAME=${1}
+
+openssl aes-256-cbc -K $encrypted_075bf2c88471_key -iv $encrypted_075bf2c88471_iv -in environments/"$K8S_ENVIRONMENT_NAME"/deploy-ops-secret.json.enc -out environments/"$K8S_ENVIRONMENT_NAME"/secret-k8s-ops.json -d
+
 OPS_REPO_SLUG="datahq/deploy"
 OPS_REPO_BRANCH="${TRAVIS_BRANCH}"
 ./run_docker_ops.sh "${K8S_ENVIRONMENT_NAME}" "
@@ -21,7 +23,7 @@ OPS_REPO_BRANCH="${TRAVIS_BRANCH}"
     kubectl get pods --all-namespaces;
     kubectl get service --all-namespaces;
     exit "'$'"RES
-" "orihoch/sk8s-ops" "${OPS_REPO_SLUG}" "${OPS_REPO_BRANCH}" "environments/datahub-testing/secret-k8s-ops.json"
+" "orihoch/sk8s-ops" "${OPS_REPO_SLUG}" "${OPS_REPO_BRANCH}" "environments/"$K8S_ENVIRONMENT_NAME"/secret-k8s-ops.json"
 if [ "$?" == "0" ]; then
     echo travis deployment success
     exit 0
