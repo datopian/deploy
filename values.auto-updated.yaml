@@ -9,7 +9,7 @@ metastore:
 nginx:
   image: datopian/datahub-nginx:d21d938492242adf1b6576910686c176001e041e
 plans:
-  image: datopian/plans:latest
+  image: datopian/plans:12bd9ff6f725703e7a73f3ad90680f5ade8cebdf
 rawstore:
   image: datopian/bitstore:latest
 resolver:
