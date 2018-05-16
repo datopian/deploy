@@ -13,6 +13,6 @@ plans:
 rawstore:
   image: datopian/bitstore:latest
 resolver:
-  image: datopian/resolver:latest
+  image: datopian/resolver:a897a90021432691ace81974dd261e48ee34fc95
 specstore:
   image: datopian/specstore:latest
