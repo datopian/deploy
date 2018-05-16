@@ -5,21 +5,6 @@ metadata:
   name: nginx
 spec:
   replicas: 1
-  {{ if .Values.enableAntiAffinity }}
-  affinity:
-    # ensure nginx won't be on the same node as specstore
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchExpressions:
-          - key: app
-            operator: In
-            values:
-            - specstore
-            - frontend
-            - auth
-        topologyKey: "kubernetes.io/hostname"
-  {{ end }}
   template:
     metadata:
       labels:
