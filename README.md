@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/datahq/deploy.svg?branch=master)](https://travis-ci.org/datahq/deploy)
+
 This repo manages datahub.io infrastructure as code.
 
 DataHub.io uses a microservices architecture. We use docker for containerisation and Kubernetes for orchestration.
