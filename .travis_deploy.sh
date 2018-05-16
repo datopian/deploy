@@ -2,7 +2,7 @@
 
 echo "${TRAVIS_COMMIT_MESSAGE}" | grep -- --no-deploy && echo skipping deployment && exit 0
 
-openssl aes-256-cbc -K $encrypted_075bf2c88471_key -iv $encrypted_075bf2c88471_iv -in environments/datahub-testing/deploy-ops-secret.json.enc -out environments/datahub-testing/k8s-ops-secret.json -d
+openssl aes-256-cbc -K $encrypted_075bf2c88471_key -iv $encrypted_075bf2c88471_iv -in environments/datahub-testing/deploy-ops-secret.json.enc -out environments/datahub-testing/secret-k8s-ops.json -d
 K8S_ENVIRONMENT_NAME="datahub-testing"
 OPS_REPO_SLUG="datahq/deploy"
 OPS_REPO_BRANCH="${TRAVIS_BRANCH}"
