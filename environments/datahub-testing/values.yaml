@@ -17,18 +17,13 @@ auth:
                                        # --from-literal= \
                                        # --from-literal=
   secretName: auth-testing
-  image: datopian/auth-datahub:latest
 filemanager:
   # kubectl create secret generic filemanager-testing --from-literal=DATABASE_URL=
   secretName: filemanager-testing
-  image: datopian/filemanager:latest
-frontend:
-  image: datopian/frontend:latest
 metastore:
   # kubectl create secret generic metastore-testing --from-literal=DATAHUB_ELASTICSEARCH_ADDRESS= \
   #                                                 --from-literal=PRIVATE_KEY=
   secretName: metastore-testing
-  image: datopian/metastore:latest
 nginx:
   enableLoadBalancer: true
   # gcloud --project=datahub-k8s  compute addresses create datahub-nginx-production (region: 13)
@@ -36,7 +31,6 @@ nginx:
   loadBalancerIP: 35.225.241.192
   # prevents nginx from scheduling on the same node as auth
   enableAntiAffinity: true
-  image: datopian/datahub-nginx:latest
 plans:
   # kubectl create secret generic plans-testing --from-literal=BASIC_AUTH_PASSWORD= \
   #                                     --from-literal=DATABASE_URL= \
@@ -45,7 +39,6 @@ plans:
   #                                     --from-literal=SESSION_SECRET_KEY= \
   #                                     --from-literal=VIRTUAL_HOST=
   secretName: plans-testing
-  image: datopian/plans:latest
 rawstore:
   # kubectl create secret generic rawstore-testing --from-literal=AUTH_SERVER= \
   #                                        --from-literal=DATABASE_URL= \
@@ -55,12 +48,10 @@ rawstore:
   #                                        --from-literal=STORAGE_PATH_PATTERN= \
   #                                        --from-literal=VIRTUAL_HOST=
   secretName: rawstore-testing
-  image: datopian/bitstore:latest
 resolver:
   # kubectl create secret generic resolver-testing --from-literal=AUTH_SERVER= \
   #                                        --from-literal=VIRTUAL_HOST=
   secretName: resolver-testing
-  image: datopian/resolver:latest
 specstore:
   # kubectl create secret generic specstore-testing --from-literal=AUTH_SERVER= \
   #                                         --from-literal=DATABASE_URL= \
@@ -74,4 +65,3 @@ specstore:
   #                                         --from-literal=PKGSTORE_BUCKET= \
   #                                         --from-literal=VIRTUAL_HOST=
   secretName: specstore-testing
-  image: datopian/specstore:latest
