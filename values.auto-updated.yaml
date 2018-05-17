@@ -15,4 +15,4 @@ rawstore:
 resolver:
   image: datopian/resolver:a897a90021432691ace81974dd261e48ee34fc95
 specstore:
-  image: datopian/specstore:bb6470f7d22353e354e25986b1b8e3adb20a1a0a
+  image: datopian/specstore:c087407c563e48318dd43ed7fce2fe8c6f7e11bb
