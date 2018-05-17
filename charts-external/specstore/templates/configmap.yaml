@@ -13,4 +13,5 @@ data:
   FILEMANAGER_DATABASE_URL: postgresql://datahq:123456@postgres/datahub
   PKGSTORE_BUCKET: pkgstore-testing.datahub.io
   VIRTUAL_HOST: api-testing.datahub.io/source/*
+  FLOWMANAGER_VERBOSITY: 2
 {{ end }}
