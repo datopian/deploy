@@ -37,4 +37,4 @@ resolver:
 specstore:
   enabled: true
   resources: >
-    {"requests": {"cpu": "350m", "memory": "500Mi"}, "limits": {"memory": "1000Mi"}}
+    {"requests": {"cpu": "3", "memory": "3000Mi"}, "limits": {"memory": "3000Mi"}}
