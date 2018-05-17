@@ -5,12 +5,12 @@ metadata:
   name: frontend
 data:
   API_URL: https://api-testing.datahub.io
-  AUTH_UR: http://auth:8000/
+  AUTH_UR: http://auth:8000
   BITSTORE_URL: https://pkgstore-testing.datahub.io
   FILEMANAGER_URL: http://filemanager:8000
-  FLOWMANAGER_URL: http://specstore:8000/
-  METASTORE_URL: http://metastore:8000/
-  RESOLVER_URL: http://resolver:8000/
+  FLOWMANAGER_URL: http://specstore:8000
+  METASTORE_URL: http://metastore:8000
+  RESOLVER_URL: http://resolver:8000
   SITE_URL: https://testing.datahub.io
-  VIRTUAL_HOST: https://testing.datahub.io'
+  VIRTUAL_HOST: https://testing.datahub.io
 {{ end }}
