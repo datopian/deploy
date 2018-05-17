@@ -11,9 +11,9 @@ deploy:
     provider: script
     script: bash .travis_deploy.sh datahub-testing
     on:
-      branch: staging
+      branch: master
   -
     provider: script
     script: bash .travis_deploy.sh datahub-production
     on:
-      branch: master
+      branch: production
