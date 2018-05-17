@@ -17,7 +17,7 @@ auth:
                                        # --from-literal= \
                                        # --from-literal=
   secretName: auth-testing
-  image: datopian/auth-datahub:d21d938492242adf1b6576910686c176001e041e
+  image: datopian/auth-datahub:latest
 filemanager:
   # kubectl create secret generic filemanager-testing --from-literal=DATABASE_URL=
   secretName: filemanager-testing

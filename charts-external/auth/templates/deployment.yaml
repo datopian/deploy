@@ -15,7 +15,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: auth
-        image: {{ .Values.image | default "datopian/auth-datahub:d21d938492242adf1b6576910686c176001e041e" | quote }}
+        image: {{ .Values.image | default "datopian/auth-datahub:latest" | quote }}
         ports:
         - containerPort: 8000
         resources: {{ .Values.resources }}
