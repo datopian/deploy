@@ -73,5 +73,5 @@ specstore:
   #                                         --from-literal=FILEMANAGER_DATABASE_URL= \
   #                                         --from-literal=PKGSTORE_BUCKET= \
   #                                         --from-literal=VIRTUAL_HOST=
-  secretName: specstore
+  secretName: specstore-testing
   image: datopian/specstore:latest
