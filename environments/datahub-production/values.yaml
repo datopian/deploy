@@ -20,6 +20,12 @@ auth:
 filemanager:
   # kubectl create secret generic filemanager-production --from-literal=DATABASE_URL=
   secretName: filemanager-production
+frontend:
+  secretName: frontend-production
+  # kubectl create secret generic frontend-production --from-literal=API_URL=
+                                                      # --from-literal=BITSTORE_URL=
+                                                      # --from-literal=SITE_URL=
+                                                      # --from-literal=VIRTUAL_HOST=
 metastore:
   # kubectl create secret generic metastore-production --from-literal=DATAHUB_ELASTICSEARCH_ADDRESS= \
   #                                          --from-literal=PRIVATE_KEY=
