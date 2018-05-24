@@ -45,7 +45,6 @@ class Updater(object):
         out = ''
         cmd = cmd.split('') + [options]
         cmd.remove('')
-        print(cmd)
         try:
             output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as process_error:
