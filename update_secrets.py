@@ -43,7 +43,7 @@ class Updater(object):
 
     def _run_commands(self, cmd, options=''):
         out = ''
-        cmd = cmd.split(' ') + [options]
+        cmd = cmd.split('') + [options]
         cmd.remove('')
         print(cmd)
         try:
