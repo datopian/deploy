@@ -23,6 +23,19 @@ elif [ "${1}" == "deploy" ]; then
                orihoch/github_yaml_updater
     [ "$?" != "0" ] && echo failed github yaml update && exit 1
 
+elif [ "${1}" == "trigger" ]; then
+    body='{
+      "request": {
+      "message": "rebuild because '${TRAVIS_REPO_SLUG}'updated with commit '${TRAVIS_COMMIT}'",
+      "branch":"master"
+    }}'
+    curl -s -X POST \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "Travis-API-Version: 3" \
+      -H "Authorization: token ${TRAVIS_TOKEN}" \
+      -d "$body" \
+      https://api.travis-ci.com/repo/datahq%2F${TRIGGER_REPO}/requests
 fi
 
 echo Great Success
