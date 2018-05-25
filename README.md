@@ -128,6 +128,25 @@ Finally, automation scripts write values to `values.auto-updated.yaml`
 
 Secrets are stored and managed directly in kubernetes and are not managed via Helm.
 
+You can modify them manually or automatically
+
+### update automatically
+
+- You will need to `.env` file to be placed in root directory (see `.env.template`).
+- Install dotenv: `pip install python-dotenv`
+
+```
+# Update secrets for all services
+python update_secrets.py update
+
+# Or update secrets for specific servcie
+python update_secrets.py update auth
+```
+
+Note: You may need to switch environment before updating `switch_environment.sh`
+
+### Update manually
+
 To update an existing secret, delete it first `kubectl delete secret SECRET_NAME`
 
 After updating a secret you should update the affected deployments, you can use `./force_update.sh` to do that
