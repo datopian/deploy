@@ -35,8 +35,22 @@ elif [ "${1}" == "trigger" ]; then
       -H "Travis-API-Version: 3" \
       -H "Authorization: token ${TRAVIS_TOKEN}" \
       -d "$body" \
-      https://api.travis-ci.com/repo/datahq%2F${TRIGGER_REPO}/requests
+      https://api.travis-ci.com/repo/datahq%2F${TRIGGER_REPO}/requests | grep -C 20 -- 'error:' && echo Warning: failed to create PR && exit 0
+elif [ "${1}" == "pr" ]; then
+    body='{
+      "title": "'${GIT_PR_TITLE}'",
+      "body": "'${GIT_PR_BODDY_MESSAGE}'",
+      "head": "'${GIT_HEAD}'",
+      "base": "'${GIT_PRODUCTION_BRANCH}'"
+    }'
+    curl -s -X POST \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "Authorization: token ${GITHUB_TOKEN}" \
+      -d "$body" \
+      https://api.github.com/repos/${TRAVIS_REPO_SLUG}/pulls | grep -C 20 -- '"errors"' && echo Warning: failed to create PR
 fi
 
+echo
 echo Great Success
 exit 0

@@ -1,5 +1,11 @@
 language: bash
 sudo: required
+env:
+  global:
+    - GIT_PR_BODDY_MESSAGE="Please visit https://datahub.io and make sure everything works as expected!"
+    - GIT_PRODUCTION_BRANCH=production
+    - GIT_HEAD=master
+    - GIT_PR_TITLE="Updates For Production Environment"
 services:
   - docker
 install:
@@ -9,7 +15,7 @@ script:
 deploy:
   -
     provider: script
-    script: bash .travis_deploy.sh datahub-testing
+    script: bash .travis_deploy.sh datahub-testing && bash apps_travis_script.sh pr
     on:
       branch: master
   -
