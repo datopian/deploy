@@ -2,7 +2,7 @@ language: bash
 sudo: required
 env:
   global:
-    - GIT_PR_BODDY_MESSAGE="Please visit https://datahub.io and make sure everything works as expected!"
+    - GIT_PR_BODDY_MESSAGE="Please visit https://testing.datahub.io and make sure everything works as expected!"
     - GIT_PRODUCTION_BRANCH=production
     - GIT_HEAD=master
     - GIT_PR_TITLE="Updates For Production Environment"
