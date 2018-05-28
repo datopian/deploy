@@ -39,14 +39,15 @@ elif [ "${1}" == "trigger" ]; then
 elif [ "${1}" == "pr" ]; then
     body='{
       "title": "'${DEPLOY_COMMIT_MESSAGE}'",
-      "body": "'${PR_BODDY_MESSAGE}'",
+      "body": "'${GIT_PR_BODDY_MESSAGE}'",
       "head": "'${GIT_HEAD}'",
       "base": "'${GIT_PRODUCTION_BRANCH}'"
     }'
-    curl -s -X GET \
+    curl -s -X POST \
       -H "Content-Type: application/json" \
       -H "Accept: application/json" \
-      -H "Authorization: token ${TRAVIS_TOKEN}" \
+      -H "Authorization: token ${GITHUB_TOKEN}" \
+      -d "$body" \
       https://api.github.com/repos/${TRAVIS_REPO_SLUG}/pulls
 fi
 
