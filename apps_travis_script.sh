@@ -36,6 +36,18 @@ elif [ "${1}" == "trigger" ]; then
       -H "Authorization: token ${TRAVIS_TOKEN}" \
       -d "$body" \
       https://api.travis-ci.com/repo/datahq%2F${TRIGGER_REPO}/requests
+elif [ "${1}" == "pr" ]; then
+    body='{
+      "title": "'${DEPLOY_COMMIT_MESSAGE}'",
+      "body": "'${PR_BODDY_MESSAGE}'",
+      "head": "'${GIT_HEAD}'",
+      "base": "'${GIT_PRODUCTION_BRANCH}'"
+    }'
+    curl -s -X GET \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "Authorization: token ${TRAVIS_TOKEN}" \
+      https://api.github.com/repos/${TRAVIS_REPO_SLUG}/pulls
 fi
 
 echo Great Success
