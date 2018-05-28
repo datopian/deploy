@@ -2,9 +2,9 @@ language: bash
 sudo: required
 env:
   global:
-    - PR_BODDY_MESSAGE="Please visit https://datahub.io and make sure everything works as expected!"
-    - GIT_PRODUCTION_BRANCH="prodcution"
-    - GIT_HEAD="origin:master"
+    - GIT_PR_BODDY_MESSAGE="Please visit https://datahub.io and make sure everything works as expected!"
+    - GIT_PRODUCTION_BRANCH=production
+    - GIT_HEAD=master
 services:
   - docker
 install:
