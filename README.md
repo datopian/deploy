@@ -173,7 +173,7 @@ To connect and run commands on a Google Kubernetes Engine environment:
 
 * Create a Google Compute Cloud service account, download the service account json file
     * set the service account json on the app's travis
-* `travis encrypt-file ../deploy/secret-deploy-ops.json deploy-ops-secret.json.enc`
+* `travis encrypt-file environments/datahub-testing/secret-k8s-ops.json environments/datahub-testing/deploy-ops-secret.json.enc --org`
 * Copy the `openssl` command output by the above command and modify in the .travis-yml
 * The -out param should be `-out k8s-ops-secret.json`
 
