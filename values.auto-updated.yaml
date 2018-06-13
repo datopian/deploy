@@ -3,7 +3,7 @@ auth:
 filemanager:
   image: datopian/filemanager:1de4b8505ca810e69f3f1efd70c2fe0c2620de61
 frontend:
-  image: datopian/datahub-frontend:769e84ed5a88604bb1305b52d1cfc4ee4614ed50
+  image: datopian/datahub-frontend:89a139ac08776351ccf27a00fa37051fa90fa2e6
 metastore:
   image: datopian/metastore:9bb3611fb1ed1053ee21cb4187ca15e6407054fb
 nginx:
