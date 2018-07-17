@@ -17,11 +17,14 @@ auth:
                                        # --from-literal= \
                                        # --from-literal=
   secretName: auth-production
+  enableAntiAffinity: true
 filemanager:
   # kubectl create secret generic filemanager-production --from-literal=DATABASE_URL=
   secretName: filemanager-production
+  enableAntiAffinity: true
 frontend:
   secretName: frontend-production
+  enableAntiAffinity: true
   # kubectl create secret generic frontend-production --from-literal=API_URL=
                                                       # --from-literal=BITSTORE_URL=
                                                       # --from-literal=SITE_URL=
@@ -30,6 +33,7 @@ metastore:
   # kubectl create secret generic metastore-production --from-literal=DATAHUB_ELASTICSEARCH_ADDRESS= \
   #                                          --from-literal=PRIVATE_KEY=
   secretName: metastore-production
+  enableAntiAffinity: true
 nginx:
   enableLoadBalancer: true
   # gcloud --project=datahub-k8s  compute addresses create datahub-nginx (region: 13)
@@ -45,6 +49,7 @@ plans:
   #                                     --from-literal=SESSION_SECRET_KEY= \
   #                                     --from-literal=VIRTUAL_HOST=
   secretName: plans-production
+  enableAntiAffinity: true
 rawstore:
   # kubectl create secret generic rawstore-production --from-literal=AUTH_SERVER= \
   #                                        --from-literal=DATABASE_URL= \
@@ -54,10 +59,12 @@ rawstore:
   #                                        --from-literal=STORAGE_PATH_PATTERN= \
   #                                        --from-literal=VIRTUAL_HOST=
   secretName: rawstore-production
+  enableAntiAffinity: true
 resolver:
   # kubectl create secret generic resolver-production --from-literal=AUTH_SERVER= \
   #                                        --from-literal=VIRTUAL_HOST=
   secretName: resolver-production
+  enableAntiAffinity: true
 specstore:
   # kubectl create secret generic specstore --from-literal=AUTH_SERVER= \
   #                                         --from-literal=DATABASE_URL= \
@@ -71,3 +78,4 @@ specstore:
   #                                         --from-literal=PKGSTORE_BUCKET= \
   #                                         --from-literal=VIRTUAL_HOST=
   secretName: specstore-production
+  enableAntiAffinity: true
