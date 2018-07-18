@@ -5,6 +5,19 @@ metadata:
   name: plans
 spec:
   replicas: 1
+  {{ if .Values.enableAntiAffinity }}
+  affinity:
+    # ensure plans won't be on the same node as specstore
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - specstore
+        topologyKey: "kubernetes.io/hostname"
+  {{ end }}
   template:
     metadata:
       labels:
