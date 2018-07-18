@@ -162,6 +162,20 @@ You can use the following snippet in the secrets.sh script to check if secret ex
   kubectl create secret generic <SECRET_NAME> <CREATE_SECRET_PARAMS>
 ```
 
+## Deleting pods manually
+
+```
+kubectl get pods
+kubectl delete pod <<pod name>>
+```
+
+Note: If pod stuck in deletion (getting recreated by itself) try deleting helm release.
+
+```
+helm list
+helm delete --purge <<release name>>
+```
+
 ## Continuous Deployment
 
 * Enable Travis for the repo (run `travis enable` from the repo directory)
@@ -194,4 +208,6 @@ To build and push docker images
 
 # Credits
 
-TODO: credit Ori ...
+This approach of infrastructure deployment on kubernetes clusters is heavily based on the https://github.com/OpenBudget/budgetkey-k8s example.
+
+Many thanks to [OriHoch](https://github.com/OriHoch) for making our lives easier.
