@@ -13,7 +13,7 @@ filemanager:
 frontend:
   enabled: true
   resources: >
-    {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
+    {"requests": {"cpu": "300m", "memory": "200Mi"}, "limits": {"memory": "400Mi"}}
 metastore:
   enabled: true
   resources: >
