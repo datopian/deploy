@@ -72,4 +72,4 @@ specstore:
   #                                         --from-literal=VIRTUAL_HOST=
   secretName: specstore-production
   resources: >
-    {"requests": {"cpu": "2.5", "memory": "9000Mi"}, "limits": {"cpu": "3.5", "memory": "12000Mi"}}
+    {"requests": {"cpu": "2.2", "memory": "5000Mi"}, "limits": {"memory": "7000Mi"}}
