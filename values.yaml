@@ -36,5 +36,6 @@ resolver:
     {"requests": {"cpu": "75m", "memory": "150Mi"}, "limits": {"memory": "300Mi"}}
 specstore:
   enabled: true
+  # For production resources are requested from environments/values.yaml
   resources: >
     {"requests": {"cpu": "1.4", "memory": "3000Mi"}, "limits": {"cpu": "1.7", "memory": "5500Mi"}}
