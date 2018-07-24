@@ -205,14 +205,6 @@ To build and push docker images
  code
   * `docker run -it --entrypoint bash -e OPS_REPO_SLUG=datahq/# The DataHQ Kubernetes Environment
 
-**Note:** If requested resources (CPU or Memory) exceed half of the allocatable resources you will need to manually delete chart via helm and redeploy it, otherwise deployment will fail with `unschedulable` error. In our case for `specstore` 2.8 CPU is requested out of 3.92 total. To update manually or reduce the requested resources:
-
-```
-helm list
-helm delete --purge datahub-production-specstore-datahub-production
-bash helm_upgrade_external_chart.sh specstore
-```
-
 # Credits
 
 This approach of infrastructure deployment on kubernetes clusters is heavily based on the https://github.com/OpenBudget/budgetkey-k8s example.
