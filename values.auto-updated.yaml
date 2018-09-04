@@ -1,7 +1,7 @@
 auth:
   image: datopian/datahub-auth:67f55287cf916880fe89090dd645e230c80c17a0
 filemanager:
-  image: datopian/filemanager:1de4b8505ca810e69f3f1efd70c2fe0c2620de61
+  image: datopian/filemanager:905b1cfca0a6874d2e79e7940a8dd1055dcb955b
 frontend:
   image: datopian/datahub-frontend:9287d7ff49283b83f45640bf6187f52be264404c
 metastore:
