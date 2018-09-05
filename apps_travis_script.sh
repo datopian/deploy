@@ -26,7 +26,7 @@ elif [ "${1}" == "deploy" ]; then
 elif [ "${1}" == "trigger" ]; then
     body='{
       "request": {
-      "message": "rebuild because '${TRAVIS_REPO_SLUG}'updated with commit '${TRAVIS_COMMIT}'",
+      "message": "rebuild because '${TRAVIS_REPO_SLUG}' updated with commit '${TRAVIS_COMMIT}'",
       "branch":"master"
     }}'
     curl -s -X POST \
@@ -35,7 +35,7 @@ elif [ "${1}" == "trigger" ]; then
       -H "Travis-API-Version: 3" \
       -H "Authorization: token ${TRAVIS_TOKEN}" \
       -d "$body" \
-      https://api.travis-ci.com/repo/datahq%2F${TRIGGER_REPO}/requests | grep -C 20 -- 'error:' && echo Warning: failed to create PR && exit 0
+      https://api.travis-ci.org/repo/datahq%2F${2}/requests | grep -C 20 -- 'error:' && echo Warning: failed to create PR && exit 0
 elif [ "${1}" == "pr" ]; then
     body='{
       "title": "'${GIT_PR_TITLE}'",
