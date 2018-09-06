@@ -23,6 +23,15 @@ elif [ "${1}" == "deploy" ]; then
                orihoch/github_yaml_updater
     [ "$?" != "0" ] && echo failed github yaml update && exit 1
 
+elif [ "${1}" == "push_to_docker" ]; then
+    tag="${TRAVIS_COMMIT}"
+    [ "${tag}" == "" ] && echo empty tag && exit 1
+    docker login -u "${DOCKER_USER:-$DOCKER_USERNAME}" -p "${DOCKER_PASS:-$DOCKER_PASSWORD}" &&\
+    docker push "${DOCKER_IMAGE}:latest" &&\
+    docker tag "${DOCKER_IMAGE}:latest" "${DOCKER_IMAGE}:${tag}" &&\
+    docker push "${DOCKER_IMAGE}:${tag}"
+    [ "$?" != "0" ] && echo failed docker push && exit 1
+
 elif [ "${1}" == "trigger" ]; then
     body='{
       "request": {
