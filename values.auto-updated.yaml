@@ -1,5 +1,5 @@
 auth:
-  image: datopian/datahub-auth:67f55287cf916880fe89090dd645e230c80c17a0
+  image: datopian/datahub-auth:67f55287cf916880fe89090dd645e230c80c17a0-425134772
 filemanager:
   image: datopian/filemanager:905b1cfca0a6874d2e79e7940a8dd1055dcb955b
 frontend:
