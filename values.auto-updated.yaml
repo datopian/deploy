@@ -5,7 +5,7 @@ filemanager:
 frontend:
   image: datopian/datahub-frontend:3819dd4ac9402485343b64f8e6a97c405b209db3-425337888
 metastore:
-  image: datopian/metastore:2364318cff6f2b1b2e62a72d0e3f254d7fadd2e2
+  image: datopian/metastore:88777c9dc602b82c5ffd84dbea253d94be00bcc6-425578033
 nginx:
   image: datopian/datahub-nginx:0aefceb61a82cebde760438a2417caa1d44b3dbc
 plans:
