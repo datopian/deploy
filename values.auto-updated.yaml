@@ -16,3 +16,5 @@ resolver:
   image: datopian/resolver:a897a90021432691ace81974dd261e48ee34fc95
 specstore:
   image: datopian/specstore:c6afe118449fa6cb251daff3ce582c4c8a100de9-439500034
+factory:
+  image: datopian/factory:latest
