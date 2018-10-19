@@ -4,5 +4,5 @@ kind: ConfigMap
 metadata:
   name: factory
 data:
-  DPP_BASE_PATH: factory
+  DPP_BASE_PATH: /factory/
 {{ end }}
