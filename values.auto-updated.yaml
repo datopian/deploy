@@ -9,7 +9,7 @@ frontend:
 metastore:
   image: datopian/metastore:c30f16711d984213aca50ad731f7cce347c902bc-425582464
 nginx:
-  image: datopian/datahub-nginx:5e00db0938c078d5bd19941ef5f662b025e0f35f-443659939
+  image: datopian/datahub-nginx:dc31b8b19619bdce13affd125a19fda69178aec7-443669231
 plans:
   image: datopian/plans:12bd9ff6f725703e7a73f3ad90680f5ade8cebdf
 rawstore:
