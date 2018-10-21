@@ -39,3 +39,7 @@ specstore:
   # For production resources are requested from environments/values.yaml
   resources: >
     {"requests": {"cpu": "0.5", "memory": "2500Mi"}, "limits": {"memory": "5500Mi"}}
+factory:
+  enabled: true
+  resources: >
+    {"requests": {"cpu": "0.3", "memory": "500Mi"}, "limits": {"memory": "1000Mi"}}

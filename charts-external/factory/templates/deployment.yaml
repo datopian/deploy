@@ -1,0 +1,30 @@
+{{ if .Values.enabled }}
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: factory
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: factory
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: factory
+        image: {{ .Values.image | default "datopian/factory:latest" | quote }}
+        ports:
+        - containerPort: 5000
+        resources: {{ .Values.resources }}
+        envFrom:
+        - configMapRef:
+            name: factory
+        {{ if .Values.secretName }}
+        # override the values from configmap
+        - secretRef:
+            name: {{ .Values.secretName | quote }}
+        {{ end }}
+{{ end }}
