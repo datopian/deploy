@@ -1,11 +1,11 @@
 auth:
   image: datopian/datahub-auth:67f55287cf916880fe89090dd645e230c80c17a0-425134772
 factory:
-  image: datopian/factory:78327cceb77e87bb28cb9eae168dfc4000189b3a-88526709
+  image: datopian/factory:cb3647bb699599e71e8ff94617afcbe37231fc7f-88677195
 filemanager:
   image: datopian/filemanager:905b1cfca0a6874d2e79e7940a8dd1055dcb955b
 frontend:
-  image: datopian/datahub-frontend:9dfdafd9d9f10d54b897a35196260846a883c248-444398231
+  image: datopian/datahub-frontend:37d14746c23cf4e22fa871f4219b6ad55d4bdd5e-444423719
 metastore:
   image: datopian/metastore:c30f16711d984213aca50ad731f7cce347c902bc-425582464
 nginx:
