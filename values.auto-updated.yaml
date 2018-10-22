@@ -1,18 +1,20 @@
 auth:
-  image: datopian/datahub-auth:685750bc6914a34fd9fb05a1338f153c318c9d23
+  image: datopian/datahub-auth:67f55287cf916880fe89090dd645e230c80c17a0-425134772
+factory:
+  image: datopian/factory:cb3647bb699599e71e8ff94617afcbe37231fc7f-88677195
 filemanager:
-  image: datopian/filemanager:1de4b8505ca810e69f3f1efd70c2fe0c2620de61
+  image: datopian/filemanager:905b1cfca0a6874d2e79e7940a8dd1055dcb955b
 frontend:
-  image: datopian/datahub-frontend:fbcea3be16b78e9480059c1c28d57cd7782a3230
+  image: datopian/datahub-frontend:37d14746c23cf4e22fa871f4219b6ad55d4bdd5e-444423719
 metastore:
-  image: datopian/metastore:9bb3611fb1ed1053ee21cb4187ca15e6407054fb
+  image: datopian/metastore:c30f16711d984213aca50ad731f7cce347c902bc-425582464
 nginx:
-  image: datopian/datahub-nginx:0aefceb61a82cebde760438a2417caa1d44b3dbc
+  image: datopian/datahub-nginx:dc31b8b19619bdce13affd125a19fda69178aec7-443669231
 plans:
   image: datopian/plans:12bd9ff6f725703e7a73f3ad90680f5ade8cebdf
 rawstore:
-  image: datopian/bitstore:d759c1182f028c9373d5f81da4284d25d4d4058c
+  image: datopian/bitstore:9eac273b288905c865fd5ce12bf136b4e02ae3cb-425134785
 resolver:
   image: datopian/resolver:a897a90021432691ace81974dd261e48ee34fc95
 specstore:
-  image: datopian/specstore:e7a6c186d83f4e218902e017a9939e2899f2649b
+  image: datopian/specstore:c6afe118449fa6cb251daff3ce582c4c8a100de9-439500034

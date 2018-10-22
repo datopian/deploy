@@ -162,6 +162,20 @@ You can use the following snippet in the secrets.sh script to check if secret ex
   kubectl create secret generic <SECRET_NAME> <CREATE_SECRET_PARAMS>
 ```
 
+## Deleting pods manually
+
+```
+kubectl get pods
+kubectl delete pod <<pod name>>
+```
+
+Note: If pod stuck in deletion (getting recreated by itself) try deleting helm release.
+
+```
+helm list
+helm delete --purge <<release name>>
+```
+
 ## Continuous Deployment
 
 * Enable Travis for the repo (run `travis enable` from the repo directory)
@@ -173,7 +187,7 @@ To connect and run commands on a Google Kubernetes Engine environment:
 
 * Create a Google Compute Cloud service account, download the service account json file
     * set the service account json on the app's travis
-* `travis encrypt-file ../deploy/secret-deploy-ops.json deploy-ops-secret.json.enc`
+* `travis encrypt-file environments/datahub-testing/secret-k8s-ops.json environments/datahub-testing/deploy-ops-secret.json.enc --org`
 * Copy the `openssl` command output by the above command and modify in the .travis-yml
 * The -out param should be `-out k8s-ops-secret.json`
 
@@ -191,7 +205,8 @@ To build and push docker images
  code
   * `docker run -it --entrypoint bash -e OPS_REPO_SLUG=datahq/# The DataHQ Kubernetes Environment
 
-
 # Credits
 
-TODO: credit Ori ...
+This approach of infrastructure deployment on kubernetes clusters is heavily based on the https://github.com/OpenBudget/budgetkey-k8s example.
+
+Many thanks to [OriHoch](https://github.com/OriHoch) for making our lives easier.
