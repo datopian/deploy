@@ -1,0 +1,8 @@
+{{ if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: factory
+data:
+  DPP_BASE_PATH: /factory/
+{{ end }}

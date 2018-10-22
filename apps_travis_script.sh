@@ -6,7 +6,7 @@ if [ "${1}" == "script" ]; then
     [ "$?" != "0" ] && echo failed script && exit 1
 
 elif [ "${1}" == "deploy" ]; then
-    tag="${TRAVIS_COMMIT}"
+    tag="${TRAVIS_COMMIT}-${TRAVIS_BUILD_ID}"
     [ "${tag}" == "" ] && echo empty tag && exit 1
     docker login -u "${DOCKER_USER:-$DOCKER_USERNAME}" -p "${DOCKER_PASS:-$DOCKER_PASSWORD}" &&\
     docker push "${DOCKER_IMAGE}:latest" &&\
@@ -23,10 +23,19 @@ elif [ "${1}" == "deploy" ]; then
                orihoch/github_yaml_updater
     [ "$?" != "0" ] && echo failed github yaml update && exit 1
 
+elif [ "${1}" == "push_to_docker" ]; then
+    tag="${TRAVIS_COMMIT}"
+    [ "${tag}" == "" ] && echo empty tag && exit 1
+    docker login -u "${DOCKER_USER:-$DOCKER_USERNAME}" -p "${DOCKER_PASS:-$DOCKER_PASSWORD}" &&\
+    docker push "${DOCKER_IMAGE}:latest" &&\
+    docker tag "${DOCKER_IMAGE}:latest" "${DOCKER_IMAGE}:${tag}" &&\
+    docker push "${DOCKER_IMAGE}:${tag}"
+    [ "$?" != "0" ] && echo failed docker push && exit 1
+
 elif [ "${1}" == "trigger" ]; then
     body='{
       "request": {
-      "message": "rebuild because '${TRAVIS_REPO_SLUG}'updated with commit '${TRAVIS_COMMIT}'",
+      "message": "rebuild because '${TRAVIS_REPO_SLUG}' updated with commit '${TRAVIS_COMMIT}'",
       "branch":"master"
     }}'
     curl -s -X POST \
@@ -35,7 +44,7 @@ elif [ "${1}" == "trigger" ]; then
       -H "Travis-API-Version: 3" \
       -H "Authorization: token ${TRAVIS_TOKEN}" \
       -d "$body" \
-      https://api.travis-ci.com/repo/datahq%2F${TRIGGER_REPO}/requests | grep -C 20 -- 'error:' && echo Warning: failed to create PR && exit 0
+      https://api.travis-ci.org/repo/datahq%2F${2}/requests | grep -C 20 -- 'error:' && echo Warning: failed to create PR && exit 0
 elif [ "${1}" == "pr" ]; then
     body='{
       "title": "'${GIT_PR_TITLE}'",
