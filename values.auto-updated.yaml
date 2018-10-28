@@ -5,7 +5,7 @@ factory:
 filemanager:
   image: datopian/filemanager:905b1cfca0a6874d2e79e7940a8dd1055dcb955b
 frontend:
-  image: datopian/datahub-frontend:958cd76bee760dc77e639a8f5d2fa1b8cceb0116-446019558
+  image: datopian/datahub-frontend:9fad64d5e6cbc28b392ee0a614e87bfd7505fbf9-447470972
 metastore:
   image: datopian/metastore:c30f16711d984213aca50ad731f7cce347c902bc-425582464
 nginx:
