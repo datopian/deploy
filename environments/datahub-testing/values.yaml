@@ -65,3 +65,6 @@ specstore:
   #                                         --from-literal=PKGSTORE_BUCKET= \
   #                                         --from-literal=VIRTUAL_HOST=
   secretName: specstore-testing
+factory:
+  # kubectl create secret generic factory-testing --from-literal=DATAHUB_ENV=
+  secretName: factory-testing
