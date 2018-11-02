@@ -5,7 +5,7 @@ factory:
 filemanager:
   image: datopian/filemanager:905b1cfca0a6874d2e79e7940a8dd1055dcb955b
 frontend:
-  image: datopian/datahub-frontend:060cf4558d553edc6afec25b3a9a571aaef168fe-448283702
+  image: datopian/datahub-frontend:264704d46e03d106c9f6fe40c01bc81902a9dc7d-449309937
 metastore:
   image: datopian/metastore:c30f16711d984213aca50ad731f7cce347c902bc-425582464
 nginx:
@@ -17,4 +17,4 @@ rawstore:
 resolver:
   image: datopian/resolver:a897a90021432691ace81974dd261e48ee34fc95
 specstore:
-  image: datopian/specstore:c6afe118449fa6cb251daff3ce582c4c8a100de9-439500034
+  image: datopian/specstore:83311d17a8d4d27290e8a80766c2aaa06c8fe0cb-449693923
