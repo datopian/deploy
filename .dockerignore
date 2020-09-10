@@ -3,4 +3,3 @@
 secret*
 .travis.yml
 continuous_deployment.sh
-environments
