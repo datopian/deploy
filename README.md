@@ -6,6 +6,10 @@ DataHub.io uses a microservices architecture. We use docker for containerisation
 
 This repo is focused on the orchestration uses Kubernetes. It assumes each service is responsible for its own dockerisation and publication to the container registry i.e. dockerhub.
 
+# Boot up the cluster
+
+If cluster does not yet exists [follow](terraform/README.md) docs to boot it up
+
 # Quickstart
 
 *If you want to boot a DataHub instance manually or just play around ...*
