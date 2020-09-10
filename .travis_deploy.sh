@@ -23,7 +23,7 @@ OPS_REPO_BRANCH="${TRAVIS_BRANCH}"
     kubectl get pods --all-namespaces;
     kubectl get service --all-namespaces;
     exit "'$'"RES
-" "orihoch/sk8s-ops" "${OPS_REPO_SLUG}" "${OPS_REPO_BRANCH}" "environments/"$K8S_ENVIRONMENT_NAME"/secret-k8s-ops.json"
+" "datahub/sk8s-ops" "${OPS_REPO_SLUG}" "${OPS_REPO_BRANCH}" "environments/"$K8S_ENVIRONMENT_NAME"/secret-k8s-ops.json"
 if [ "$?" == "0" ]; then
     echo travis deployment success
     exit 0
