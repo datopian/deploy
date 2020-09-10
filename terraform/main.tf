@@ -2,16 +2,24 @@ variable "region" {
   default = "us-central1"
 }
 
+variable "zone" {
+  default = "us-central1-a"
+}
+
 variable "kubernetes_version" {
   default = "1.16.13-gke.1"
 }
 
 variable "cluster_name" {
-  default = "datahub-staging"
+  default = "datahub-testing"
 }
 
 variable "node_pool_name" {
   default = "staging-node-pool"
+}
+
+variable "load_balancer_ip" {
+  default = "35.225.241.192"
 }
 
 module "gke" {
@@ -25,6 +33,7 @@ module "gke" {
   ip_range_services        = ""
   regional                 = true
   region                   = var.region
+  zones                    = [var.zone]
   create_service_account   = true
   kubernetes_version       = var.kubernetes_version
   remove_default_node_pool = true
@@ -46,3 +55,11 @@ module "gke" {
     }
   ]
 }
+
+## IP addreses are already reserved so skiping for now
+#resource "google_compute_address" "ip_address" {
+#  project       = "datahub-k8s"
+#  name          = "datahub-nginx"
+#  address       = var.load_balancer_ip
+#  region        = var.region
+#}
