@@ -5,6 +5,8 @@ metadata:
   name: resolver
 spec:
   replicas: 1
+  selector:
+    matchLabels: {app: resolver}
   template:
     metadata:
       labels:

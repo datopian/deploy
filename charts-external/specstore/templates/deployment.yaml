@@ -5,6 +5,8 @@ metadata:
   name: specstore
 spec:
   replicas: 1
+  selector:
+    matchLabels: {app: specstore}
   template:
     metadata:
       labels:

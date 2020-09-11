@@ -5,6 +5,8 @@ metadata:
   name: factory
 spec:
   replicas: 1
+  selector:
+    matchLabels: {app: factory}
   template:
     metadata:
       labels:

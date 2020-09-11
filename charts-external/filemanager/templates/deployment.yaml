@@ -5,6 +5,8 @@ metadata:
   name: filemanager
 spec:
   replicas: 1
+  selector:
+    matchLabels: {app: filemanager}
   template:
     metadata:
       labels:
