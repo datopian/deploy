@@ -5,6 +5,8 @@ metadata:
   name: rawstore
 spec:
   replicas: 1
+  selector:
+    matchLabels: {app: rawstore}
   template:
     metadata:
       labels:

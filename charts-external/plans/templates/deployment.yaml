@@ -5,6 +5,8 @@ metadata:
   name: plans
 spec:
   replicas: 1
+  selector:
+    matchLabels: {app: plans}
   template:
     metadata:
       labels:

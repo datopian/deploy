@@ -5,6 +5,8 @@ metadata:
   name: metastore
 spec:
   replicas: 1
+  selector:
+    matchLabels: {app: metastore}
   template:
     metadata:
       labels:
