@@ -10,7 +10,7 @@ OPS_REPO_SLUG="datahq/deploy"
 OPS_REPO_BRANCH="${TRAVIS_BRANCH}"
 ./run_docker_ops.sh "${K8S_ENVIRONMENT_NAME}" "
     RES=0;
-    curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get --version v2.8.2 > get_helm.sh && chmod 700 get_helm.sh && ./get_helm.sh;
+    curl https://raw.githubusercontent.com/kubernetes/helm/v2.16.10/scripts/get > get_helm.sh && chmod 700 get_helm.sh && ./get_helm.sh;
     if ./helm_upgrade_all.sh --install --dry-run --debug; then
         echo Dry run was successfull, performing upgrades
         ! ./helm_upgrade_all.sh --install && echo Failed upgrade && RES=1
@@ -23,7 +23,7 @@ OPS_REPO_BRANCH="${TRAVIS_BRANCH}"
     kubectl get pods --all-namespaces;
     kubectl get service --all-namespaces;
     exit "'$'"RES
-" "orihoch/sk8s-ops" "${OPS_REPO_SLUG}" "${OPS_REPO_BRANCH}" "environments/"$K8S_ENVIRONMENT_NAME"/secret-k8s-ops.json"
+" "datopian/sk8s-ops" "${OPS_REPO_SLUG}" "${OPS_REPO_BRANCH}" "environments/"$K8S_ENVIRONMENT_NAME"/secret-k8s-ops.json"
 if [ "$?" == "0" ]; then
     echo travis deployment success
     exit 0

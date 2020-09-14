@@ -54,7 +54,7 @@ elif ! gcloud "--project=${CLOUDSDK_CORE_PROJECT}" \
     echo
     echo "Failed to connect! Please ensure you have permissions and are logged in to gcloud. You can connect manually to debug:"
     echo
-    echo "gcloud container clusters get-credentials $CLOUDSDK_CONTAINER_CLUSTER --zone "${CLOUDSDK_COMPUTE_ZONE}""
+    echo "gcloud container clusters get-credentials $CLOUDSDK_CONTAINER_CLUSTER --zone "${CLOUDSDK_COMPUTE_ZONE}" --project "${CLOUDSDK_CORE_PROJECT}""
     echo
 else
   K8S_ENVIRONMENT_CONTEXT=`kubectl config current-context`

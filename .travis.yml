@@ -6,6 +6,7 @@ env:
     - GIT_PRODUCTION_BRANCH=production
     - GIT_HEAD=master
     - GIT_PR_TITLE="Updates For Production Environment"
+    - OPS_DOCKER_IMAGE=datopian/sk8s-ops
 services:
   - docker
 install:
