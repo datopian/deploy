@@ -11,15 +11,15 @@ variable "kubernetes_version" {
 }
 
 variable "cluster_name" {
-  default = "datahub-testing"
+  default = "datahub-production"
 }
 
 variable "node_pool_name" {
-  default = "staging-node-pool"
+  default = "production-node-pool"
 }
 
 variable "load_balancer_ip" {
-  default = "35.225.241.192"
+  default = "35.224.172.105"
 }
 
 module "gke" {
@@ -42,7 +42,7 @@ module "gke" {
   node_pools = [
     {
       name                = var.node_pool_name
-      machine_type        = "n1-standard-2"
+      machine_type        = "n1-standard-4"
       min_count           = 2
       max_count           = 2
       local_ssd_count     = 0
