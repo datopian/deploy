@@ -69,3 +69,6 @@ metastore:
 filemanager:
   environment:
     DATABASE_URL: ${RDS_URI}
+factory:
+  environment:
+    DATABASE_URL: ${RDS_URI}
