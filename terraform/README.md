@@ -71,15 +71,15 @@ terraform apply
 Export following following environment variables to deploy production cluster
 
 ```
-export TF_cluster_name=datahub-production              Kuberntes Cluster Name              (default: datahub-staging)
-export TF_load_balancer_ip=35.224.172.105              External IP of loadbalancer         (default: 35.225.241.192)
-export TF_node_pool_name=prodcution-node-pool          Node pool name                      (default: staging-node-pool)
+export TF_cluster_name=datahub-production              # Kuberntes Cluster Name              (default: datahub-staging)
+export TF_load_balancer_ip=35.224.172.105              # External IP of loadbalancer         (default: 35.225.241.192)
+export TF_node_pool_name=prodcution-node-pool          # Node pool name                      (default: staging-node-pool)
 ```
 
 Other configurable variables
 
 ```
-export TF_region                  The region to host the cluster      (default: us-central1)
-export TF_region                  The zone to host the cluster        (default: us-central1-a)
-export TF_kubernetes_version      Kuberntes version                   (default: 1.16.13-gke.1)
+export TF_region                  # The region to host the cluster      (default: us-central1)
+export TF_region                  # The zone to host the cluster        (default: us-central1-a)
+export TF_kubernetes_version      # Kberntes version                   (default: 1.16.13-gke.1)
 ```
