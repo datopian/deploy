@@ -3,7 +3,7 @@ frontend:
     SITE_URL: https://${DOMAIN}
     API_URL: https://${DOMAIN_API}
     BITSTORE_URL: https://${PKGSTORE_BUCKET}
-    AUTH_UR: http://auth:8000/
+    AUTH_URL: http://auth:8000/
     FLOWMANAGER_URL: http://specstore:8000/
     METASTORE_URL: http://metastore:8000/
     RESOLVER_URL: http://resolver:8000/
