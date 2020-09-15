@@ -27,6 +27,7 @@ class Updater(object):
         self.configs = yaml.load(open(envfile).read())
         self.configs = self._update_with_envs(self.configs, self.envs)
 
+
     def _update_with_envs(self, configfile, env):
         for service in configfile:
             for env_ in configfile[service]['environment']:
@@ -37,14 +38,15 @@ class Updater(object):
                     env_value = configfile[service]['environment'][env_]
                     to_replace = pattern.findall(str(env_value))
                     for rpl in to_replace:
-                        configfile[service]['environment'][env_] = env.get(rpl[2:-1], '')
+                        configfile[service]['environment'][env_] = env_value.replace(rpl,env.get(rpl[2:-1], ''))
         return configfile
 
 
     def _run_commands(self, cmd, options=''):
         out = ''
-        cmd = cmd.split('') + [options]
-        cmd.remove('')
+        cmd = cmd.split() + options.split()
+        if '' in cmd:
+            cmd.remove('')
         try:
             output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as process_error:
@@ -52,7 +54,6 @@ class Updater(object):
             for output in all_output:
                 if not 'Error:' in output:
                     output = 'Error: ' + str(output.strip())
-        print(output)
         return output
 
     def update(self, service=None):
@@ -79,7 +80,7 @@ class Updater(object):
             cmd = cmd % (serv, stage)
             options = ''
             for env in self.configs[serv]['environment']:
-                 options += '--from-literal=%s="%s" ' % (env, self.configs[serv]['environment'].get(env, ''))
+                options += '--from-literal=%s=%s ' % (env, self.configs[serv]['environment'].get(env, ''))
 
             print('Deleting old secrets for %s' % serv)
             self._run_commands(cmd_del % (serv, stage))
@@ -118,7 +119,6 @@ Actions:
     # parser.add_option('-c', '--config', dest='config',
     #         help='Config file to use.')
     options, args = parser.parse_args()
-
     if not args or not args[0] in _methods:
         parser.print_help()
         sys.exit(1)
