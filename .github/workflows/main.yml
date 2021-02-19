@@ -1,0 +1,30 @@
+name: Continuous Deployment
+on:
+  push:
+    branches:
+      - master
+      - migrate-datopian
+jobs:
+  DeployStaging:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.1
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Deploy
+        env:
+          GIT_PR_BODDY_MESSAGE: "Please visit https://testing.datahub.io and make sure everything works as expected!"
+          GIT_PRODUCTION_BRANCH: production
+          GIT_HEAD: master
+          GIT_PR_TITLE: "Updates For Production Environment"
+          OPS_DOCKER_IMAGE: datopian/sk8s-ops
+        run: |
+          curl -L https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | sudo bash
+          bash helm_lint_all.sh
+          bash .travis_deploy.sh datahub-testing && bash apps_travis_script.sh pr
