@@ -1,4 +1,5 @@
 name: Deploy Datahub
+on: [push]
 jobs:
   DeployStaging:
     if: github.ref == 'refs/heads/master'
