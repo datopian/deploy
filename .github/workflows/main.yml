@@ -1,12 +1,8 @@
-name: Continuous Deployment
+name: Deploy Datahub
 jobs:
   DeployStaging:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
-    on:
-      push:
-        branches:
-          - master
-          - migrate-datopian
     services:
       docker:
         image: docker
@@ -37,3 +33,36 @@ jobs:
           curl -L https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | sudo bash
           bash helm_lint_all.sh
           bash .travis_deploy.sh datahub-testing && bash apps_travis_script.sh pr
+  DeployProduction:
+    if: github.ref == 'refs/heads/production'
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.1
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Deploy
+        env:
+          GIT_PR_BODDY_MESSAGE: "Please visit https://testing.datahub.io and make sure everything works as expected!"
+          GIT_PRODUCTION_BRANCH: production
+          GIT_HEAD: master
+          GIT_PR_TITLE: "Updates For Production Environment"
+          OPS_DOCKER_IMAGE: datopian/sk8s-ops
+          CLOUDSDK_CORE_PROJECT: datahub-305010
+          CLOUDSDK_CONTAINER_CLUSTER: datahub-production
+          CLOUDSDK_COMPUTE_ZONE: europe-west1
+          K8S_NAMESPACE: default
+          K8S_HELM_RELEASE_NAME: datahub-production
+          K8S_ENVIRONMENT_NAME: datahub-production
+          K8S_ENVIRONMENT_CONTEXT: gke_datahub-305010_europe-west1_datahub-staging
+          encrypted_key: ${{ secrets.ENCRYPTED_KEY }}
+          encrypted_iv: ${{ secrets.ENCRYPTED_IV }}
+        run: |
+          curl -L https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | sudo bash
+          bash helm_lint_all.sh
+          bash .travis_deploy.sh datahub-production
