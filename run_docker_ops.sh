@@ -33,12 +33,15 @@ echo "DOCKER_RUN_PARAMS=${DOCKER_RUN_PARAMS}"
 [ ! -f "${OPS_SECRET_JSON_FILE}" ] && echo "Missing secret json file ${OPS_SECRET_JSON_FILE}" && exit 1
 
 echo $DATOPIAN_CLOUDSDK_CORE_PROJECT
-echo $CLOUDSDK_CONTAINER_CLUSTER
-echo $CLOUDSDK_COMPUTE_ZONE
+echo $DATOPIAN_CLOUDSDK_CONTAINER_CLUSTER
+echo $DATOPIAN_CLOUDSDK_COMPUTE_ZONE
 
 ! docker run -i -v "`readlink -f "${OPS_SECRET_JSON_FILE}"`:/k8s-ops/secret.json" \
                  -e "OPS_REPO_SLUG=${OPS_REPO_SLUG}" \
                  -e "OPS_REPO_BRANCH=${OPS_REPO_BRANCH}" \
+                 -e "DATOPIAN_CLOUDSDK_CORE_PROJECT=${DATOPIAN_CLOUDSDK_CORE_PROJECT}" \
+                 -e "DATOPIAN_CLOUDSDK_CONTAINER_CLUSTER=${DATOPIAN_CLOUDSDK_CONTAINER_CLUSTER}" \
+                 -e "DATOPIAN_CLOUDSDK_COMPUTE_ZONE=${DATOPIAN_CLOUDSDK_COMPUTE_ZONE}" \
                  $DOCKER_RUN_PARAMS \
                  "${OPS_DOCKER_IMAGE}" \
                  -c "env | grep CLOUDSDK && ls && cat connect.sh && source ~/.bashrc && source switch_environment.sh ${ENVIRONMENT_NAME}; ${SCRIPT}" \
