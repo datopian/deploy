@@ -36,12 +36,12 @@ echo "DOCKER_RUN_PARAMS=${DOCKER_RUN_PARAMS}"
                  -e "OPS_REPO_SLUG=${OPS_REPO_SLUG}" \
                  -e "OPS_REPO_BRANCH=${OPS_REPO_BRANCH}" \
                  -e "CLOUDSDK_CORE_PROJEC=${CLOUDSDK_CORE_PROJECT}" \
-                 -e "CLOUDSDK_CONTAINER_CLUSTE=${CLOUDSDK_CONTAINER_CLUSTER}" \
-                 -e "CLOUDSDK_COMPUTE_ZON=${CLOUDSDK_COMPUTE_ZONE}" \
-                 -e "K8S_NAMESPAC=${K8S_NAMESPACE}" \
-                 -e "K8S_HELM_RELEASE_NAM=${K8S_HELM_RELEASE_NAME}" \
-                 -e "K8S_ENVIRONMENT_NAM=${K8S_ENVIRONMENT_NAME}" \
-                 -e "K8S_ENVIRONMENT_CONTEX=${K8S_ENVIRONMENT_CONTEXT}" \
+                 -e "CLOUDSDK_CONTAINER_CLUSTER=${CLOUDSDK_CONTAINER_CLUSTER}" \
+                 -e "CLOUDSDK_COMPUTE_ZONE=${CLOUDSDK_COMPUTE_ZONE}" \
+                 -e "K8S_NAMESPACE=${K8S_NAMESPACE}" \
+                 -e "K8S_HELM_RELEASE_NAME=${K8S_HELM_RELEASE_NAME}" \
+                 -e "K8S_ENVIRONMENT_NAME=${K8S_ENVIRONMENT_NAME}" \
+                 -e "K8S_ENVIRONMENT_CONTEXT=${K8S_ENVIRONMENT_CONTEXT}" \
                  $DOCKER_RUN_PARAMS \
                  "${OPS_DOCKER_IMAGE}" \
                  -c "env > environments/${ENVIRONMENT_NAME}/.env && cat environments/${ENVIRONMENT_NAME}/.env && source ~/.bashrc && source switch_environment.sh ${ENVIRONMENT_NAME}; ${SCRIPT}" \

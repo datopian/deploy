@@ -31,7 +31,6 @@ jobs:
           K8S_HELM_RELEASE_NAME: datahub-testing
           K8S_ENVIRONMENT_NAME: datahub-testing
           K8S_ENVIRONMENT_CONTEXT: gke_datahub-305010_europe-west1_datahub-staging
-
           encrypted_key: ${{ secrets.ENCRYPTED_KEY }}
           encrypted_iv: ${{ secrets.ENCRYPTED_IV }}
         run: |
