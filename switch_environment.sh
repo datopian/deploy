@@ -11,8 +11,6 @@
 ! which dotenv >/dev/null && echo "attempting automatic installation of python-dotenv" && sudo pip install python-dotenv
 ! which jq >/dev/null && echo "attempting automatic installation of jq" && sudo apt-get update && sudo apt-get install -y jq
 
-echo "==================================================="
-
 if which dotenv >/dev/null && which helm >/dev/null && which kubectl >/dev/null && which jq >/dev/null; then
   if [ "${1}" == "" ]; then
       echo "source switch_environment.sh <ENVIRONMENT_NAME>"

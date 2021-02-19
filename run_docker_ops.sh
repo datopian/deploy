@@ -32,19 +32,19 @@ echo "DOCKER_RUN_PARAMS=${DOCKER_RUN_PARAMS}"
 
 [ ! -f "${OPS_SECRET_JSON_FILE}" ] && echo "Missing secret json file ${OPS_SECRET_JSON_FILE}" && exit 1
 
-echo $DATOPIAN_CLOUDSDK_CORE_PROJECT
-echo $DATOPIAN_CLOUDSDK_CONTAINER_CLUSTER
-echo $DATOPIAN_CLOUDSDK_COMPUTE_ZONE
-
 ! docker run -i -v "`readlink -f "${OPS_SECRET_JSON_FILE}"`:/k8s-ops/secret.json" \
                  -e "OPS_REPO_SLUG=${OPS_REPO_SLUG}" \
                  -e "OPS_REPO_BRANCH=${OPS_REPO_BRANCH}" \
-                 -e "CLOUDSDK_CORE_PROJECT=${DATOPIAN_CLOUDSDK_CORE_PROJECT}" \
-                 -e "CLOUDSDK_CONTAINER_CLUSTER=${DATOPIAN_CLOUDSDK_CONTAINER_CLUSTER}" \
-                 -e "CLOUDSDK_COMPUTE_ZONE=${DATOPIAN_CLOUDSDK_COMPUTE_ZONE}" \
+                 -e "CLOUDSDK_CORE_PROJEC=${CLOUDSDK_CORE_PROJECT}" \
+                 -e "CLOUDSDK_CONTAINER_CLUSTE=${CLOUDSDK_CONTAINER_CLUSTER}" \
+                 -e "CLOUDSDK_COMPUTE_ZON=${CLOUDSDK_COMPUTE_ZONE}" \
+                 -e "K8S_NAMESPAC=${K8S_NAMESPACE}" \
+                 -e "K8S_HELM_RELEASE_NAM=${K8S_HELM_RELEASE_NAME}" \
+                 -e "K8S_ENVIRONMENT_NAM=${K8S_ENVIRONMENT_NAME}" \
+                 -e "K8S_ENVIRONMENT_CONTEX=${K8S_ENVIRONMENT_CONTEXT}" \
                  $DOCKER_RUN_PARAMS \
                  "${OPS_DOCKER_IMAGE}" \
-                 -c "env | grep CLOUDSDK && ls && cat connect.sh && cat environments/datahub-testing/.env && source ~/.bashrc && source switch_environment.sh ${ENVIRONMENT_NAME}; ${SCRIPT}" \
+                 -c "env > environments/${ENVIRONMENT_NAME}/.env && cat environments/${ENVIRONMENT_NAME}/.env && source ~/.bashrc && source switch_environment.sh ${ENVIRONMENT_NAME}; ${SCRIPT}" \
     && echo "failed to run SCRIPT" && exit 1
 
 echo "Great Success!"
