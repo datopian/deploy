@@ -44,7 +44,7 @@ echo "DOCKER_RUN_PARAMS=${DOCKER_RUN_PARAMS}"
                  -e "K8S_ENVIRONMENT_CONTEXT=${K8S_ENVIRONMENT_CONTEXT}" \
                  $DOCKER_RUN_PARAMS \
                  "${OPS_DOCKER_IMAGE}" \
-                 -c "env > environments/${ENVIRONMENT_NAME}/.env && cat environments/${ENVIRONMENT_NAME}/.env && source ~/.bashrc && source switch_environment.sh ${ENVIRONMENT_NAME}; ${SCRIPT}" \
+                 -c "env > environments/${ENVIRONMENT_NAME}/.env && source ~/.bashrc && source switch_environment.sh ${ENVIRONMENT_NAME}; ${SCRIPT}" \
     && echo "failed to run SCRIPT" && exit 1
 
 echo "Great Success!"
