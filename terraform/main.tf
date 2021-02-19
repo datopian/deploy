@@ -11,18 +11,23 @@ variable "kubernetes_version" {
 }
 
 variable "cluster_name" {
-  default = "datahub-staging"
-  # default = "datahub-production" # Production
+  #default = "datahub-staging"
+  default = "datahub-production" # Production
 }
 
 variable "node_pool_name" {
-  default = "staging-node-pool"
-  # default = "production-node-pool" # Production
+  #default = "staging-node-pool"
+  default = "production-node-pool" # Production
 }
 
 variable "load_balancer_ip" {
-  default = "34.77.5.20"
-  # default = "34.77.5.20" # Production
+  #default = "34.77.5.20"
+  default = "35.195.246.183" # Production
+}
+
+variable "load_balancer_name" {
+  #default = "datahub-nginx"
+  default = "datahub-nginx-production" # Production
 }
 
 module "gke" {
@@ -62,6 +67,6 @@ module "gke" {
 ## IP addreses are already reserved so skiping for now
 resource "google_compute_address" "ip_address" {
   project       = "datahub-305010"
-  name          = "datahub-nginx"
+  name          = var.load_balancer_name
   region        = var.region
 }

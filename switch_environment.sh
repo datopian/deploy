@@ -15,7 +15,7 @@ if which dotenv >/dev/null && which helm >/dev/null && which kubectl >/dev/null 
   if [ "${1}" == "" ]; then
       echo "source switch_environment.sh <ENVIRONMENT_NAME>"
   else
-  	ENVIRONMENT_NAME="${1}"	
+  	ENVIRONMENT_NAME="${1}"
   	if [ ! -f "environments/${ENVIRONMENT_NAME}/.env" ]; then
   		echo "missing environments/${ENVIRONMENT_NAME}/.env"
   	else
