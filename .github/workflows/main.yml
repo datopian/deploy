@@ -24,6 +24,8 @@ jobs:
           GIT_HEAD: master
           GIT_PR_TITLE: "Updates For Production Environment"
           OPS_DOCKER_IMAGE: datopian/sk8s-ops
+          encrypted_key: ${{ secrets.ENCRYPTED_KEY }}
+          encrypted_iv: ${{ secrets.ENCRYPTED_IV }}
         run: |
           curl -L https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | sudo bash
           bash helm_lint_all.sh
