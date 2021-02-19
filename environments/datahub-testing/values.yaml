@@ -28,7 +28,7 @@ nginx:
   enableLoadBalancer: true
   # gcloud --project=datahub-k8s  compute addresses create datahub-nginx-production (region: 13)
   # gcloud --project=datahub-k8s  compute addresses describe datahub-nginx-production | grep ^address:
-  loadBalancerIP: 35.225.241.192
+  loadBalancerIP: 34.77.5.20
   # prevents nginx from scheduling on the same node as auth
   enableAntiAffinity: true
 plans:
