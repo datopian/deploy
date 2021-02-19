@@ -24,6 +24,13 @@ jobs:
           GIT_HEAD: master
           GIT_PR_TITLE: "Updates For Production Environment"
           OPS_DOCKER_IMAGE: datopian/sk8s-ops
+          CLOUDSDK_CORE_PROJECT: datahub-305010
+          CLOUDSDK_CONTAINER_CLUSTER: datahub-staging
+          CLOUDSDK_COMPUTE_ZONE: europe-west1
+          K8S_NAMESPACE: default
+          K8S_HELM_RELEASE_NAME: datahub-testing
+          K8S_ENVIRONMENT_NAME: datahub-testing
+          K8S_ENVIRONMENT_CONTEXT: gke_datahub-305010_europe-west1_datahub-staging
           encrypted_key: ${{ secrets.ENCRYPTED_KEY }}
           encrypted_iv: ${{ secrets.ENCRYPTED_IV }}
         run: |
