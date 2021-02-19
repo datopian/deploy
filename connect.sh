@@ -54,7 +54,7 @@ elif ! gcloud "--project=${DATOPIAN_CLOUDSDK_CORE_PROJECT}" \
     echo
     echo "Failed to connect! Please ensure you have permissions and are logged in to gcloud. You can connect manually to debug:"
     echo
-    echo "gcloud container clusters get-credentials $DATOPIAN_CLOUDSDK_CONTAINER_CLUSTER --zone "${DATOPIAN_CLOUDSDK_COMPUTE_ZONE}" --project "${DATOPIAN_CLOUDSDK_CORE_PROJECT}""
+    echo "gcloud container clusters get-credentials datahub-testing --zone europe-west1 --project datahub-305010"
     echo
 else
   K8S_ENVIRONMENT_CONTEXT=`kubectl config current-context`
