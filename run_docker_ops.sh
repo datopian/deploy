@@ -35,7 +35,7 @@ echo "DOCKER_RUN_PARAMS=${DOCKER_RUN_PARAMS}"
 ! docker run -i -v "`readlink -f "${OPS_SECRET_JSON_FILE}"`:/k8s-ops/secret.json" \
                  -e "OPS_REPO_SLUG=${OPS_REPO_SLUG}" \
                  -e "OPS_REPO_BRANCH=${OPS_REPO_BRANCH}" \
-                 -e "CLOUDSDK_CORE_PROJEC=${CLOUDSDK_CORE_PROJECT}" \
+                 -e "CLOUDSDK_CORE_PROJECT=${CLOUDSDK_CORE_PROJECT}" \
                  -e "CLOUDSDK_CONTAINER_CLUSTER=${CLOUDSDK_CONTAINER_CLUSTER}" \
                  -e "CLOUDSDK_COMPUTE_ZONE=${CLOUDSDK_COMPUTE_ZONE}" \
                  -e "K8S_NAMESPACE=${K8S_NAMESPACE}" \
