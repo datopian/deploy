@@ -39,12 +39,9 @@ echo $CLOUDSDK_COMPUTE_ZONE
 ! docker run -i -v "`readlink -f "${OPS_SECRET_JSON_FILE}"`:/k8s-ops/secret.json" \
                  -e "OPS_REPO_SLUG=${OPS_REPO_SLUG}" \
                  -e "OPS_REPO_BRANCH=${OPS_REPO_BRANCH}" \
-                 # -e "CLOUDSDK_CORE_PROJECT=${DATOPIAN_CLOUDSDK_CORE_PROJECT}" \
-                 # -e "CLOUDSDK_CONTAINER_CLUSTER=${DATOPIAN_CLOUDSDK_CONTAINER_CLUSTER}" \
-                 # -e "CLOUDSDK_COMPUTE_ZONE=${DATOPIAN_CLOUDSDK_COMPUTE_ZONE}" \
                  $DOCKER_RUN_PARAMS \
                  "${OPS_DOCKER_IMAGE}" \
-                 -c "env | grep CLOUDSDK && cat connect.sh && source ~/.bashrc && source switch_environment.sh ${ENVIRONMENT_NAME}; ${SCRIPT}" \
+                 -c "env | grep CLOUDSDK && ls && cat connect.sh && source ~/.bashrc && source switch_environment.sh ${ENVIRONMENT_NAME}; ${SCRIPT}" \
     && echo "failed to run SCRIPT" && exit 1
 
 echo "Great Success!"
