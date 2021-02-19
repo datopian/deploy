@@ -1,31 +1,34 @@
 variable "region" {
-  default = "us-central1"
+  default = "europe-west1"
 }
 
 variable "zone" {
-  default = "us-central1-a"
+  default = "europe-west1-b"
 }
 
 variable "kubernetes_version" {
-  default = "1.16.13-gke.1"
+  default = "1.16.15-gke.6000"
 }
 
 variable "cluster_name" {
-  default = "datahub-production"
+  default = "datahub-staging"
+  # default = "datahub-production" # Production
 }
 
 variable "node_pool_name" {
-  default = "production-node-pool"
+  default = "staging-node-pool"
+  # default = "production-node-pool" # Production
 }
 
 variable "load_balancer_ip" {
-  default = "35.224.172.105"
+  default = "34.77.5.20"
+  # default = "34.77.5.20" # Production
 }
 
 module "gke" {
   source                   = "terraform-google-modules/kubernetes-engine/google"
   version                  = "9.2.0"
-  project_id               = "datahub-k8s"
+  project_id               = "datahub-305010"
   name                     = var.cluster_name
   network                  = "default"
   subnetwork               = "default"
@@ -57,9 +60,8 @@ module "gke" {
 }
 
 ## IP addreses are already reserved so skiping for now
-#resource "google_compute_address" "ip_address" {
-#  project       = "datahub-k8s"
-#  name          = "datahub-nginx"
-#  address       = var.load_balancer_ip
-#  region        = var.region
-#}
+resource "google_compute_address" "ip_address" {
+  project       = "datahub-305010"
+  name          = "datahub-nginx"
+  region        = var.region
+}

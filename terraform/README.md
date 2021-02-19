@@ -62,9 +62,14 @@ $  ...
 
 ### Apply
 
+
 ```
 terraform apply
 ```
+
+**Important:** You will need to delete/move elsewhere terraform state if you are
+booting production cluster after staging one (or vice versa). Otherwise terraform
+will think you want to rename/update variables 
 
 ## Environment Variabless
 
