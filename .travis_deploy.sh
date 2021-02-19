@@ -4,7 +4,7 @@ echo "${TRAVIS_COMMIT_MESSAGE}" | grep -- --no-deploy && echo skipping deploymen
 
 K8S_ENVIRONMENT_NAME=${1}
 
-openssl aes-256-cbc -K $encrypted_075bf2c88471_key -iv $encrypted_075bf2c88471_iv -in environments/"$K8S_ENVIRONMENT_NAME"/deploy-ops-secret.json.enc -out environments/"$K8S_ENVIRONMENT_NAME"/secret-k8s-ops.json -d
+openssl aes-256-cbc -K $encrypted_key -iv $encrypted_iv -in environments/"$K8S_ENVIRONMENT_NAME"/deploy-ops-secret.json.enc -out environments/"$K8S_ENVIRONMENT_NAME"/secret-k8s-ops.json -d
 
 OPS_REPO_SLUG="datahq/deploy"
 OPS_REPO_BRANCH="${TRAVIS_BRANCH}"

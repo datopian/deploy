@@ -32,7 +32,7 @@ echo "DOCKER_RUN_PARAMS=${DOCKER_RUN_PARAMS}"
 
 [ ! -f "${OPS_SECRET_JSON_FILE}" ] && echo "Missing secret json file ${OPS_SECRET_JSON_FILE}" && exit 1
 
-! docker run -it -v "`readlink -f "${OPS_SECRET_JSON_FILE}"`:/k8s-ops/secret.json" \
+! docker run -i -v "`readlink -f "${OPS_SECRET_JSON_FILE}"`:/k8s-ops/secret.json" \
                  -e "OPS_REPO_SLUG=${OPS_REPO_SLUG}" \
                  -e "OPS_REPO_BRANCH=${OPS_REPO_BRANCH}" \
                  $DOCKER_RUN_PARAMS \
