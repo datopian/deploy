@@ -35,7 +35,7 @@ jobs:
           bash helm_lint_all.sh
           bash .travis_deploy.sh datahub-testing && bash apps_travis_script.sh pr
   DeployProduction:
-    if: github.ref == 'refs/heads/migrate-datopian'
+    if: github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
     services:
       docker:
