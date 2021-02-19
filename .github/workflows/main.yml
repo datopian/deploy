@@ -30,6 +30,7 @@ jobs:
           K8S_ENVIRONMENT_CONTEXT: gke_datahub-305010_europe-west1_datahub-staging
           encrypted_key: ${{ secrets.ENCRYPTED_KEY }}
           encrypted_iv: ${{ secrets.ENCRYPTED_IV }}
+          GITHUB_TOKEN: ${{ secrets.DATAHUB_GITHUB_TOKEN }}
         run: |
           curl -L https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | sudo bash
           bash helm_lint_all.sh
